@@ -1,4 +1,4 @@
-site_name: "Exploring Software Development Tools"
+site_name: "Exploring Kubernetes"
 extra_css:
   - stylesheets/extra.css
 theme:
@@ -7,8 +7,8 @@ theme:
     scheme: slate
     primary: black
     accent: amber
-  logo: images/exploring_software_development_tools.png
-  favicon: images/exploring_software_development_tools.png
+  logo: images/exploring_kubernetes.png
+  favicon: images/exploring_kubernetes.png
   icon:
     admonition:
       note: octicons/tag-16
@@ -50,10 +50,3 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Git:
-    - Core Functionality:
-      - Introducing Git: git/core_functionality/intro_to_git.md
-#    - Next-Level Git:
-#    - Remotes and Collaboration:
-#    - Advanced Git:
-#  - JQ:
