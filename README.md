@@ -1,2 +1,2 @@
-# exploring_tools
-Exploring some of the tools related to enterprise software development/design.
+# Exploring Kubernetes
+A personal knowledge base of Kubernetes tips and best practices built with MkDocs.
