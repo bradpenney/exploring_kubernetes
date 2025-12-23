@@ -19,3 +19,23 @@
     margin: 0 0 1em 1em;
   }
 }
+
+/* Video embeds - responsive with max-width cap */
+.video-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 1.5rem 0;
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 8px;
+}
+
+/* Center Mermaid diagrams */
+.mermaid {
+  display: flex;
+  justify-content: center;
+}

@@ -1,23 +1,68 @@
 <img src="images/exploring_kubernetes.png" alt="Exploring Kubernetes" class="img-responsive-right" width="300">
 
-# Welcome to Exploring Kubernetes
+# Exploring Kubernetes
 
-A subsection of [BradPenney.io](https://bradpenney.io), this is a hands-on, human-friendly
-dive into the ever-evolving world of containers, clusters, and cloud-native wizardry! ☸️🚀
+**Orchestrating the infrastructure of modern software.**
 
-This site is dedicated to documenting the best practices, hidden gems, and everyday challenges
-of working with Kubernetes. From managing workloads to taming YAML, I’ll share what I learn
-(and occasionally break) along the way.
+A subsection of [BradPenney.io](https://bradpenney.io), this site documents a hands-on journey through the world of containers, clusters, and cloud-native patterns. It transforms complex technical concepts into structured, practical guides focused on building resilient systems.
 
-Whether you're spinning up your first Pod or wrangling Kustomize like a boss, I hope you’ll
-find something useful, practical, or at least entertaining here. 😄
+The goal is to demystify the orchestration layer by understanding the components that make it possible. (And occasionally documenting how to fix things when the "magic" disappears.)
 
-## Topics to Explore 🔍
+---
 
-- Core concepts: Pods, Deployments, Services, and beyond 🧱
-- Helm, Kustomize, and managing complex configs 🎛️
-- Tips, tools, and CLI tricks for cluster sanity 🧘
-- Real-world scenarios, diagrams, and troubleshooting tales 🧯
+## Knowledge Areas
 
-Stay tuned as I keep exploring the cloudy frontier of Kubernetes.
-Thanks for stopping by — and may your clusters stay healthy! 👋
+<div class="grid cards" markdown>
+
+- :material-cube-outline: **Core Concepts**
+
+    ---
+
+    **The Foundation** — [Cluster Architecture](core_concepts/architecture.md)
+
+    **The Units** — Pods, Nodes, and Namespaces
+
+    **The Definition** — Declarative Configuration & YAML
+
+- :material-server-network: **Workloads** *(Coming Soon)*
+
+    ---
+
+    **Orchestration** — Deployments, StatefulSets, & DaemonSets
+
+    **Scheduling** — Taints, Tolerations, & Affinity
+
+    **Execution** — Jobs, CronJobs, & Probes
+
+- :material-lan: **Networking** *(Coming Soon)*
+
+    ---
+
+    **Connectivity** — Services, Ingress, & Network Policies
+
+    **Discovery** — DNS & Cluster Communication
+
+    **Security** — TLS & Certificates
+
+- :material-database-outline: **Storage** *(Coming Soon)*
+
+    ---
+
+    **Persistence** — PVs, PVCs, & StorageClasses
+
+    **Data** — ConfigMaps & Secrets
+
+- :material-eye-outline: **Observability** *(Coming Soon)*
+
+    ---
+
+    **Insight** — Logging, Monitoring, & Tracing
+
+    **Health** — Metrics Server & Probes
+
+</div>
+
+## Connect
+
+- Main site: [bradpenney.io](https://bradpenney.io)
+- Source code: [GitHub](https://github.com/bradpenney/exploring_kubernetes)
