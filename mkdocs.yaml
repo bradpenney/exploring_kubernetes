@@ -72,12 +72,76 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Core Concepts:
-      - Architecture: core_concepts/architecture.md
-#  - Workloads:
-#      - The Pod: workloads/the_pod.md
-#      - Deployments: workloads/deployments.md
-#  - Networking:
-#      - Services: networking/services.md
-#  - Storage:
-#      - Persistent Volumes: storage/persistent_volumes.md
+  - Day One - Getting Started:
+      - Overview: day_one/overview.md
+      # Additional Day One articles coming soon:
+      # - What Is Kubernetes?: day_one/what_is_kubernetes.md
+      # - Getting kubectl Access: day_one/kubectl_access.md
+      # - Your First Deployment: day_one/first_deployment.md
+      # - Essential kubectl Commands: day_one/essential_commands.md
+      # - Understanding What Happened: day_one/understanding_deployment.md
+
+  # EDITORIAL NOTE: Content below is commented out pending quality review
+  # Goal: Implement progressive learning journey (Day One → Level 6)
+  # Following Exploring Linux editorial standards established 2026-02-06
+  # Uncomment articles ONE AT A TIME after thorough editorial vetting
+  # See CLAUDE.md for quality standards and vetting checklist
+
+  # - Level 1 - Core Primitives:
+  #     - Overview: level_1/overview.md
+  #     - Pods Deep Dive: level_1/pods.md
+  #     - Services - Connecting to Pods: level_1/services.md
+  #     - ConfigMaps and Secrets: level_1/config_and_secrets.md
+  #     - Namespaces: level_1/namespaces.md
+  #     - Labels and Selectors: level_1/labels_selectors.md
+
+  # - Level 2 - Workload Management:
+  #     - Overview: level_2/overview.md
+  #     - Deployments Explained: level_2/deployments.md
+  #     - ReplicaSets Under the Hood: level_2/replicasets.md
+  #     - StatefulSets: level_2/statefulsets.md
+  #     - DaemonSets: level_2/daemonsets.md
+  #     - Jobs and CronJobs: level_2/jobs_cronjobs.md
+
+  # - Level 3 - Networking:
+  #     - Overview: level_3/overview.md
+  #     - Services Deep Dive: level_3/services_deep_dive.md
+  #     - Ingress Controllers: level_3/ingress.md
+  #     - Network Policies: level_3/network_policies.md
+  #     - DNS and Service Discovery: level_3/dns_service_discovery.md
+  #     - Troubleshooting Networking: level_3/troubleshooting_networking.md
+
+  # - Level 4 - Storage and State:
+  #     - Overview: level_4/overview.md
+  #     - Understanding Volumes: level_4/volumes.md
+  #     - Persistent Volumes (PV): level_4/persistent_volumes.md
+  #     - Persistent Volume Claims (PVC): level_4/persistent_volume_claims.md
+  #     - StorageClasses: level_4/storage_classes.md
+  #     - Running Databases on Kubernetes: level_4/databases_on_k8s.md
+
+  # - Level 5 - Advanced Scheduling & Security:
+  #     - Overview: level_5/overview.md
+  #     - Resource Requests and Limits: level_5/resources.md
+  #     - Taints and Tolerations: level_5/taints_tolerations.md
+  #     - Node Affinity and Pod Affinity: level_5/affinity.md
+  #     - RBAC: level_5/rbac.md
+  #     - Security Best Practices: level_5/security.md
+
+  # - Level 6 - Production Operations:
+  #     - Overview: level_6/overview.md
+  #     - Logging Architecture: level_6/logging.md
+  #     - Monitoring and Metrics: level_6/monitoring.md
+  #     - Health Checks and Probes: level_6/probes.md
+  #     - Helm Package Manager: level_6/helm.md
+  #     - Operators and Custom Resources: level_6/operators.md
+
+  # OLD STRUCTURE (being retired):
+  # - Core Concepts:
+  #     - Architecture: core_concepts/architecture.md  # Will be moved to Day One or Level 1
+  # - Workloads:
+  #     - The Pod: workloads/the_pod.md  # Will be enhanced and moved to Level 1
+  #     - Deployments: workloads/deployments.md  # Will be enhanced and moved to Level 2
+  # - Networking:
+  #     - Services: networking/services.md  # Will be enhanced and moved to Level 1 or Level 3
+  # - Storage:
+  #     - Persistent Volumes: storage/persistent_volumes.md  # Will be moved to Level 4
