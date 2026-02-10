@@ -175,7 +175,6 @@ flowchart TD
     style End fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
-## Your Journey
 
 === "Starting Point: Application Developer"
 
