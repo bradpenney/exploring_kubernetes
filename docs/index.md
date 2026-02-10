@@ -26,13 +26,11 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
 
     **Articles:**
 
-    - What Is Kubernetes?
-    - Getting kubectl Access
-    - Your First Deployment
-    - Essential kubectl Commands
-    - Understanding What Happened
-
-    *(coming soon)*
+    - [What Is Kubernetes?](day_one/what_is_kubernetes.md)
+    - Getting kubectl Access *(coming soon)*
+    - Your First Deployment *(coming soon)*
+    - Essential kubectl Commands *(coming soon)*
+    - Understanding What Happened *(coming soon)*
 
 - :material-cube: **Level 1 - Core Primitives** *(Coming Soon)*
 

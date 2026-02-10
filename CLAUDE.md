@@ -564,16 +564,16 @@ Before uncommenting an article in `mkdocs.yaml`:
 - [ ] All code blocks have `title=` attribute
 - [ ] YAML manifests use `linenums="1"` and inline annotations
 - [ ] Admonitions used appropriately (tip, warning)
-- [ ] Proper markdown list formatting (blank lines)
+- [ ] **CRITICAL: Blank lines before ALL lists** (recurring issue - check every list in article)
 - [ ] Mermaid diagrams follow slate color scheme
 - [ ] Internal links use relative paths
-- [ ] External links to authoritative sources only (kubernetes.io, CNCF)
+- [ ] **External links validated with WebFetch before publishing** (URLs break over time)
 - [ ] **Command names wrapped in backticks in prose** (e.g., "Use `kubectl apply`" not "Use kubectl apply") - excludes code blocks and mermaid diagrams
 
 **✅ Integration and Links:**
 
 - [ ] Pre-publication link audit completed
-- [ ] No links to unpublished articles
+- [ ] **NEVER link to unpublished articles** - only link to articles uncommented in mkdocs.yaml
 - [ ] Cross-links added between all published articles in level
 - [ ] "Part of [Level]" callout with link to overview
 - [ ] Referenced in "What's Next" from previous article

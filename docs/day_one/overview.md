@@ -187,7 +187,7 @@ Work through these in order for the complete Day One experience:
 
 <div class="grid cards" markdown>
 
--   :material-help-circle: **What Is Kubernetes and Why?** *(coming soon)*
+-   :material-help-circle: **[What Is Kubernetes and Why?](what_is_kubernetes.md)**
 
     ---
 
@@ -219,8 +219,8 @@ Work through these in order for the complete Day One experience:
 
 </div>
 
-!!! note "Articles Publishing Soon"
-    Articles are being created and reviewed for quality. Check back soon for the complete Day One experience.
+!!! note "Day One Articles"
+    Articles are being published progressively. Start with "What Is Kubernetes?" and more will be added soon.
 
 ---
 
@@ -291,6 +291,6 @@ But first, let's get you deploying applications. That's what Day One is all abou
 
 ## Ready?
 
-Start with **What Is Kubernetes and Why?** to understand what you're working with and why it matters *(coming soon)*.
+Start with **[What Is Kubernetes and Why?](what_is_kubernetes.md)** to understand what you're working with and why it matters.
 
 Your journey from intimidated app developer to confident Kubernetes user starts here. Let's get you deploying.
