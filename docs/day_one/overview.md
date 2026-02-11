@@ -193,7 +193,7 @@ Work through these in order for the complete Day One experience:
 
     Understand the container orchestration problem and why companies adopt Kubernetes. No jargon, just practical context.
 
--   :material-connection: **Getting kubectl Access** *(coming soon)*
+-   :material-connection: **[Getting kubectl Access](kubectl_access.md)**
 
     ---
 

@@ -75,8 +75,8 @@ nav:
   - Day One - Getting Started:
       - Overview: day_one/overview.md
       - What Is Kubernetes?: day_one/what_is_kubernetes.md
+      - Getting kubectl Access: day_one/kubectl_access.md
       # Additional Day One articles coming soon:
-      # - Getting kubectl Access: day_one/kubectl_access.md
       # - Your First Deployment: day_one/first_deployment.md
       # - Essential kubectl Commands: day_one/essential_commands.md
       # - Understanding What Happened: day_one/understanding_deployment.md

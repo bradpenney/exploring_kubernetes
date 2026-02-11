@@ -391,9 +391,7 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 
 ## What's Next?
 
-You understand why Kubernetes exists. Now let's get you connected: **Getting kubectl Access** *(coming soon)* will show you how to connect to your company's cluster and verify you're ready to deploy.
-
-In the meantime, return to the [Day One overview](overview.md) to see the complete learning path.
+You understand why Kubernetes exists. Now let's get you connected: **[Getting kubectl Access](kubectl_access.md)** will show you how to connect to your company's cluster and verify you're ready to deploy.
 
 ---
 

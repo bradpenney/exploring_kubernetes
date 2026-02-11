@@ -27,9 +27,9 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
     **Articles:**
 
     - [What Is Kubernetes?](day_one/what_is_kubernetes.md)
-    - Getting kubectl Access *(coming soon)*
+    - [Getting `kubectl` Access](day_one/kubectl_access.md)
     - Your First Deployment *(coming soon)*
-    - Essential kubectl Commands *(coming soon)*
+    - Essential `kubectl` Commands *(coming soon)*
     - Understanding What Happened *(coming soon)*
 
 - :material-cube: **Level 1 - Core Primitives** *(Coming Soon)*
@@ -172,7 +172,7 @@ flowchart TD
     style L12 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style L34 fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style L56 fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style End fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style End fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
 
