@@ -28,7 +28,7 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
 
     - [What Is Kubernetes?](day_one/what_is_kubernetes.md)
     - [Getting `kubectl` Access](day_one/kubectl_access.md)
-    - Your First Deployment *(coming soon)*
+    - [Your First Deployment](day_one/first_deployment.md)
     - Essential `kubectl` Commands *(coming soon)*
     - Understanding What Happened *(coming soon)*
 
