@@ -205,7 +205,7 @@ Work through these in order for the complete Day One experience:
 
     Deploy a simple application and see it run. Hands-on, step-by-step, with YAML explained.
 
--   :material-console: **Essential kubectl Commands** *(coming soon)*
+-   :material-console: **[Essential kubectl Commands](essential_commands.md)**
 
     ---
 
@@ -220,7 +220,7 @@ Work through these in order for the complete Day One experience:
 </div>
 
 !!! note "Day One Articles"
-    Articles are being published progressively. Start with "What Is Kubernetes?" and more will be added soon.
+    Four articles are now available! Start with "What Is Kubernetes?" and work through in order. "Understanding What Happened" is coming soon to complete the Day One journey.
 
 ---
 

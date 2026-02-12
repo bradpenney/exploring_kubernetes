@@ -596,7 +596,7 @@ kubectl delete -f nginx-service.yaml
 
 You've deployed your first application! Next up in the Day One series:
 
-- **Essential kubectl Commands** - The 10 commands you'll use every day (coming soon)
+- **[Essential kubectl Commands](essential_commands.md)** - Master the 10 commands you'll use every day
 - **Understanding What Happened** - Deep dive into Deployments, ReplicaSets, and Pods (coming soon)
 
 Check the [Day One Overview](overview.md) for the complete learning path.
