@@ -39,3 +39,8 @@
   display: flex;
   justify-content: center;
 }
+
+/* Force card grids to single column */
+.grid.cards {
+  grid-template-columns: 1fr !important;
+}

@@ -141,7 +141,7 @@ graph TD
         Move-Item -Path "kubectl.exe" -Destination "$env:USERPROFILE\bin\kubectl.exe"
         ```
 
-        1. v1.31.0 is used as an example - kubectl versions are typically compatible across multiple Kubernetes versions. Your cluster's version doesn't need to match exactly. Check [Kubernetes releases](https://kubernetes.io/releases/) for the latest stable version.
+        1. v1.31.0 is used as an example - `kubectl` versions are typically compatible across multiple Kubernetes versions. Your cluster's version doesn't need to match exactly. Check [Kubernetes releases](https://kubernetes.io/releases/) for the latest stable version.
 
         Add to your PATH (still in PowerShell as Administrator):
 
@@ -166,10 +166,10 @@ graph TD
         1. Download a recent release:
 
             - **For latest version:** Check [Kubernetes releases](https://kubernetes.io/releases/) first, then download
-            - **Or use v1.31.0 (example):** [Download kubectl.exe](https://dl.k8s.io/release/v1.31.0/bin/windows/amd64/kubectl.exe)
+            - **Or use v1.31.0 (example):** [Download `kubectl.exe`](https://dl.k8s.io/release/v1.31.0/bin/windows/amd64/kubectl.exe)
             - Save the file to your Downloads folder
 
-        2. Create a directory for kubectl:
+        2. Create a directory for `kubectl`:
 
             - Open File Explorer
             - Navigate to `C:\Users\YourUsername\`
@@ -208,10 +208,10 @@ graph TD
     ```
 
     !!! tip "Troubleshooting"
-        If you get "kubectl is not recognized":
+        If you get "`kubectl` is not recognized":
 
         1. Make sure you opened a **new** PowerShell window after changing PATH
-        2. Verify kubectl.exe exists: `Test-Path "$env:USERPROFILE\bin\kubectl.exe"`
+        2. Verify `kubectl.exe` exists: `Test-Path "$env:USERPROFILE\bin\kubectl.exe"`
         3. Check your PATH includes the bin folder: `$env:PATH -split ';' | Select-String 'bin'`
 
 ---
@@ -471,7 +471,7 @@ Most enterprises use one of these methods:
     !!! success "Why this is better"
         - **Your identity** = Audit logs show what YOU did, not "shared-user"
         - **Auto-refresh** = No expired credentials
-        - **Revocation** = You leave the company? Your cloud access is revoked = kubectl access revoked
+        - **Revocation** = You leave the company? Your cloud access is revoked = `kubectl` access revoked
         - **No shared secrets** = Nothing precious to protect
 
 === "OIDC/SSO Login"
@@ -556,7 +556,8 @@ Most enterprises use one of these methods:
         If your company uses **Okta, Google Workspace, or another OIDC provider**:
 
         **Your platform team should provide:**
-        - Specific kubectl plugin or tool to install
+
+        - Specific `kubectl` plugin or tool to install
         - The issuer URL (identity provider)
         - Client ID for the Kubernetes cluster
 
@@ -633,8 +634,6 @@ Most enterprises use one of these methods:
 
     === "Automated Tool (Easiest)"
 
-        **Option 1: Automated tool**
-
         If your platform team provides a script or command-line tool:
 
         ```bash title="Generate certificate with automated tool"
@@ -651,41 +650,37 @@ Most enterprises use one of these methods:
 
     === "Self-Service Portal"
 
-        **Option 2: Self-service portal**
+        1. Visit internal portal (e.g., `https://k8s-certs.company.com`)
+        2. Log in with company credentials
+        3. Request certificate for cluster "dev" or "prod"
+        4. Download `yourname.crt` and `yourname.key`
+        5. Configure `kubectl`:
 
-    1. Visit internal portal (e.g., `https://k8s-certs.company.com`)
-    2. Log in with company credentials
-    3. Request certificate for cluster "dev" or "prod"
-    4. Download `yourname.crt` and `yourname.key`
-    5. Configure kubectl:
+        ```bash title="Configure kubectl to use your certificate"
+        # Add your certificate to kubectl config
+        kubectl config set-credentials yourname \
+          --client-certificate=yourname.crt \
+          --client-key=yourname.key \
+          --embed-certs=true  # (1)!
 
-    ```bash title="Configure kubectl to use your certificate"
-    # Add your certificate to kubectl config
-    kubectl config set-credentials yourname \
-      --client-certificate=yourname.crt \
-      --client-key=yourname.key \
-      --embed-certs=true  # (1)!
+        # Set the cluster and context (platform team provides these values)
+        kubectl config set-cluster my-cluster \
+          --server=https://k8s-api.company.com:6443 \
+          --certificate-authority=ca.crt
 
-    # Set the cluster and context (platform team provides these values)
-    kubectl config set-cluster my-cluster \
-      --server=https://k8s-api.company.com:6443 \
-      --certificate-authority=ca.crt
+        kubectl config set-context my-cluster \
+          --cluster=my-cluster \
+          --user=yourname \
+          --namespace=default
 
-    kubectl config set-context my-cluster \
-      --cluster=my-cluster \
-      --user=yourname \
-      --namespace=default
-
-    kubectl config use-context my-cluster
-    ```
+        kubectl config use-context my-cluster
+        ```
 
         1. `--embed-certs=true` encodes the certificate into the kubeconfig file instead of referencing the file path. Useful if you move the kubeconfig to another machine.
 
     === "CSR Workflow (Advanced)"
 
-        **Option 3: CSR (Certificate Signing Request) workflow**
-
-        Advanced setup where YOU generate the private key:
+        **Certificate Signing Request (CSR)** - Advanced setup where YOU generate the private key:
 
         ```bash title="Generate certificate with CSR (advanced)"
         # Generate your private key (keep this SECRET)
@@ -1021,7 +1016,7 @@ If you see an error like "Unauthorized" or "Forbidden", contact your platform te
 ## Common Connection Problems
 
 ??? question "Error: The connection to the server was refused"
-    **Problem:** kubectl can't reach the cluster.
+    **Problem:** `kubectl` can't reach the cluster.
 
     **Possible causes:**
     - VPN required but not connected
@@ -1208,7 +1203,9 @@ We'll cover all of these in detail in the next article about essential `kubectl`
 
 ## What's Next?
 
-You're connected! `kubectl` is working, and you can access your namespace. The next article will guide you through deploying your first application to the cluster.
+You're connected! `kubectl` is working, and you can access your namespace. Ready to deploy something?
+
+**Next:** [Your First Deployment](first_deployment.md) - Deploy a simple web application and see it run in Kubernetes.
 
 ---
 

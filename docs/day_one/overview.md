@@ -53,7 +53,7 @@ flowchart TD
     style Deploy fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style Watch fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style Logs fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Success fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Success fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
 This is the practical journey you'll take—from credentials in hand to deployed application.
@@ -199,7 +199,7 @@ Work through these in order for the complete Day One experience:
 
     Connect to your company's cluster. Understand kubeconfig, contexts, namespaces, and how to verify you're ready.
 
--   :material-rocket-launch: **Your First Deployment** *(coming soon)*
+-   :material-rocket-launch: **[Your First Deployment](first_deployment.md)**
 
     ---
 
