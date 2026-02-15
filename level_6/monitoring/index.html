@@ -1,0 +1,2506 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A progressive journey through Kubernetes, from your first deployment to production operations.">
+      
+      
+        <meta name="author" content="Brad Penney">
+      
+      
+        <link rel="canonical" href="https://kubernetes.bradpenney.io/level_6/monitoring/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/exploring_kubernetes.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Monitoring and Metrics - Exploring Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1%207.775V2.75C1%201.784%201.784%201%202.75%201h5.025c.464%200%20.91.184%201.238.513l6.25%206.25a1.75%201.75%200%200%201%200%202.474l-5.026%205.026a1.75%201.75%200%200%201-2.474%200l-6.25-6.25A1.75%201.75%200%200%201%201%207.775m1.5%200c0%20.066.026.13.073.177l6.25%206.25a.25.25%200%200%200%20.354%200l5.025-5.025a.25.25%200%200%200%200-.354l-6.25-6.25a.25.25%200%200%200-.177-.073H2.75a.25.25%200%200%200-.25.25ZM6%205a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.5%201.75v11.5c0%20.138.112.25.25.25h3.17a.75.75%200%200%201%200%201.5H2.75A1.75%201.75%200%200%201%201%2013.25V1.75C1%20.784%201.784%200%202.75%200h8.5C12.216%200%2013%20.784%2013%201.75v7.736a.75.75%200%200%201-1.5%200V1.75a.25.25%200%200%200-.25-.25h-8.5a.25.25%200%200%200-.25.25m13.274%209.537zl-4.557%204.45a.75.75%200%200%201-1.055-.008l-1.943-1.95a.75.75%200%200%201%201.062-1.058l1.419%201.425%204.026-3.932a.75.75%200%201%201%201.048%201.074M4.75%204h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M4%207.75A.75.75%200%200%201%204.75%207h2a.75.75%200%200%201%200%201.5h-2A.75.75%200%200%201%204%207.75%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3.499.75a.75.75%200%200%201%201.5%200v.996C5.9%202.903%206.793%203.65%207.662%204.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873%2010.794-.045%2012.622.26%2014.408.558%2016%201.94%2016%204.25c0%201.278-.954%202.575-2.44%202.734l.146.508.065.22c.203.701.412%201.455.476%202.226.142%201.707-.4%203.03-1.487%203.898C11.714%2014.671%2010.27%2015%208.75%2015h-6a.75.75%200%200%201%200-1.5h1.376a4.5%204.5%200%200%201-.563-1.191%203.84%203.84%200%200%201-.05-2.063%204.65%204.65%200%200%201-2.025-.293.75.75%200%200%201%20.525-1.406c1.357.507%202.376-.006%202.698-.318l.009-.01a.747.747%200%200%201%201.06%200%20.75.75%200%200%201-.012%201.074c-.912.92-.992%201.835-.768%202.586.221.74.745%201.337%201.196%201.621H8.75c1.343%200%202.398-.296%203.074-.836.635-.507%201.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4%202.4%200%200%201-.507-.441%203.1%203.1%200%200%201-.633-1.248.75.75%200%200%201%201.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738%200%201.25-.615%201.25-1.25%200-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706%201.345-.46.92-.27%201.774.019%203.062l.042.19.01.05c.348.443.666.949.94%201.553a.75.75%200%201%201-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7%205.527c-.814-.68-1.75-1.462-2.692-2.619a3.7%203.7%200%200%200-1.023.88c-.406.495-.663%201.036-.722%201.508.116.122.306.21.591.239.388.038.797-.06%201.032-.19a.75.75%200%200%201%20.728%201.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75%205.677V5.5c0-.984.48-1.94%201.077-2.664.46-.559%201.05-1.055%201.673-1.353z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M13.78%204.22a.75.75%200%200%201%200%201.06l-7.25%207.25a.75.75%200%200%201-1.06%200L2.22%209.28a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018L6%2010.94l6.72-6.72a.75.75%200%200%201%201.06%200%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.92%206.085h.001a.749.749%200%201%201-1.342-.67c.169-.339.436-.701.849-.977C6.845%204.16%207.369%204%208%204a2.76%202.76%200%200%201%201.637.525c.503.377.863.965.863%201.725%200%20.448-.115.83-.329%201.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6%206%200%200%200-.26.16%201%201%200%200%200-.276.245.75.75%200%200%201-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1%201%200%200%200%20.277-.245C8.96%206.514%209%206.427%209%206.25a.61.61%200%200%200-.262-.525A1.27%201.27%200%200%200%208%205.5c-.369%200-.595.09-.74.187a1%201%200%200%200-.34.398M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.344%202.343za8%208%200%200%201%2011.314%2011.314A8.002%208.002%200%200%201%20.234%2010.089a8%208%200%200%201%202.11-7.746m1.06%2010.253a6.5%206.5%200%201%200%209.108-9.275%206.5%206.5%200%200%200-9.108%209.275M6.03%204.97%208%206.94l1.97-1.97a.749.749%200%200%201%201.275.326.75.75%200%200%201-.215.734L9.06%208l1.97%201.97a.749.749%200%200%201-.326%201.275.75.75%200%200%201-.734-.215L8%209.06l-1.97%201.97a.749.749%200%200%201-1.275-.326.75.75%200%200%201%20.215-.734L6.94%208%204.97%206.03a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.72.22a.75.75%200%200%201%201.06%200l1%20.999a3.5%203.5%200%200%201%202.441%200l.999-1a.748.748%200%200%201%201.265.332.75.75%200%200%201-.205.729l-.775.776c.616.63.995%201.493.995%202.444v.327q0%20.15-.025.292c.408.14.764.392%201.029.722l1.968-.787a.75.75%200%200%201%20.556%201.392L13%207.258V9h2.25a.75.75%200%200%201%200%201.5H13v.5q-.002.615-.141%201.186l2.17.868a.75.75%200%200%201-.557%201.392l-2.184-.873A5%205%200%200%201%208%2016a5%205%200%200%201-4.288-2.427l-2.183.873a.75.75%200%200%201-.558-1.392l2.17-.868A5%205%200%200%201%203%2011v-.5H.75a.75.75%200%200%201%200-1.5H3V7.258L.971%206.446a.75.75%200%200%201%20.558-1.392l1.967.787c.265-.33.62-.583%201.03-.722a1.7%201.7%200%200%201-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72%201.28a.75.75%200%200%201%200-1.06m.53%206.28a.75.75%200%200%200-.75.75V11a3.5%203.5%200%201%200%207%200V7.25a.75.75%200%200%200-.75-.75ZM6.173%205h3.654A.17.17%200%200%200%2010%204.827V4.5a2%202%200%201%200-4%200v.327c0%20.096.077.173.173.173%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-V01MJ4R3SQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-V01MJ4R3SQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-V01MJ4R3SQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Monitoring and Metrics - Exploring Kubernetes" />
+<meta property="og:description" content="A progressive journey through Kubernetes, from your first deployment to production operations." />
+<meta property="og:image" content="https://kubernetes.bradpenney.io/assets/images/social/level_6/monitoring.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://kubernetes.bradpenney.io/level_6/monitoring/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Monitoring and Metrics - Exploring Kubernetes" />
+<meta property="twitter:description" content="A progressive journey through Kubernetes, from your first deployment to production operations." />
+<meta property="twitter:image" content="https://kubernetes.bradpenney.io/assets/images/social/level_6/monitoring.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#monitoring-and-metrics" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Exploring Kubernetes" class="md-header__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Exploring Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Monitoring and Metrics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Exploring Kubernetes" class="md-nav__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    Exploring Kubernetes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day One - Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Day One - Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/what_is_kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Kubernetes?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Scratch (kubectl)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    From Scratch (kubectl)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/understanding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-monitoring-journey" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Monitoring Journey
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Fundamentals
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-are-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Are Metrics?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#types-of-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types of Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Server
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics Server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-resource-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Resource Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-metrics-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Metrics Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prometheus-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Prometheus?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-prometheus-with-kube-prometheus-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Prometheus with kube-prometheus-stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exposing-application-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exposing Application Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exposing Application Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-metrics-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The /metrics Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instrumenting-your-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instrumenting Your Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#servicemonitor-telling-prometheus-what-to-scrape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ServiceMonitor: Telling Prometheus What to Scrape
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#querying-metrics-with-promql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Querying Metrics with PromQL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Querying Metrics with PromQL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#promql-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromQL Basics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-promql-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common PromQL Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#grafana-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grafana Dashboards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Grafana Dashboards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-your-first-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Your First Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-custom-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Custom Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-metrics-to-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics to Monitor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Metrics to Monitor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-use-method-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The USE Method (Infrastructure)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-red-method-applications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The RED Method (Applications)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-four-golden-signals-google-sre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Four Golden Signals (Google SRE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alerting-with-alertmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alerting with AlertManager
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alerting with AlertManager">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining Alerting Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-alertmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring AlertManager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alert-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alert Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#production-monitoring-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Monitoring Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tools-and-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tools and Operators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="monitoring-and-metrics">Monitoring and Metrics</h1>
+<div class="admonition tip">
+<p class="admonition-title">Part of Level 6: Production Operations</p>
+<p>This article is part of <a href="../overview/">Level 6: Production Operations</a>. At this level, you're running production Kubernetes and need real-time visibility into cluster and application health.</p>
+</div>
+<p>Your production cluster is running. Applications are deployed. Logging is configured. Everything looks good—until your phone buzzes at 2 AM: "Site is down."</p>
+<p>You rush to your laptop. What's wrong? Is it the application? The database? The cluster itself? CPU exhausted? Memory leak? Network issue?</p>
+<p><strong>Without monitoring, you're flying blind.</strong> Logs tell you what happened in the past. Metrics tell you what's happening right now—and warn you before things break.</p>
+<p>This is the difference between reacting to outages and preventing them.</p>
+<div class="admonition info">
+<p class="admonition-title">What You'll Learn</p>
+<p>By the end of this article, you'll understand:</p>
+<ul>
+<li><strong>Metrics fundamentals</strong> - What metrics are and why they matter</li>
+<li><strong>Metrics Server</strong> - Basic resource metrics (CPU, memory)</li>
+<li><strong>Prometheus architecture</strong> - Industry-standard metrics collection</li>
+<li><strong>Exporters and ServiceMonitors</strong> - How Prometheus discovers what to scrape</li>
+<li><strong>Grafana dashboards</strong> - Visualizing metrics for humans</li>
+<li><strong>Key metrics to monitor</strong> - USE method, RED method, SLIs/SLOs</li>
+<li><strong>Alerting with AlertManager</strong> - Getting notified before users complain</li>
+<li><strong>Production monitoring checklist</strong> - What to implement for production</li>
+</ul>
+</div>
+<h2 id="the-monitoring-journey">The Monitoring Journey</h2>
+<pre class="mermaid"><code>graph TD
+    A[Application exposes&lt;br/&gt;/metrics endpoint] --&gt; B[Prometheus scrapes&lt;br/&gt;metrics periodically]
+    B --&gt; C[Prometheus stores&lt;br/&gt;time-series data]
+    C --&gt; D[Grafana queries&lt;br/&gt;Prometheus for dashboards]
+    C --&gt; E[AlertManager evaluates&lt;br/&gt;alerting rules]
+    E --&gt; F[Sends alerts&lt;br/&gt;Slack/PagerDuty/Email]
+
+    style A fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style E fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style F fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<hr />
+<h2 id="metrics-fundamentals">Metrics Fundamentals</h2>
+<h3 id="what-are-metrics">What Are Metrics?</h3>
+<p><strong>Metrics are numerical measurements over time.</strong></p>
+<p>Unlike logs (discrete events), metrics are continuous data points that show trends:</p>
+<ul>
+<li>CPU usage: 45%, 52%, 61%, 70%...</li>
+<li>Request rate: 150 req/s, 180 req/s, 200 req/s...</li>
+<li>Error rate: 0.2%, 0.3%, 1.2%, 5.4%...</li>
+</ul>
+<p><strong>Why metrics matter:</strong></p>
+<ul>
+<li><strong>Trend analysis:</strong> See patterns (CPU climbing gradually = resource leak)</li>
+<li><strong>Thresholds and alerting:</strong> Trigger alerts when values exceed limits</li>
+<li><strong>Capacity planning:</strong> Predict when to scale</li>
+<li><strong>Dashboards:</strong> Visual real-time status at a glance</li>
+</ul>
+<h3 id="types-of-metrics">Types of Metrics</h3>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m0 2v12h7V6zm16 12V6h-1.24c.24.54.19 1.07.19 1.13-.07.67-.54 1.37-.71 1.62l-2.33 2.55 3.32-.02.01 1.22-5.2-.03-.04-1s3.05-3.23 3.2-3.52c.14-.28.71-1.95-.7-1.95-1.23.05-1.09 1.3-1.09 1.3l-1.54.01s.01-.66.38-1.31H13v12h2.58l-.01-.86.97-.01s.91-.16.92-1.05c.04-1-.81-1-.96-1-.13 0-1.07.05-1.07.87h-1.52s.04-2.06 2.59-2.06c2.6 0 2.46 2.02 2.46 2.02s.04 1.25-1.11 1.72l.52.37zM8.92 16h-1.5v-5.8l-1.8.56V9.53l3.14-1.12h.16z"/></svg></span> <strong>Counter</strong></p>
+<hr />
+<p><strong>What it is:</strong> A value that only increases (never decreases, except on reset).</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Total HTTP requests served</li>
+<li>Total errors</li>
+<li>Total bytes sent</li>
+</ul>
+<p><strong>When to use:</strong> Counting events that accumulate over time.</p>
+<p><strong>Key insight:</strong> You typically query the rate of change (requests per second), not the absolute value.</p>
+<div class="language-promql highlight"><span class="filename">Counter query example</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># Requests per second, averaged over 5 minutes</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8c0 2.4-1 4.5-2.7 6-1.4-1.3-3.3-2-5.3-2s-3.8.7-5.3 2C5 16.5 4 14.4 4 12a8 8 0 0 1 8-8m2 1.89c-.38.01-.74.26-.9.65l-1.29 3.23-.1.23c-.71.13-1.3.6-1.57 1.26-.41 1.03.09 2.19 1.12 2.6s2.19-.09 2.6-1.12c.26-.66.14-1.42-.29-1.98l.1-.26 1.29-3.21.01-.03c.2-.51-.05-1.09-.56-1.3-.13-.05-.26-.07-.41-.07M10 6a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M7 9a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m10 0a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Gauge</strong></p>
+<hr />
+<p><strong>What it is:</strong> A value that can increase or decrease.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Current CPU usage (%)</li>
+<li>Current memory usage (bytes)</li>
+<li>Number of active connections</li>
+<li>Queue depth</li>
+</ul>
+<p><strong>When to use:</strong> Measuring current state, not cumulative events.</p>
+<p><strong>Key insight:</strong> Gauges represent "right now" values. They can spike and drop.</p>
+<div class="language-promql highlight"><span class="filename">Gauge query example</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">node_memory_MemAvailable_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nv">node_memory_MemTotal_bytes</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Percentage of memory available</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h2v10h4V7h4v4h4v4h4v6H3z"/></svg></span> <strong>Histogram</strong></p>
+<hr />
+<p><strong>What it is:</strong> Tracks distribution of values in buckets.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Request duration (how many requests took &lt;100ms, &lt;500ms, &lt;1s, etc.)</li>
+<li>Response size distribution</li>
+</ul>
+<p><strong>When to use:</strong> Analyzing distributions and calculating percentiles.</p>
+<p><strong>Key insight:</strong> Lets you calculate p50, p95, p99 latency (50th, 95th, 99th percentile).</p>
+<div class="language-promql highlight"><span class="filename">Histogram query example</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kr">histogram_quantile</span><span class="o">(</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_request_duration_seconds_bucket</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># 95th percentile request duration</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6H8.83l6 6-6 6H18v2H6v-2l6-6-6-6V4h12z"/></svg></span> <strong>Summary</strong></p>
+<hr />
+<p><strong>What it is:</strong> Like histogram, but calculates quantiles on the client side.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Request duration summary (pre-calculated percentiles)</li>
+</ul>
+<p><strong>When to use:</strong> Similar to histogram, but less flexible (can't aggregate across instances).</p>
+<p><strong>Key insight:</strong> Histograms are generally preferred in Prometheus. Summaries are used when client-side calculation is needed.</p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="metrics-server">Metrics Server</h2>
+<h3 id="basic-resource-metrics">Basic Resource Metrics</h3>
+<p><strong>Metrics Server</strong> is a lightweight cluster add-on that provides CPU and memory metrics for nodes and pods.</p>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Collects resource metrics from kubelets on each node</li>
+<li>Stores short-term metrics in memory (no persistent storage)</li>
+<li>Powers <code>kubectl top</code> commands</li>
+<li>Used by Horizontal Pod Autoscaler (HPA) for scaling decisions</li>
+</ul>
+<p><strong>What it does NOT do:</strong></p>
+<ul>
+<li>Store historical metrics (data is only kept for a few minutes)</li>
+<li>Provide custom application metrics</li>
+<li>Support alerting</li>
+</ul>
+<p><strong>Think of Metrics Server as:</strong> Basic resource monitoring for autoscaling. For production observability, you need Prometheus.</p>
+<h3 id="installing-metrics-server">Installing Metrics Server</h3>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Install Metrics Server (official manifest)</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+</span></code></pre></div>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Verify Metrics Server running</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployment<span class="w"> </span>metrics-server<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># NAME             READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># metrics-server   1/1     1            1           1m</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># NAME       CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># node-01    250m         12%    1500Mi          40%</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># node-02    180m         9%     1200Mi          32%</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># node-03    320m         16%    1800Mi          48%</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>production
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># NAME                       CPU(cores)   MEMORY(bytes)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c1"># api-server-7c5ddbdf54-2x   20m          128Mi</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># api-server-7c5ddbdf54-8m   18m          132Mi</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">kubectl top is Your Friend</p>
+<p><code>kubectl top</code> gives instant visibility into resource usage. Use it daily:</p>
+<ul>
+<li><code>kubectl top nodes</code> - Which nodes are under pressure?</li>
+<li><code>kubectl top pods -n &lt;namespace&gt;</code> - Which pods are consuming resources?</li>
+<li><code>kubectl top pods --all-namespaces --sort-by=memory</code> - Top memory consumers cluster-wide</li>
+</ul>
+</div>
+<hr />
+<h2 id="prometheus-architecture">Prometheus Architecture</h2>
+<h3 id="why-prometheus">Why Prometheus?</h3>
+<p><strong>Prometheus is the industry standard for Kubernetes monitoring.</strong> It's purpose-built for dynamic, cloud-native environments.</p>
+<p><strong>Key features:</strong></p>
+<ul>
+<li><strong>Pull-based model:</strong> Prometheus scrapes metrics from targets (vs. push-based systems)</li>
+<li><strong>Service discovery:</strong> Automatically discovers pods, services, nodes via Kubernetes API</li>
+<li><strong>Powerful query language (PromQL):</strong> Flexible metric queries and aggregations</li>
+<li><strong>Multi-dimensional data:</strong> Metrics tagged with labels (pod, namespace, service, etc.)</li>
+<li><strong>Time-series database:</strong> Efficiently stores metrics over time</li>
+<li><strong>Alerting:</strong> Built-in alert evaluation and routing</li>
+</ul>
+<h3 id="prometheus-components">Prometheus Components</h3>
+<pre class="mermaid"><code>graph TD
+    A[Prometheus Server] --&gt; B[Scrape targets&lt;br/&gt;every 15-30s]
+    B --&gt; C1[Application&lt;br/&gt;/metrics endpoint]
+    B --&gt; C2[Node Exporter&lt;br/&gt;node metrics]
+    B --&gt; C3[kube-state-metrics&lt;br/&gt;K8s object state]
+    A --&gt; D[Evaluate&lt;br/&gt;alerting rules]
+    D --&gt; E[AlertManager]
+    E --&gt; F[Slack/PagerDuty]
+    A --&gt; G[Grafana&lt;br/&gt;queries Prometheus]
+
+    style A fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C1 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C2 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C3 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style E fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style F fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style G fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1M9 5h1V3H9zm0 8h1v-2H9zm0 8h1v-2H9zM5 3v2h2V3zm0 8v2h2v-2zm0 8v2h2v-2z"/></svg></span> <strong>Prometheus Server</strong></p>
+<hr />
+<p><strong>The core component.</strong></p>
+<ul>
+<li>Scrapes metrics from targets</li>
+<li>Stores time-series data</li>
+<li>Evaluates PromQL queries</li>
+<li>Evaluates alerting rules</li>
+</ul>
+<p><strong>Deployed as:</strong> StatefulSet or Deployment (with persistent storage)</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 2v2.07A8 8 0 0 0 4.07 11H2v2h2.07A8 8 0 0 0 11 19.93V22h2v-2.07A8 8 0 0 0 19.93 13H22v-2h-2.07A8 8 0 0 0 13 4.07V2m-2 4.08V8h2V6.09c2.5.41 4.5 2.41 4.92 4.91H16v2h1.91c-.41 2.5-2.41 4.5-4.91 4.92V16h-2v1.91C8.5 17.5 6.5 15.5 6.08 13H8v-2H6.09C6.5 8.5 8.5 6.5 11 6.08M12 11a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Exporters</strong></p>
+<hr />
+<p><strong>Translate metrics into Prometheus format.</strong></p>
+<p><strong>Common exporters:</strong></p>
+<ul>
+<li><strong>node-exporter:</strong> Hardware and OS metrics (CPU, memory, disk, network) from each node</li>
+<li><strong>kube-state-metrics:</strong> Kubernetes object state (pod status, deployment replicas, resource requests)</li>
+<li><strong>Application exporters:</strong> Redis exporter, MySQL exporter, etc.</li>
+</ul>
+<p><strong>Your application:</strong> Should expose <code>/metrics</code> endpoint in Prometheus format</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19v1H3v-1l2-2v-6c0-3.1 2.03-5.83 5-6.71V4a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.29c2.97.88 5 3.61 5 6.71v6zm-7 2a2 2 0 0 1-2 2 2 2 0 0 1-2-2"/></svg></span> <strong>AlertManager</strong></p>
+<hr />
+<p><strong>Handles alerts from Prometheus.</strong></p>
+<ul>
+<li>Receives alerts from Prometheus</li>
+<li>Groups, deduplicates, and routes alerts</li>
+<li>Sends notifications (Slack, PagerDuty, email, webhooks)</li>
+<li>Silences and inhibits alerts</li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"/></svg></span> <strong>Grafana</strong></p>
+<hr />
+<p><strong>Visualization and dashboards.</strong></p>
+<ul>
+<li>Queries Prometheus for metrics</li>
+<li>Creates dashboards with graphs, tables, gauges</li>
+<li>Supports multiple data sources</li>
+<li>Pre-built dashboards for Kubernetes, applications</li>
+</ul>
+</li>
+</ul>
+</div>
+<h3 id="installing-prometheus-with-kube-prometheus-stack">Installing Prometheus with kube-prometheus-stack</h3>
+<p><strong>The easiest way to deploy Prometheus on Kubernetes:</strong> Use the <strong>kube-prometheus-stack</strong> Helm chart.</p>
+<p><strong>What it includes:</strong></p>
+<ul>
+<li>Prometheus Operator (manages Prometheus instances declaratively)</li>
+<li>Prometheus server</li>
+<li>AlertManager</li>
+<li>Grafana</li>
+<li>node-exporter</li>
+<li>kube-state-metrics</li>
+<li>Pre-configured dashboards and alerts</li>
+</ul>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Install kube-prometheus-stack with Helm</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Add Prometheus Helm repo</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>prometheus-community<span class="w"> </span>https://prometheus-community.github.io/helm-charts
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Create monitoring namespace</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>monitoring
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># Install kube-prometheus-stack</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>helm<span class="w"> </span>install<span class="w"> </span>prometheus<span class="w"> </span>prometheus-community/kube-prometheus-stack<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span>--namespace<span class="w"> </span>monitoring<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span>--set<span class="w"> </span>prometheus.prometheusSpec.retention<span class="o">=</span>30d<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span>--set<span class="w"> </span>prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage<span class="o">=</span>50Gi
+</span></code></pre></div>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Verify Prometheus stack deployed</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>monitoring
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># NAME                                                   READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># prometheus-kube-prometheus-prometheus-0                2/2     Running   0          2m</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># prometheus-grafana-7c5ddbdf54-x8f9p                    3/3     Running   0          2m</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># prometheus-kube-state-metrics-6d8f9c5b5d-abc12         1/1     Running   0          2m</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># prometheus-prometheus-node-exporter-abcd1              1/1     Running   0          2m</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># prometheus-prometheus-node-exporter-efgh2              1/1     Running   0          2m</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># alertmanager-prometheus-kube-prometheus-alertmanager-0 2/2     Running   0          2m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Access Prometheus UI</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/prometheus-kube-prometheus-prometheus<span class="w"> </span><span class="m">9090</span>:9090
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># Open browser: http://localhost:9090</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Access Grafana UI</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/prometheus-grafana<span class="w"> </span><span class="m">3000</span>:80
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Open browser: http://localhost:3000</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Default credentials: admin / prom-operator</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Persistent Storage Required</p>
+<p>Prometheus stores time-series data. Without persistent storage, you lose all metrics when the pod restarts.</p>
+<p><strong>Ensure:</strong></p>
+<ul>
+<li>PersistentVolumeClaim is bound (check <code>kubectl get pvc -n monitoring</code>)</li>
+<li>Storage class supports dynamic provisioning</li>
+<li>Retention period and storage size are configured appropriately</li>
+</ul>
+</div>
+<hr />
+<h2 id="exposing-application-metrics">Exposing Application Metrics</h2>
+<h3 id="the-metrics-endpoint">The /metrics Endpoint</h3>
+<p>Prometheus scrapes metrics from HTTP endpoints that return metrics in <strong>Prometheus text format</strong>.</p>
+<p><strong>Example <code>/metrics</code> endpoint response:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a># HELP http_requests_total Total number of HTTP requests
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a># TYPE http_requests_total counter
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>http_requests_total{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,status=&quot;200&quot;} 15234
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>http_requests_total{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,status=&quot;404&quot;} 42
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>http_requests_total{method=&quot;POST&quot;,endpoint=&quot;/api/users&quot;,status=&quot;201&quot;} 523
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a># HELP http_request_duration_seconds HTTP request duration
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a># TYPE http_request_duration_seconds histogram
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>http_request_duration_seconds_bucket{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,le=&quot;0.1&quot;} 12450
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>http_request_duration_seconds_bucket{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,le=&quot;0.5&quot;} 15100
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>http_request_duration_seconds_bucket{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,le=&quot;1.0&quot;} 15200
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>http_request_duration_seconds_bucket{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;,le=&quot;+Inf&quot;} 15234
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>http_request_duration_seconds_sum{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;} 1523.4
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>http_request_duration_seconds_count{method=&quot;GET&quot;,endpoint=&quot;/api/users&quot;} 15234
+</span></code></pre></div>
+<h3 id="instrumenting-your-application">Instrumenting Your Application</h3>
+<p><strong>Most languages have Prometheus client libraries:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Go</label><label for="__tabbed_1_2">Python</label><label for="__tabbed_1_3">Java (Spring Boot)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-go highlight"><span class="filename">Example: Instrumenting a Go HTTP handler</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="s">&quot;net/http&quot;</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="s">&quot;github.com/prometheus/client_golang/prometheus&quot;</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="s">&quot;github.com/prometheus/client_golang/prometheus/promhttp&quot;</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">)</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="kd">var</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="nx">httpRequestsTotal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">NewCounterVec</span><span class="p">(</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">        </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">CounterOpts</span><span class="p">{</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http_requests_total&quot;</span><span class="p">,</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">            </span><span class="nx">Help</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Total number of HTTP requests&quot;</span><span class="p">,</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">        </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;method&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endpoint&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;status&quot;</span><span class="p">},</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span><span class="nx">httpRequestDuration</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">NewHistogramVec</span><span class="p">(</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">        </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">HistogramOpts</span><span class="p">{</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">    </span><span class="s">&quot;http_request_duration_seconds&quot;</span><span class="p">,</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">            </span><span class="nx">Help</span><span class="p">:</span><span class="w">    </span><span class="s">&quot;HTTP request duration&quot;</span><span class="p">,</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">            </span><span class="nx">Buckets</span><span class="p">:</span><span class="w"> </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">DefBuckets</span><span class="p">,</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">        </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;method&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endpoint&quot;</span><span class="p">},</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="p">)</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="kd">func</span><span class="w"> </span><span class="nx">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="w">    </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">MustRegister</span><span class="p">(</span><span class="nx">httpRequestsTotal</span><span class="p">)</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="w">    </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">MustRegister</span><span class="p">(</span><span class="nx">httpRequestDuration</span><span class="p">)</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="p">}</span>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>
+</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a><span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a><span class="w">    </span><span class="nx">http</span><span class="p">.</span><span class="nx">Handle</span><span class="p">(</span><span class="s">&quot;/metrics&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">promhttp</span><span class="p">.</span><span class="nx">Handler</span><span class="p">())</span>
+</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a><span class="w">    </span><span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/api/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">usersHandler</span><span class="p">)</span>
+</span><span id="__span-10-35"><a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a><span class="w">    </span><span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">)</span>
+</span><span id="__span-10-36"><a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a><span class="p">}</span>
+</span><span id="__span-10-37"><a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a>
+</span><span id="__span-10-38"><a id="__codelineno-10-38" name="__codelineno-10-38" href="#__codelineno-10-38"></a><span class="kd">func</span><span class="w"> </span><span class="nx">usersHandler</span><span class="p">(</span><span class="nx">w</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-39"><a id="__codelineno-10-39" name="__codelineno-10-39" href="#__codelineno-10-39"></a><span class="w">    </span><span class="nx">timer</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">prometheus</span><span class="p">.</span><span class="nx">NewTimer</span><span class="p">(</span><span class="nx">httpRequestDuration</span><span class="p">.</span><span class="nx">WithLabelValues</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Method</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/api/users&quot;</span><span class="p">))</span>
+</span><span id="__span-10-40"><a id="__codelineno-10-40" name="__codelineno-10-40" href="#__codelineno-10-40"></a><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="nx">timer</span><span class="p">.</span><span class="nx">ObserveDuration</span><span class="p">()</span>
+</span><span id="__span-10-41"><a id="__codelineno-10-41" name="__codelineno-10-41" href="#__codelineno-10-41"></a>
+</span><span id="__span-10-42"><a id="__codelineno-10-42" name="__codelineno-10-42" href="#__codelineno-10-42"></a><span class="w">    </span><span class="c1">// Your handler logic here</span>
+</span><span id="__span-10-43"><a id="__codelineno-10-43" name="__codelineno-10-43" href="#__codelineno-10-43"></a><span class="w">    </span><span class="nx">w</span><span class="p">.</span><span class="nx">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">)</span>
+</span><span id="__span-10-44"><a id="__codelineno-10-44" name="__codelineno-10-44" href="#__codelineno-10-44"></a>
+</span><span id="__span-10-45"><a id="__codelineno-10-45" name="__codelineno-10-45" href="#__codelineno-10-45"></a><span class="w">    </span><span class="nx">httpRequestsTotal</span><span class="p">.</span><span class="nx">WithLabelValues</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Method</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/api/users&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;200&quot;</span><span class="p">).</span><span class="nx">Inc</span><span class="p">()</span>
+</span><span id="__span-10-46"><a id="__codelineno-10-46" name="__codelineno-10-46" href="#__codelineno-10-46"></a><span class="p">}</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><span class="filename">Example: Instrumenting a Python Flask app</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">prometheus_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">Histogram</span><span class="p">,</span> <span class="n">generate_latest</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">http_requests_total</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="s1">&#39;http_requests_total&#39;</span><span class="p">,</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="s1">&#39;Total HTTP requests&#39;</span><span class="p">,</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;endpoint&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">]</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="p">)</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="n">http_request_duration_seconds</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="s1">&#39;http_request_duration_seconds&#39;</span><span class="p">,</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="s1">&#39;HTTP request duration&#39;</span><span class="p">,</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>    <span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;endpoint&#39;</span><span class="p">]</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="p">)</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/metrics&#39;</span><span class="p">)</span>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">():</span>
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    <span class="k">return</span> <span class="n">generate_latest</span><span class="p">()</span>
+</span><span id="__span-11-21"><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>
+</span><span id="__span-11-22"><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/users&#39;</span><span class="p">)</span>
+</span><span id="__span-11-23"><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="nd">@http_request_duration_seconds</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;/api/users&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-11-24"><a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="k">def</span><span class="w"> </span><span class="nf">users</span><span class="p">():</span>
+</span><span id="__span-11-25"><a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>    <span class="c1"># Your handler logic here</span>
+</span><span id="__span-11-26"><a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="n">http_requests_total</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;/api/users&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;200&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+</span><span id="__span-11-27"><a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">]}</span>
+</span><span id="__span-11-28"><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>
+</span><span id="__span-11-29"><a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span id="__span-11-30"><a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-java highlight"><span class="filename">Example: Spring Boot with Micrometer</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// Add dependency: io.micrometer:micrometer-registry-prometheus</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nd">@RestController</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UsersController</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Counter</span><span class="w"> </span><span class="n">httpRequestsTotal</span><span class="p">;</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="n">httpRequestDuration</span><span class="p">;</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">UsersController</span><span class="p">(</span><span class="n">MeterRegistry</span><span class="w"> </span><span class="n">registry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">httpRequestsTotal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Counter</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;http.requests.total&quot;</span><span class="p">)</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">            </span><span class="p">.</span><span class="na">tag</span><span class="p">(</span><span class="s">&quot;endpoint&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/api/users&quot;</span><span class="p">)</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">            </span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">httpRequestDuration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Timer</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span><span class="s">&quot;http.request.duration.seconds&quot;</span><span class="p">)</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">            </span><span class="p">.</span><span class="na">tag</span><span class="p">(</span><span class="s">&quot;endpoint&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/api/users&quot;</span><span class="p">)</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">            </span><span class="p">.</span><span class="na">register</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/api/users&quot;</span><span class="p">)</span>
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getUsers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-21"><a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">httpRequestDuration</span><span class="p">.</span><span class="na">record</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-22"><a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="w">            </span><span class="c1">// Your handler logic here</span>
+</span><span id="__span-12-23"><a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a><span class="w">            </span><span class="n">httpRequestsTotal</span><span class="p">.</span><span class="na">increment</span><span class="p">();</span>
+</span><span id="__span-12-24"><a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">findAll</span><span class="p">();</span>
+</span><span id="__span-12-25"><a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a><span class="w">        </span><span class="p">});</span>
+</span><span id="__span-12-26"><a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-27"><a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="p">}</span>
+</span><span id="__span-12-28"><a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>
+</span><span id="__span-12-29"><a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a><span class="c1">// Metrics exposed automatically at /actuator/prometheus</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Key principles:</strong></p>
+<ul>
+<li>Use descriptive metric names (<code>http_requests_total</code>, not <code>requests</code>)</li>
+<li>Add labels for dimensions (<code>method</code>, <code>endpoint</code>, <code>status</code>)</li>
+<li>Use appropriate metric types (counter for cumulative, gauge for current state)</li>
+<li>Avoid high-cardinality labels (e.g., don't use user_id as a label—millions of unique values)</li>
+</ul>
+<h3 id="servicemonitor-telling-prometheus-what-to-scrape">ServiceMonitor: Telling Prometheus What to Scrape</h3>
+<p><strong>Prometheus Operator uses <code>ServiceMonitor</code> CRDs</strong> to define which services to scrape.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">servicemonitor.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span>
+<span class="normal"><a href="#__codelineno-13-11">11</a></span>
+<span class="normal"><a href="#__codelineno-13-12">12</a></span>
+<span class="normal"><a href="#__codelineno-13-13">13</a></span>
+<span class="normal"><a href="#__codelineno-13-14">14</a></span>
+<span class="normal"><a href="#__codelineno-13-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceMonitor</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server-metrics</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12"></a><span class="w">  </span><span class="nt">endpoints</span><span class="p">:</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metrics</span><span class="w">  </span><span class="c1"># (4)!</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14"></a><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span><span class="w">  </span><span class="c1"># (5)!</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15"></a><span class="w">    </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span><span class="w">  </span><span class="c1"># (6)!</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>ServiceMonitor is a CRD provided by Prometheus Operator</li>
+<li>Labels for organizing ServiceMonitors</li>
+<li>Selects Services with this label—Prometheus will scrape all pods behind this service</li>
+<li>Port name defined in the Service (not port number)</li>
+<li>HTTP path where metrics are exposed</li>
+<li>How often to scrape (default: 30s)</li>
+</ol>
+<p><strong>Corresponding Service:</strong></p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">service.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-14-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-14-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-14-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-14-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-14-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-14-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-14-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-14-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-14-10">10</a></span>
+<span class="normal"><a href="#__codelineno-14-11">11</a></span>
+<span class="normal"><a href="#__codelineno-14-12">12</a></span>
+<span class="normal"><a href="#__codelineno-14-13">13</a></span>
+<span class="normal"><a href="#__codelineno-14-14">14</a></span>
+<span class="normal"><a href="#__codelineno-14-15">15</a></span>
+<span class="normal"><a href="#__codelineno-14-16">16</a></span>
+<span class="normal"><a href="#__codelineno-14-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span><span class="w">  </span><span class="c1"># Matches ServiceMonitor selector</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metrics</span><span class="w">  </span><span class="c1"># ServiceMonitor references this port name</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9090</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9090</span><span class="w">  </span><span class="c1"># Application /metrics endpoint</span>
+</span></code></pre></div></td></tr></table></div>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Apply ServiceMonitor</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>servicemonitor.yaml
+</span></code></pre></div>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Verify Prometheus discovered targets</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Access Prometheus UI (port-forward if needed)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1"># Navigate to Status &gt; Targets</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1"># You should see your service listed with UP status</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Debugging ServiceMonitor Issues</p>
+<p><strong>If your service doesn't appear in Prometheus targets:</strong></p>
+<ol>
+<li><strong>Check ServiceMonitor labels match Prometheus selector</strong></li>
+<li>Prometheus Operator watches for ServiceMonitors with specific labels</li>
+<li>Default: <code>release: prometheus</code> (check your Helm release name)</li>
+<li>
+<p>Add label to ServiceMonitor: <code>release: prometheus</code></p>
+</li>
+<li>
+<p><strong>Check Service selector matches Pods</strong></p>
+</li>
+<li>
+<p><code>kubectl get endpoints &lt;service-name&gt;</code> should show pod IPs</p>
+</li>
+<li>
+<p><strong>Check port names match</strong></p>
+</li>
+<li>
+<p>ServiceMonitor <code>port:</code> must match Service port <code>name:</code></p>
+</li>
+<li>
+<p><strong>Check application is actually exposing /metrics</strong></p>
+</li>
+<li><code>kubectl port-forward &lt;pod&gt; 9090:9090</code></li>
+<li><code>curl http://localhost:9090/metrics</code></li>
+</ol>
+</div>
+<hr />
+<h2 id="querying-metrics-with-promql">Querying Metrics with PromQL</h2>
+<h3 id="promql-basics">PromQL Basics</h3>
+<p><strong>PromQL (Prometheus Query Language)</strong> is how you query metrics.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19.31 18.9 3.08 3.1L21 23.39l-3.12-3.07c-.69.43-1.51.68-2.38.68-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 .88-.25 1.71-.69 2.4m-3.81.1a2.5 2.5 0 0 0 0-5 2.5 2.5 0 0 0 0 5M21 4v2H3V4zM3 16v-2h6v2zm0-5V9h18v2h-2.03c-1.01-.63-2.2-1-3.47-1s-2.46.37-3.47 1z"/></svg></span> <strong>Instant Vector</strong></p>
+<hr />
+<p><strong>Returns current value for matching time series.</strong></p>
+<div class="language-promql highlight"><span class="filename">Get current HTTP request rate</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># Requests per second, averaged over last 5 minutes</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12v7.88c.04.3-.06.62-.29.83a.996.996 0 0 1-1.41 0l-2.01-2.01a.99.99 0 0 1-.29-.83V12h-.03L4.21 4.62a1 1 0 0 1 .17-1.4c.19-.14.4-.22.62-.22h14c.22 0 .43.08.62.22a1 1 0 0 1 .17 1.4L14.03 12z"/></svg></span> <strong>Label Filtering</strong></p>
+<hr />
+<p><strong>Filter metrics by label values.</strong></p>
+<div class="language-promql highlight"><span class="filename">Filter by labels</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">method</span><span class="o">=</span><span class="p">&quot;</span><span class="s">GET</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">status</span><span class="o">=</span><span class="p">&quot;</span><span class="s">200</span><span class="p">&quot;}</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># Only GET requests with 200 status</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># All 5xx status codes (regex match)</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">endpoint</span><span class="o">!=</span><span class="p">&quot;</span><span class="s">/health</span><span class="p">&quot;}</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Exclude /health endpoint</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.6 5.29c-1.1-.1-2.07.71-2.17 1.82L13.18 10H16v2h-3l-.44 5.07a3.986 3.986 0 0 1-4.33 3.63 4 4 0 0 1-3.06-1.87l1.5-1.5c.24.74.9 1.31 1.73 1.38 1.1.1 2.07-.71 2.17-1.82L11 12H8v-2h3.17l.27-3.07c.19-2.2 2.13-3.83 4.33-3.63 1.31.11 2.41.84 3.06 1.87l-1.5 1.5c-.24-.74-.9-1.31-1.73-1.38"/></svg></span> <strong>Aggregation</strong></p>
+<hr />
+<p><strong>Combine multiple time series.</strong></p>
+<div class="language-promql highlight"><span class="filename">Aggregate across pods</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">endpoint</span><span class="o">)</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># Total request rate per endpoint (summed across all pods)</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="k">avg</span><span class="o">(</span><span class="nv">http_request_duration_seconds</span><span class="o">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">endpoint</span><span class="o">)</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="c1"># Average request duration per endpoint</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2m0 2v4h10V4zm0 6v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2z"/></svg></span> <strong>Math and Operators</strong></p>
+<hr />
+<p><strong>Perform calculations on metrics.</strong></p>
+<div class="language-promql highlight"><span class="filename">Calculate error rate percentage</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="o">(</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">  </span><span class="o">/</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="o">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="c1"># Percentage of 5xx errors</span>
+</span></code></pre></div>
+</li>
+</ul>
+</div>
+<h3 id="common-promql-queries">Common PromQL Queries</h3>
+<p><strong>Node metrics:</strong></p>
+<div class="language-promql highlight"><span class="filename">CPU usage per node</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="mi">100</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">(</span><span class="k">avg</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">instance</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="kr">irate</span><span class="o">(</span><span class="nv">node_cpu_seconds_total</span><span class="p">{</span><span class="nl">mode</span><span class="o">=</span><span class="p">&quot;</span><span class="s">idle</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Memory usage percentage per node</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="o">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">(</span><span class="nv">node_memory_MemAvailable_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nv">node_memory_MemTotal_bytes</span><span class="o">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Disk usage percentage</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="o">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">(</span><span class="nv">node_filesystem_avail_bytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nv">node_filesystem_size_bytes</span><span class="o">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span></code></pre></div>
+<p><strong>Pod metrics:</strong></p>
+<div class="language-promql highlight"><span class="filename">CPU usage per pod</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">container_cpu_usage_seconds_total</span><span class="p">{</span><span class="nl">pod</span><span class="o">!=</span><span class="p">&quot;&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">pod</span><span class="p">,</span><span class="w"> </span><span class="nv">namespace</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Memory usage per pod</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">sum</span><span class="o">(</span><span class="nv">container_memory_usage_bytes</span><span class="p">{</span><span class="nl">pod</span><span class="o">!=</span><span class="p">&quot;&quot;}</span><span class="o">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">pod</span><span class="p">,</span><span class="w"> </span><span class="nv">namespace</span><span class="o">)</span>
+</span></code></pre></div>
+<p><strong>Application metrics:</strong></p>
+<div class="language-promql highlight"><span class="filename">Request rate per service</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">service</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">95th percentile latency</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="kr">histogram_quantile</span><span class="o">(</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_request_duration_seconds_bucket</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">le</span><span class="p">,</span><span class="w"> </span><span class="nv">endpoint</span><span class="o">))</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Error rate</span><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">service</span><span class="o">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="grafana-dashboards">Grafana Dashboards</h2>
+<h3 id="creating-your-first-dashboard">Creating Your First Dashboard</h3>
+<p>Grafana visualizes Prometheus metrics with graphs, gauges, tables, and more.</p>
+<p><strong>Accessing Grafana:</strong></p>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Port-forward to Grafana</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/prometheus-grafana<span class="w"> </span><span class="m">3000</span>:80
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1"># Open browser: http://localhost:3000</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="c1"># Login: admin / prom-operator (default)</span>
+</span></code></pre></div>
+<p><strong>Pre-built dashboards included in kube-prometheus-stack:</strong></p>
+<ul>
+<li><strong>Kubernetes / Compute Resources / Cluster</strong> - Overall cluster resource usage</li>
+<li><strong>Kubernetes / Compute Resources / Namespace (Pods)</strong> - Per-namespace pod metrics</li>
+<li><strong>Node Exporter / Nodes</strong> - Detailed node hardware metrics</li>
+<li><strong>Prometheus / Overview</strong> - Prometheus server health</li>
+</ul>
+<h3 id="building-a-custom-dashboard">Building a Custom Dashboard</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Step 1: Create Dashboard</label><label for="__tabbed_2_2">Step 2: Add Query</label><label for="__tabbed_2_3">Step 3: Configure Visualization</label><label for="__tabbed_2_4">Step 4: Customize Panel</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>In Grafana UI:</strong></p>
+<ol>
+<li>Click <strong>+ (Create)</strong> → <strong>Dashboard</strong></li>
+<li>Click <strong>Add new panel</strong></li>
+</ol>
+</div>
+<div class="tabbed-block">
+<p><strong>Select data source:</strong> Prometheus</p>
+<p><strong>Add PromQL query:</strong></p>
+<div class="language-promql highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">endpoint</span><span class="o">)</span>
+</span></code></pre></div>
+<p><strong>Legend:</strong> <code>{{endpoint}}</code></p>
+</div>
+<div class="tabbed-block">
+<p><strong>Choose visualization type:</strong></p>
+<ul>
+<li><strong>Time series:</strong> Line graph (default, best for trends over time)</li>
+<li><strong>Gauge:</strong> Single current value with thresholds</li>
+<li><strong>Stat:</strong> Large number display</li>
+<li><strong>Table:</strong> Tabular data</li>
+</ul>
+<p><strong>Set thresholds (for gauges/stats):</strong></p>
+<ul>
+<li>Green: &lt; 100 req/s</li>
+<li>Yellow: 100-500 req/s</li>
+<li>Red: &gt; 500 req/s</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>Panel options:</strong></p>
+<ul>
+<li><strong>Title:</strong> "HTTP Request Rate by Endpoint"</li>
+<li><strong>Description:</strong> "Requests per second, 5-minute average"</li>
+<li><strong>Unit:</strong> "requests/sec (reqps)"</li>
+</ul>
+<p><strong>Save dashboard.</strong></p>
+</div>
+</div>
+</div>
+<h3 id="dashboard-best-practices">Dashboard Best Practices</h3>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 3v6h8V3m-8 18h8V11h-8M3 21h8v-6H3m0-2h8V3H3z"/></svg></span> <strong>Organize by Audience</strong></p>
+<hr />
+<p><strong>Different teams need different views:</strong></p>
+<ul>
+<li><strong>SRE dashboard:</strong> Cluster health, resource usage, saturation</li>
+<li><strong>Application team dashboard:</strong> Request rate, latency, errors</li>
+<li><strong>Business dashboard:</strong> Signups, conversions, revenue</li>
+</ul>
+<p><strong>Create role-specific dashboards</strong>, not one giant dashboard with everything.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm5 8h10v3H7zm4 5h10v3H11zM6 4h16v4h-2V6H8v2H6z"/></svg></span> <strong>Use Consistent Time Ranges</strong></p>
+<hr />
+<p><strong>Set time range at dashboard level:</strong></p>
+<ul>
+<li><strong>Real-time:</strong> Last 15 minutes (for incident response)</li>
+<li><strong>Daily:</strong> Last 24 hours (for trends)</li>
+<li><strong>Weekly:</strong> Last 7 days (for capacity planning)</li>
+</ul>
+<p><strong>Use time range variables</strong> so users can adjust without editing queries.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> <strong>Highlight What Matters</strong></p>
+<hr />
+<p><strong>Use color to show status:</strong></p>
+<ul>
+<li><strong>Green:</strong> Healthy</li>
+<li><strong>Yellow:</strong> Warning threshold</li>
+<li><strong>Red:</strong> Critical threshold</li>
+</ul>
+<p><strong>Place most important metrics at top</strong> of dashboard.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2"/></svg></span> <strong>Add Context with Annotations</strong></p>
+<hr />
+<p><strong>Grafana annotations mark events on graphs:</strong></p>
+<ul>
+<li>Deployments (when new version was deployed)</li>
+<li>Incidents (when alert fired)</li>
+<li>Scaling events (when HPA scaled pods)</li>
+</ul>
+<p><strong>Correlate metrics with events</strong> to understand cause and effect.</p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="key-metrics-to-monitor">Key Metrics to Monitor</h2>
+<h3 id="the-use-method-infrastructure">The USE Method (Infrastructure)</h3>
+<p><strong>For every resource, monitor:</strong></p>
+<ul>
+<li><strong>Utilization:</strong> % of time resource is busy</li>
+<li><strong>Saturation:</strong> Amount of work resource cannot service (queued)</li>
+<li><strong>Errors:</strong> Count of error events</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Utilization</th>
+<th>Saturation</th>
+<th>Errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU</strong></td>
+<td>% CPU used</td>
+<td>Run queue length</td>
+<td>CPU throttling</td>
+</tr>
+<tr>
+<td><strong>Memory</strong></td>
+<td>% memory used</td>
+<td>Swapping / OOM kills</td>
+<td>Allocation failures</td>
+</tr>
+<tr>
+<td><strong>Disk</strong></td>
+<td>% disk I/O time</td>
+<td>Disk queue depth</td>
+<td>I/O errors</td>
+</tr>
+<tr>
+<td><strong>Network</strong></td>
+<td>% bandwidth used</td>
+<td>Send/receive queue</td>
+<td>Packet loss, errors</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example queries:</strong></p>
+<div class="language-promql highlight"><span class="filename">CPU Utilization</span><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="mi">100</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">(</span><span class="k">avg</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">instance</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="kr">irate</span><span class="o">(</span><span class="nv">node_cpu_seconds_total</span><span class="p">{</span><span class="nl">mode</span><span class="o">=</span><span class="p">&quot;</span><span class="s">idle</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Memory Saturation (swap usage)</span><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="nv">node_memory_SwapTotal_bytes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">node_memory_SwapFree_bytes</span>
+</span></code></pre></div>
+<h3 id="the-red-method-applications">The RED Method (Applications)</h3>
+<p><strong>For every service, monitor:</strong></p>
+<ul>
+<li><strong>Rate:</strong> Requests per second</li>
+<li><strong>Errors:</strong> Number of failed requests</li>
+<li><strong>Duration:</strong> Latency (p50, p95, p99)</li>
+</ul>
+<p><strong>Example queries:</strong></p>
+<div class="language-promql highlight"><span class="filename">Request Rate</span><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">service</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Error Rate</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">service</span><span class="o">)</span>
+</span></code></pre></div>
+<div class="language-promql highlight"><span class="filename">Request Duration (p95)</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="kr">histogram_quantile</span><span class="o">(</span><span class="mf">0.95</span><span class="p">,</span><span class="w"> </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_request_duration_seconds_bucket</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">le</span><span class="p">,</span><span class="w"> </span><span class="nv">service</span><span class="o">))</span>
+</span></code></pre></div>
+<h3 id="the-four-golden-signals-google-sre">The Four Golden Signals (Google SRE)</h3>
+<ol>
+<li><strong>Latency:</strong> Time to service a request</li>
+<li><strong>Traffic:</strong> Demand on your system (requests per second)</li>
+<li><strong>Errors:</strong> Rate of failed requests</li>
+<li><strong>Saturation:</strong> How "full" your service is (CPU, memory, queue depth)</li>
+</ol>
+<p><strong>These overlap with USE and RED—pick the framework that resonates with your team.</strong></p>
+<hr />
+<h2 id="alerting-with-alertmanager">Alerting with AlertManager</h2>
+<h3 id="defining-alerting-rules">Defining Alerting Rules</h3>
+<p>Prometheus evaluates alerting rules and fires alerts to AlertManager.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">prometheus-rules.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-36-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-36-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-36-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-36-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-36-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-36-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-36-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-36-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-36-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-36-10">10</a></span>
+<span class="normal"><a href="#__codelineno-36-11">11</a></span>
+<span class="normal"><a href="#__codelineno-36-12">12</a></span>
+<span class="normal"><a href="#__codelineno-36-13">13</a></span>
+<span class="normal"><a href="#__codelineno-36-14">14</a></span>
+<span class="normal"><a href="#__codelineno-36-15">15</a></span>
+<span class="normal"><a href="#__codelineno-36-16">16</a></span>
+<span class="normal"><a href="#__codelineno-36-17">17</a></span>
+<span class="normal"><a href="#__codelineno-36-18">18</a></span>
+<span class="normal"><a href="#__codelineno-36-19">19</a></span>
+<span class="normal"><a href="#__codelineno-36-20">20</a></span>
+<span class="normal"><a href="#__codelineno-36-21">21</a></span>
+<span class="normal"><a href="#__codelineno-36-22">22</a></span>
+<span class="normal"><a href="#__codelineno-36-23">23</a></span>
+<span class="normal"><a href="#__codelineno-36-24">24</a></span>
+<span class="normal"><a href="#__codelineno-36-25">25</a></span>
+<span class="normal"><a href="#__codelineno-36-26">26</a></span>
+<span class="normal"><a href="#__codelineno-36-27">27</a></span>
+<span class="normal"><a href="#__codelineno-36-28">28</a></span>
+<span class="normal"><a href="#__codelineno-36-29">29</a></span>
+<span class="normal"><a href="#__codelineno-36-30">30</a></span>
+<span class="normal"><a href="#__codelineno-36-31">31</a></span>
+<span class="normal"><a href="#__codelineno-36-32">32</a></span>
+<span class="normal"><a href="#__codelineno-36-33">33</a></span>
+<span class="normal"><a href="#__codelineno-36-34">34</a></span>
+<span class="normal"><a href="#__codelineno-36-35">35</a></span>
+<span class="normal"><a href="#__codelineno-36-36">36</a></span>
+<span class="normal"><a href="#__codelineno-36-37">37</a></span>
+<span class="normal"><a href="#__codelineno-36-38">38</a></span>
+<span class="normal"><a href="#__codelineno-36-39">39</a></span>
+<span class="normal"><a href="#__codelineno-36-40">40</a></span>
+<span class="normal"><a href="#__codelineno-36-41">41</a></span>
+<span class="normal"><a href="#__codelineno-36-42">42</a></span>
+<span class="normal"><a href="#__codelineno-36-43">43</a></span>
+<span class="normal"><a href="#__codelineno-36-44">44</a></span>
+<span class="normal"><a href="#__codelineno-36-45">45</a></span>
+<span class="normal"><a href="#__codelineno-36-46">46</a></span>
+<span class="normal"><a href="#__codelineno-36-47">47</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PrometheusRule</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-alerts</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7"></a><span class="w">    </span><span class="nt">prometheus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-prometheus</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9"></a><span class="w">  </span><span class="nt">groups</span><span class="p">:</span>
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-server-alerts</span>
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11"></a><span class="w">    </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12"></a><span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HighErrorRate</span><span class="w">  </span><span class="c1"># (4)!</span>
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14"></a><span class="w">      </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># (5)!</span>
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15"></a><span class="w">        </span><span class="no">(</span>
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16"></a><span class="w">          </span><span class="no">sum(rate(http_requests_total{status=~&quot;5..&quot;}[5m]))</span>
+</span><span id="__span-36-17"><a id="__codelineno-36-17" name="__codelineno-36-17"></a><span class="w">          </span><span class="no">/</span>
+</span><span id="__span-36-18"><a id="__codelineno-36-18" name="__codelineno-36-18"></a><span class="w">          </span><span class="no">sum(rate(http_requests_total[5m]))</span>
+</span><span id="__span-36-19"><a id="__codelineno-36-19" name="__codelineno-36-19"></a><span class="w">        </span><span class="no">) * 100 &gt; 5</span>
+</span><span id="__span-36-20"><a id="__codelineno-36-20" name="__codelineno-36-20"></a><span class="w">      </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span><span class="w">  </span><span class="c1"># (6)!</span>
+</span><span id="__span-36-21"><a id="__codelineno-36-21" name="__codelineno-36-21"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-36-22"><a id="__codelineno-36-22" name="__codelineno-36-22"></a><span class="w">        </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">critical</span><span class="w">  </span><span class="c1"># (7)!</span>
+</span><span id="__span-36-23"><a id="__codelineno-36-23" name="__codelineno-36-23"></a><span class="w">      </span><span class="nt">annotations</span><span class="p">:</span><span class="w">  </span><span class="c1"># (8)!</span>
+</span><span id="__span-36-24"><a id="__codelineno-36-24" name="__codelineno-36-24"></a><span class="w">        </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">rate</span><span class="nv"> </span><span class="s">detected&quot;</span>
+</span><span id="__span-36-25"><a id="__codelineno-36-25" name="__codelineno-36-25"></a><span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Error</span><span class="nv"> </span><span class="s">rate</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">}}%</span><span class="nv"> </span><span class="s">(threshold:</span><span class="nv"> </span><span class="s">5%)&quot;</span>
+</span><span id="__span-36-26"><a id="__codelineno-36-26" name="__codelineno-36-26"></a>
+</span><span id="__span-36-27"><a id="__codelineno-36-27" name="__codelineno-36-27"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HighLatency</span>
+</span><span id="__span-36-28"><a id="__codelineno-36-28" name="__codelineno-36-28"></a><span class="w">      </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-36-29"><a id="__codelineno-36-29" name="__codelineno-36-29"></a><span class="w">        </span><span class="no">histogram_quantile(0.95,</span>
+</span><span id="__span-36-30"><a id="__codelineno-36-30" name="__codelineno-36-30"></a><span class="w">          </span><span class="no">sum(rate(http_request_duration_seconds_bucket[5m])) by (le)</span>
+</span><span id="__span-36-31"><a id="__codelineno-36-31" name="__codelineno-36-31"></a><span class="w">        </span><span class="no">) &gt; 1</span>
+</span><span id="__span-36-32"><a id="__codelineno-36-32" name="__codelineno-36-32"></a><span class="w">      </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m</span>
+</span><span id="__span-36-33"><a id="__codelineno-36-33" name="__codelineno-36-33"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-36-34"><a id="__codelineno-36-34" name="__codelineno-36-34"></a><span class="w">        </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+</span><span id="__span-36-35"><a id="__codelineno-36-35" name="__codelineno-36-35"></a><span class="w">      </span><span class="nt">annotations</span><span class="p">:</span>
+</span><span id="__span-36-36"><a id="__codelineno-36-36" name="__codelineno-36-36"></a><span class="w">        </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High</span><span class="nv"> </span><span class="s">latency</span><span class="nv"> </span><span class="s">detected&quot;</span>
+</span><span id="__span-36-37"><a id="__codelineno-36-37" name="__codelineno-36-37"></a><span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;P95</span><span class="nv"> </span><span class="s">latency</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">}}s</span><span class="nv"> </span><span class="s">(threshold:</span><span class="nv"> </span><span class="s">1s)&quot;</span>
+</span><span id="__span-36-38"><a id="__codelineno-36-38" name="__codelineno-36-38"></a>
+</span><span id="__span-36-39"><a id="__codelineno-36-39" name="__codelineno-36-39"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodCrashLooping</span>
+</span><span id="__span-36-40"><a id="__codelineno-36-40" name="__codelineno-36-40"></a><span class="w">      </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-36-41"><a id="__codelineno-36-41" name="__codelineno-36-41"></a><span class="w">        </span><span class="no">rate(kube_pod_container_status_restarts_total[15m]) &gt; 0</span>
+</span><span id="__span-36-42"><a id="__codelineno-36-42" name="__codelineno-36-42"></a><span class="w">      </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span>
+</span><span id="__span-36-43"><a id="__codelineno-36-43" name="__codelineno-36-43"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-36-44"><a id="__codelineno-36-44" name="__codelineno-36-44"></a><span class="w">        </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+</span><span id="__span-36-45"><a id="__codelineno-36-45" name="__codelineno-36-45"></a><span class="w">      </span><span class="nt">annotations</span><span class="p">:</span>
+</span><span id="__span-36-46"><a id="__codelineno-36-46" name="__codelineno-36-46"></a><span class="w">        </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Pod</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$labels.pod</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">crash</span><span class="nv"> </span><span class="s">looping&quot;</span>
+</span><span id="__span-36-47"><a id="__codelineno-36-47" name="__codelineno-36-47"></a><span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Pod</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">restarted</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">$value</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">times</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">last</span><span class="nv"> </span><span class="s">15</span><span class="nv"> </span><span class="s">minutes&quot;</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>PrometheusRule CRD defines alerting rules</li>
+<li>Label selector—must match Prometheus's <code>ruleSelector</code></li>
+<li>How often to evaluate rules</li>
+<li>Alert name (must be unique within group)</li>
+<li>PromQL expression—alert fires when this is true</li>
+<li>Alert must be true for this duration before firing (avoids flapping)</li>
+<li>Labels attached to alert (used for routing in AlertManager)</li>
+<li>Human-readable alert details (support templating with <code>{{ }}</code>)</li>
+</ol>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Apply alerting rules</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>prometheus-rules.yaml
+</span></code></pre></div>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Verify rules loaded</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="c1"># In Prometheus UI: Status &gt; Rules</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1"># You should see your alert rules listed</span>
+</span></code></pre></div>
+<h3 id="configuring-alertmanager">Configuring AlertManager</h3>
+<p>AlertManager routes alerts to notification channels.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">alertmanager-config.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-39-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-39-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-39-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-39-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-39-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-39-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-39-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-39-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-39-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-39-10">10</a></span>
+<span class="normal"><a href="#__codelineno-39-11">11</a></span>
+<span class="normal"><a href="#__codelineno-39-12">12</a></span>
+<span class="normal"><a href="#__codelineno-39-13">13</a></span>
+<span class="normal"><a href="#__codelineno-39-14">14</a></span>
+<span class="normal"><a href="#__codelineno-39-15">15</a></span>
+<span class="normal"><a href="#__codelineno-39-16">16</a></span>
+<span class="normal"><a href="#__codelineno-39-17">17</a></span>
+<span class="normal"><a href="#__codelineno-39-18">18</a></span>
+<span class="normal"><a href="#__codelineno-39-19">19</a></span>
+<span class="normal"><a href="#__codelineno-39-20">20</a></span>
+<span class="normal"><a href="#__codelineno-39-21">21</a></span>
+<span class="normal"><a href="#__codelineno-39-22">22</a></span>
+<span class="normal"><a href="#__codelineno-39-23">23</a></span>
+<span class="normal"><a href="#__codelineno-39-24">24</a></span>
+<span class="normal"><a href="#__codelineno-39-25">25</a></span>
+<span class="normal"><a href="#__codelineno-39-26">26</a></span>
+<span class="normal"><a href="#__codelineno-39-27">27</a></span>
+<span class="normal"><a href="#__codelineno-39-28">28</a></span>
+<span class="normal"><a href="#__codelineno-39-29">29</a></span>
+<span class="normal"><a href="#__codelineno-39-30">30</a></span>
+<span class="normal"><a href="#__codelineno-39-31">31</a></span>
+<span class="normal"><a href="#__codelineno-39-32">32</a></span>
+<span class="normal"><a href="#__codelineno-39-33">33</a></span>
+<span class="normal"><a href="#__codelineno-39-34">34</a></span>
+<span class="normal"><a href="#__codelineno-39-35">35</a></span>
+<span class="normal"><a href="#__codelineno-39-36">36</a></span>
+<span class="normal"><a href="#__codelineno-39-37">37</a></span>
+<span class="normal"><a href="#__codelineno-39-38">38</a></span>
+<span class="normal"><a href="#__codelineno-39-39">39</a></span>
+<span class="normal"><a href="#__codelineno-39-40">40</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alertmanager-prometheus-kube-prometheus-alertmanager</span>
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7"></a><span class="nt">stringData</span><span class="p">:</span>
+</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8"></a><span class="w">  </span><span class="nt">alertmanager.yaml</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9"></a><span class="w">    </span><span class="no">global:</span>
+</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10"></a><span class="w">      </span><span class="no">slack_api_url: &#39;https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK&#39;</span>
+</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11"></a>
+</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12"></a><span class="w">    </span><span class="no">route:</span>
+</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13"></a><span class="w">      </span><span class="no">receiver: &#39;default&#39;</span>
+</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14"></a><span class="w">      </span><span class="no">group_by: [&#39;alertname&#39;, &#39;cluster&#39;]</span>
+</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15"></a><span class="w">      </span><span class="no">group_wait: 10s  # (1)!</span>
+</span><span id="__span-39-16"><a id="__codelineno-39-16" name="__codelineno-39-16"></a><span class="w">      </span><span class="no">group_interval: 10s  # (2)!</span>
+</span><span id="__span-39-17"><a id="__codelineno-39-17" name="__codelineno-39-17"></a><span class="w">      </span><span class="no">repeat_interval: 12h  # (3)!</span>
+</span><span id="__span-39-18"><a id="__codelineno-39-18" name="__codelineno-39-18"></a><span class="w">      </span><span class="no">routes:</span>
+</span><span id="__span-39-19"><a id="__codelineno-39-19" name="__codelineno-39-19"></a><span class="w">      </span><span class="no">- match:</span>
+</span><span id="__span-39-20"><a id="__codelineno-39-20" name="__codelineno-39-20"></a><span class="w">          </span><span class="no">severity: critical  # (4)!</span>
+</span><span id="__span-39-21"><a id="__codelineno-39-21" name="__codelineno-39-21"></a><span class="w">        </span><span class="no">receiver: &#39;pagerduty&#39;</span>
+</span><span id="__span-39-22"><a id="__codelineno-39-22" name="__codelineno-39-22"></a><span class="w">      </span><span class="no">- match:</span>
+</span><span id="__span-39-23"><a id="__codelineno-39-23" name="__codelineno-39-23"></a><span class="w">          </span><span class="no">severity: warning</span>
+</span><span id="__span-39-24"><a id="__codelineno-39-24" name="__codelineno-39-24"></a><span class="w">        </span><span class="no">receiver: &#39;slack&#39;</span>
+</span><span id="__span-39-25"><a id="__codelineno-39-25" name="__codelineno-39-25"></a>
+</span><span id="__span-39-26"><a id="__codelineno-39-26" name="__codelineno-39-26"></a><span class="w">    </span><span class="no">receivers:</span>
+</span><span id="__span-39-27"><a id="__codelineno-39-27" name="__codelineno-39-27"></a><span class="w">    </span><span class="no">- name: &#39;default&#39;</span>
+</span><span id="__span-39-28"><a id="__codelineno-39-28" name="__codelineno-39-28"></a><span class="w">      </span><span class="no">slack_configs:</span>
+</span><span id="__span-39-29"><a id="__codelineno-39-29" name="__codelineno-39-29"></a><span class="w">      </span><span class="no">- channel: &#39;#alerts&#39;</span>
+</span><span id="__span-39-30"><a id="__codelineno-39-30" name="__codelineno-39-30"></a><span class="w">        </span><span class="no">title: &#39;Alert: {{ .GroupLabels.alertname }}&#39;</span>
+</span><span id="__span-39-31"><a id="__codelineno-39-31" name="__codelineno-39-31"></a><span class="w">        </span><span class="no">text: &#39;{{ range .Alerts }}{{ .Annotations.description }}{{ end }}&#39;</span>
+</span><span id="__span-39-32"><a id="__codelineno-39-32" name="__codelineno-39-32"></a>
+</span><span id="__span-39-33"><a id="__codelineno-39-33" name="__codelineno-39-33"></a><span class="w">    </span><span class="no">- name: &#39;slack&#39;</span>
+</span><span id="__span-39-34"><a id="__codelineno-39-34" name="__codelineno-39-34"></a><span class="w">      </span><span class="no">slack_configs:</span>
+</span><span id="__span-39-35"><a id="__codelineno-39-35" name="__codelineno-39-35"></a><span class="w">      </span><span class="no">- channel: &#39;#monitoring&#39;</span>
+</span><span id="__span-39-36"><a id="__codelineno-39-36" name="__codelineno-39-36"></a><span class="w">        </span><span class="no">title: &#39;Warning: {{ .GroupLabels.alertname }}&#39;</span>
+</span><span id="__span-39-37"><a id="__codelineno-39-37" name="__codelineno-39-37"></a>
+</span><span id="__span-39-38"><a id="__codelineno-39-38" name="__codelineno-39-38"></a><span class="w">    </span><span class="no">- name: &#39;pagerduty&#39;</span>
+</span><span id="__span-39-39"><a id="__codelineno-39-39" name="__codelineno-39-39"></a><span class="w">      </span><span class="no">pagerduty_configs:</span>
+</span><span id="__span-39-40"><a id="__codelineno-39-40" name="__codelineno-39-40"></a><span class="w">      </span><span class="no">- service_key: &#39;YOUR_PAGERDUTY_KEY&#39;</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>Wait before sending first notification (to group related alerts)</li>
+<li>Wait before sending updated notification for grouped alerts</li>
+<li>Wait before re-sending same alert (prevents spam)</li>
+<li>Route critical alerts to PagerDuty, warnings to Slack</li>
+</ol>
+<h3 id="alert-best-practices">Alert Best Practices</h3>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10c0-1.16-.21-2.31-.61-3.39l-1.6 1.6c.14.59.21 1.19.21 1.79a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8c.6 0 1.2.07 1.79.21L15.4 2.6C14.31 2.21 13.16 2 12 2m7 0-4 4v1.5l-2.55 2.55C12.3 10 12.15 10 12 10a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2c0-.15 0-.3-.05-.45L16.5 9H18l4-4h-3zm-7 4a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6h-2a4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4z"/></svg></span> <strong>Alert on Symptoms, Not Causes</strong></p>
+<hr />
+<p><strong>Wrong:</strong> "CPU &gt; 80%"</p>
+<p><strong>Right:</strong> "Request latency &gt; 1s"</p>
+<p><strong>Why:</strong> High CPU might be fine if latency is acceptable. Alert on user impact, not internal metrics.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19.03 7.39 1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 0 0 0 18c5 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61M13 14h-2V7h2zm2-13H9v2h6z"/></svg></span> <strong>Use <code>for:</code> to Avoid Flapping</strong></p>
+<hr />
+<p><strong>Set <code>for: 5m</code> on alerts</strong> to ensure condition is sustained before firing.</p>
+<p><strong>Prevents:</strong> Alerts firing and resolving rapidly during brief spikes.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12 16 7.36-5.73L21 9l-9-7-9 7 1.63 1.27M12 18.54l-7.38-5.73L3 14.07l9 7 9-7-1.63-1.27z"/></svg></span> <strong>Use Severity Levels</strong></p>
+<hr />
+<ul>
+<li><strong>critical:</strong> Page on-call engineer immediately (user-facing outage)</li>
+<li><strong>warning:</strong> Notify team, investigate during business hours (degraded performance)</li>
+<li><strong>info:</strong> Log for awareness (scheduled maintenance, deployments)</li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m9 16v-2H6v2zm3-4v-2H6v2z"/></svg></span> <strong>Write Actionable Annotations</strong></p>
+<hr />
+<p><strong>Bad annotation:</strong> "High error rate"</p>
+<p><strong>Good annotation:</strong> "Error rate is 8.3% (threshold: 5%). Check logs: kubectl logs -l app=api-server. Check dashboards: http://grafana/dashboards/api"</p>
+<p><strong>Include:</strong> What's wrong, where to look, how to investigate.</p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="production-monitoring-checklist">Production Monitoring Checklist</h2>
+<p>Before going to production, ensure you have:</p>
+<ul>
+<li>[ ] <strong>Metrics Server installed</strong> - <code>kubectl top</code> works</li>
+<li>[ ] <strong>Prometheus deployed</strong> - With persistent storage and appropriate retention (30+ days)</li>
+<li>[ ] <strong>Node exporters running</strong> - One per node for hardware metrics</li>
+<li>[ ] <strong>kube-state-metrics deployed</strong> - For Kubernetes object state</li>
+<li>[ ] <strong>Applications expose /metrics</strong> - Prometheus-format metrics endpoint</li>
+<li>[ ] <strong>ServiceMonitors configured</strong> - Prometheus discovers and scrapes application metrics</li>
+<li>[ ] <strong>Grafana dashboards created</strong> - For cluster, node, and application metrics</li>
+<li>[ ] <strong>USE method metrics</strong> - Monitor utilization, saturation, errors for all resources</li>
+<li>[ ] <strong>RED method metrics</strong> - Monitor rate, errors, duration for all services</li>
+<li>[ ] <strong>Alerting rules defined</strong> - Alerts for critical conditions (high error rate, high latency, pod crashes)</li>
+<li>[ ] <strong>AlertManager configured</strong> - Routes alerts to Slack, PagerDuty, email</li>
+<li>[ ] <strong>Alert annotations tested</strong> - Include runbook links, kubectl commands, dashboard links</li>
+<li>[ ] <strong>On-call playbooks</strong> - Document how to respond to each alert</li>
+<li>[ ] <strong>Capacity planning queries</strong> - Track resource trends over time</li>
+<li>[ ] <strong>Cost monitoring</strong> - Track resource usage by namespace/team for billing</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Start with Pre-Built, Customize Later</p>
+<p>Don't build everything from scratch:</p>
+<ol>
+<li><strong>Use kube-prometheus-stack Helm chart</strong> - Includes Prometheus, Grafana, exporters, dashboards</li>
+<li><strong>Import community dashboards</strong> - Grafana.com has thousands of dashboards (search for "Kubernetes")</li>
+<li><strong>Customize gradually</strong> - Start with defaults, adjust based on what you actually need</li>
+<li><strong>Instrument new services incrementally</strong> - Don't block deployments waiting for perfect metrics</li>
+</ol>
+</div>
+<hr />
+<h2 id="practice-exercises">Practice Exercises</h2>
+<details class="question">
+<summary>Exercise 1: Check node resource usage</summary>
+<p><strong>Goal:</strong> Use <code>kubectl top</code> to identify which node is using the most CPU.</p>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">Check node CPU and memory usage</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>kubectl<span class="w"> </span>top<span class="w"> </span>nodes
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="c1"># NAME       CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="c1"># node-01    250m         12%    1500Mi          40%</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a><span class="c1"># node-02    180m         9%     1200Mi          32%</span>
+</span><span id="__span-40-5"><a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a><span class="c1"># node-03    820m         41%    2800Mi          75%  &lt;- Highest CPU</span>
+</span></code></pre></div>
+<p><strong>Identify:</strong> node-03 has highest CPU usage (41%)</p>
+<p><strong>Next steps:</strong></p>
+<div class="language-bash highlight"><span class="filename">See which pods are on that node</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--all-namespaces<span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>--field-selector<span class="w"> </span>spec.nodeName<span class="o">=</span>node-03
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Check pod resource usage on that node</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>kubectl<span class="w"> </span>top<span class="w"> </span>pods<span class="w"> </span>--all-namespaces<span class="w"> </span>--field-selector<span class="w"> </span>spec.nodeName<span class="o">=</span>node-03<span class="w"> </span>--sort-by<span class="o">=</span>cpu
+</span></code></pre></div>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Using <code>kubectl top nodes</code> to identify resource pressure</li>
+<li>Filtering pods by node to investigate issues</li>
+<li>Sorting pods by resource usage</li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 2: Query Prometheus for error rate</summary>
+<p><strong>Goal:</strong> Write a PromQL query to calculate the percentage of 5xx errors for a service.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p><strong>PromQL query:</strong></p>
+<div class="language-promql highlight"><span class="filename">Calculate 5xx error rate percentage</span><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="o">(</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="w">  </span><span class="o">/</span>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="o">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>rate(...[5m])</code> - Requests per second over last 5 minutes</li>
+<li><code>status=~"5.."</code> - Regex match: 500, 501, 502, etc.</li>
+<li>Divide 5xx requests by total requests</li>
+<li>Multiply by 100 for percentage</li>
+</ul>
+<p><strong>Test in Prometheus UI:</strong></p>
+<ol>
+<li>Access Prometheus: <code>kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090</code></li>
+<li>Navigate to <strong>Graph</strong> tab</li>
+<li>Paste query and click <strong>Execute</strong></li>
+<li>View result (e.g., 2.3% error rate)</li>
+</ol>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Using <code>rate()</code> function for counters</li>
+<li>Filtering metrics with label matchers</li>
+<li>Calculating percentages in PromQL</li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 3: Create a Grafana dashboard for your application</summary>
+<p><strong>Goal:</strong> Build a dashboard showing request rate, error rate, and latency for your application.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p><strong>Step 1: Access Grafana</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/prometheus-grafana<span class="w"> </span><span class="m">3000</span>:80
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="c1"># Open http://localhost:3000</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="c1"># Login: admin / prom-operator</span>
+</span></code></pre></div>
+<p><strong>Step 2: Create Dashboard</strong></p>
+<ul>
+<li>Click <strong>+ (Create)</strong> → <strong>Dashboard</strong></li>
+<li>Click <strong>Add new panel</strong></li>
+</ul>
+<p><strong>Panel 1: Request Rate</strong></p>
+<ul>
+<li><strong>Query:</strong>
+  <div class="language-promql highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span></code></pre></div></li>
+<li><strong>Visualization:</strong> Time series (line graph)</li>
+<li><strong>Panel title:</strong> "Request Rate"</li>
+<li><strong>Unit:</strong> requests/sec (reqps)</li>
+</ul>
+<p><strong>Panel 2: Error Rate</strong></p>
+<ul>
+<li><strong>Query:</strong>
+  <div class="language-promql highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="o">(</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">status</span><span class="o">=~</span><span class="p">&quot;</span><span class="s">5..</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a><span class="w">  </span><span class="o">/</span>
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_requests_total</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span>
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a><span class="o">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+</span></code></pre></div></li>
+<li><strong>Visualization:</strong> Time series</li>
+<li><strong>Panel title:</strong> "Error Rate"</li>
+<li><strong>Unit:</strong> percent (0-100)</li>
+<li><strong>Thresholds:</strong> Green &lt; 1%, Yellow 1-5%, Red &gt; 5%</li>
+</ul>
+<p><strong>Panel 3: Latency (P95)</strong></p>
+<ul>
+<li><strong>Query:</strong>
+  <div class="language-promql highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="kr">histogram_quantile</span><span class="o">(</span><span class="mf">0.95</span><span class="p">,</span>
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="w">  </span><span class="k">sum</span><span class="o">(</span><span class="kr">rate</span><span class="o">(</span><span class="nv">http_request_duration_seconds_bucket</span><span class="p">{</span><span class="nl">service</span><span class="o">=</span><span class="p">&quot;</span><span class="s">api-server</span><span class="p">&quot;}[</span><span class="s">5m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">le</span><span class="o">)</span>
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a><span class="o">)</span>
+</span></code></pre></div></li>
+<li><strong>Visualization:</strong> Time series</li>
+<li><strong>Panel title:</strong> "P95 Latency"</li>
+<li><strong>Unit:</strong> seconds (s)</li>
+</ul>
+<p><strong>Step 3: Save Dashboard</strong></p>
+<ul>
+<li>Click <strong>Save dashboard</strong> (disk icon)</li>
+<li>Name: "API Server Metrics"</li>
+</ul>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Creating Grafana panels with PromQL queries</li>
+<li>Using appropriate visualizations for different metric types</li>
+<li>Setting thresholds for status indication</li>
+</ul>
+</details>
+</details>
+<hr />
+<h2 id="quick-recap">Quick Recap</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Metrics Server</strong></td>
+<td>Basic CPU/memory metrics for <code>kubectl top</code> and HPA</td>
+</tr>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td>Scrapes, stores, and queries time-series metrics</td>
+</tr>
+<tr>
+<td><strong>node-exporter</strong></td>
+<td>Hardware and OS metrics from each node</td>
+</tr>
+<tr>
+<td><strong>kube-state-metrics</strong></td>
+<td>Kubernetes object state (pod status, deployment replicas)</td>
+</tr>
+<tr>
+<td><strong>ServiceMonitor</strong></td>
+<td>Tells Prometheus what to scrape (CRD)</td>
+</tr>
+<tr>
+<td><strong>PromQL</strong></td>
+<td>Query language for Prometheus</td>
+</tr>
+<tr>
+<td><strong>Grafana</strong></td>
+<td>Visualize metrics with dashboards</td>
+</tr>
+<tr>
+<td><strong>AlertManager</strong></td>
+<td>Routes alerts to notification channels</td>
+</tr>
+<tr>
+<td><strong>USE method</strong></td>
+<td>Monitor Utilization, Saturation, Errors (infrastructure)</td>
+</tr>
+<tr>
+<td><strong>RED method</strong></td>
+<td>Monitor Rate, Errors, Duration (applications)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="further-reading">Further Reading</h2>
+<h3 id="official-documentation">Official Documentation</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes Docs: Metrics Server</a> - Overview of metrics pipeline</li>
+<li><a href="https://prometheus.io/docs/introduction/overview/">Prometheus Documentation</a> - Comprehensive Prometheus guide</li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL Basics</a> - Query language reference</li>
+<li><a href="https://grafana.com/docs/grafana/latest/">Grafana Documentation</a> - Dashboards and visualization</li>
+</ul>
+<h3 id="monitoring-best-practices">Monitoring Best Practices</h3>
+<ul>
+<li><a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE Book: Monitoring Distributed Systems</a> - Four golden signals, philosophy</li>
+<li><a href="https://www.brendangregg.com/usemethod.html">Brendan Gregg: The USE Method</a> - Systematic performance analysis</li>
+<li><a href="https://grafana.com/blog/2018/08/02/the-red-method-how-to-instrument-your-services/">Tom Wilkie: The RED Method</a> - Service-level monitoring</li>
+</ul>
+<h3 id="tools-and-operators">Tools and Operators</h3>
+<ul>
+<li><a href="https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack">kube-prometheus-stack Helm Chart</a> - Complete monitoring stack</li>
+<li><a href="https://prometheus-operator.dev/">Prometheus Operator</a> - Kubernetes-native Prometheus management</li>
+<li><a href="https://grafana.com/grafana/dashboards/">Grafana Dashboards</a> - Pre-built community dashboards</li>
+</ul>
+<h3 id="related-articles">Related Articles</h3>
+<ul>
+<li><a href="../logging/">Logging Architecture</a> - Centralized logging with Fluentd and ELK/PLG</li>
+<li><a href="../probes/">Health Checks and Probes</a> - Liveness and readiness probes</li>
+<li><a href="../overview/">Level 6 Overview</a> - All production operations topics</li>
+</ul>
+<hr />
+<h2 id="whats-next">What's Next?</h2>
+<p>You can now monitor your cluster and applications with Prometheus and Grafana. Next in Level 6:</p>
+<ul>
+<li><strong>Health Checks and Probes</strong> - Configure liveness, readiness, and startup probes</li>
+<li><strong>Helm Package Manager</strong> - Package and deploy applications with Helm charts</li>
+</ul>
+<p>Metrics tell you <strong>what's happening now</strong>. Probes tell you <strong>whether to route traffic</strong>. Together with logging, you have complete observability.</p>
+<hr />
+<p><strong>Your production cluster is no longer a black box.</strong></p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bradpenney" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/bradpenney" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "content.code.highlight", "content.tooltips", "content.code.mermaid"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

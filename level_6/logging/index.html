@@ -1,0 +1,2128 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A progressive journey through Kubernetes, from your first deployment to production operations.">
+      
+      
+        <meta name="author" content="Brad Penney">
+      
+      
+        <link rel="canonical" href="https://kubernetes.bradpenney.io/level_6/logging/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/exploring_kubernetes.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Logging Architecture - Exploring Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1%207.775V2.75C1%201.784%201.784%201%202.75%201h5.025c.464%200%20.91.184%201.238.513l6.25%206.25a1.75%201.75%200%200%201%200%202.474l-5.026%205.026a1.75%201.75%200%200%201-2.474%200l-6.25-6.25A1.75%201.75%200%200%201%201%207.775m1.5%200c0%20.066.026.13.073.177l6.25%206.25a.25.25%200%200%200%20.354%200l5.025-5.025a.25.25%200%200%200%200-.354l-6.25-6.25a.25.25%200%200%200-.177-.073H2.75a.25.25%200%200%200-.25.25ZM6%205a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.5%201.75v11.5c0%20.138.112.25.25.25h3.17a.75.75%200%200%201%200%201.5H2.75A1.75%201.75%200%200%201%201%2013.25V1.75C1%20.784%201.784%200%202.75%200h8.5C12.216%200%2013%20.784%2013%201.75v7.736a.75.75%200%200%201-1.5%200V1.75a.25.25%200%200%200-.25-.25h-8.5a.25.25%200%200%200-.25.25m13.274%209.537zl-4.557%204.45a.75.75%200%200%201-1.055-.008l-1.943-1.95a.75.75%200%200%201%201.062-1.058l1.419%201.425%204.026-3.932a.75.75%200%201%201%201.048%201.074M4.75%204h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M4%207.75A.75.75%200%200%201%204.75%207h2a.75.75%200%200%201%200%201.5h-2A.75.75%200%200%201%204%207.75%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3.499.75a.75.75%200%200%201%201.5%200v.996C5.9%202.903%206.793%203.65%207.662%204.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873%2010.794-.045%2012.622.26%2014.408.558%2016%201.94%2016%204.25c0%201.278-.954%202.575-2.44%202.734l.146.508.065.22c.203.701.412%201.455.476%202.226.142%201.707-.4%203.03-1.487%203.898C11.714%2014.671%2010.27%2015%208.75%2015h-6a.75.75%200%200%201%200-1.5h1.376a4.5%204.5%200%200%201-.563-1.191%203.84%203.84%200%200%201-.05-2.063%204.65%204.65%200%200%201-2.025-.293.75.75%200%200%201%20.525-1.406c1.357.507%202.376-.006%202.698-.318l.009-.01a.747.747%200%200%201%201.06%200%20.75.75%200%200%201-.012%201.074c-.912.92-.992%201.835-.768%202.586.221.74.745%201.337%201.196%201.621H8.75c1.343%200%202.398-.296%203.074-.836.635-.507%201.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4%202.4%200%200%201-.507-.441%203.1%203.1%200%200%201-.633-1.248.75.75%200%200%201%201.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738%200%201.25-.615%201.25-1.25%200-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706%201.345-.46.92-.27%201.774.019%203.062l.042.19.01.05c.348.443.666.949.94%201.553a.75.75%200%201%201-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7%205.527c-.814-.68-1.75-1.462-2.692-2.619a3.7%203.7%200%200%200-1.023.88c-.406.495-.663%201.036-.722%201.508.116.122.306.21.591.239.388.038.797-.06%201.032-.19a.75.75%200%200%201%20.728%201.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75%205.677V5.5c0-.984.48-1.94%201.077-2.664.46-.559%201.05-1.055%201.673-1.353z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M13.78%204.22a.75.75%200%200%201%200%201.06l-7.25%207.25a.75.75%200%200%201-1.06%200L2.22%209.28a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018L6%2010.94l6.72-6.72a.75.75%200%200%201%201.06%200%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.92%206.085h.001a.749.749%200%201%201-1.342-.67c.169-.339.436-.701.849-.977C6.845%204.16%207.369%204%208%204a2.76%202.76%200%200%201%201.637.525c.503.377.863.965.863%201.725%200%20.448-.115.83-.329%201.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6%206%200%200%200-.26.16%201%201%200%200%200-.276.245.75.75%200%200%201-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1%201%200%200%200%20.277-.245C8.96%206.514%209%206.427%209%206.25a.61.61%200%200%200-.262-.525A1.27%201.27%200%200%200%208%205.5c-.369%200-.595.09-.74.187a1%201%200%200%200-.34.398M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.344%202.343za8%208%200%200%201%2011.314%2011.314A8.002%208.002%200%200%201%20.234%2010.089a8%208%200%200%201%202.11-7.746m1.06%2010.253a6.5%206.5%200%201%200%209.108-9.275%206.5%206.5%200%200%200-9.108%209.275M6.03%204.97%208%206.94l1.97-1.97a.749.749%200%200%201%201.275.326.75.75%200%200%201-.215.734L9.06%208l1.97%201.97a.749.749%200%200%201-.326%201.275.75.75%200%200%201-.734-.215L8%209.06l-1.97%201.97a.749.749%200%200%201-1.275-.326.75.75%200%200%201%20.215-.734L6.94%208%204.97%206.03a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.72.22a.75.75%200%200%201%201.06%200l1%20.999a3.5%203.5%200%200%201%202.441%200l.999-1a.748.748%200%200%201%201.265.332.75.75%200%200%201-.205.729l-.775.776c.616.63.995%201.493.995%202.444v.327q0%20.15-.025.292c.408.14.764.392%201.029.722l1.968-.787a.75.75%200%200%201%20.556%201.392L13%207.258V9h2.25a.75.75%200%200%201%200%201.5H13v.5q-.002.615-.141%201.186l2.17.868a.75.75%200%200%201-.557%201.392l-2.184-.873A5%205%200%200%201%208%2016a5%205%200%200%201-4.288-2.427l-2.183.873a.75.75%200%200%201-.558-1.392l2.17-.868A5%205%200%200%201%203%2011v-.5H.75a.75.75%200%200%201%200-1.5H3V7.258L.971%206.446a.75.75%200%200%201%20.558-1.392l1.967.787c.265-.33.62-.583%201.03-.722a1.7%201.7%200%200%201-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72%201.28a.75.75%200%200%201%200-1.06m.53%206.28a.75.75%200%200%200-.75.75V11a3.5%203.5%200%201%200%207%200V7.25a.75.75%200%200%200-.75-.75ZM6.173%205h3.654A.17.17%200%200%200%2010%204.827V4.5a2%202%200%201%200-4%200v.327c0%20.096.077.173.173.173%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-V01MJ4R3SQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-V01MJ4R3SQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-V01MJ4R3SQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Logging Architecture - Exploring Kubernetes" />
+<meta property="og:description" content="A progressive journey through Kubernetes, from your first deployment to production operations." />
+<meta property="og:image" content="https://kubernetes.bradpenney.io/assets/images/social/level_6/logging.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://kubernetes.bradpenney.io/level_6/logging/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Logging Architecture - Exploring Kubernetes" />
+<meta property="twitter:description" content="A progressive journey through Kubernetes, from your first deployment to production operations." />
+<meta property="twitter:image" content="https://kubernetes.bradpenney.io/assets/images/social/level_6/logging.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#logging-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Exploring Kubernetes" class="md-header__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Exploring Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Logging Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Exploring Kubernetes" class="md-nav__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    Exploring Kubernetes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day One - Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Day One - Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/what_is_kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Kubernetes?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Scratch (kubectl)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    From Scratch (kubectl)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../day_one/kubectl/understanding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-logging-journey" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Logging Journey
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-logging-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container Logging Fundamentals
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Container Logging Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-kubernetes-handles-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Kubernetes Handles Logs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-logs-with-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading Logs with kubectl
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-patterns-and-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging Patterns and Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging Patterns and Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#structured-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Structured Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logging-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging Levels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to Log
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#log-aggregation-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Aggregation Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Log Aggregation Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-you-need-centralized-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why You Need Centralized Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-log-aggregation-stacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Log Aggregation Stacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-centralized-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing Centralized Logging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing Centralized Logging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploying-fluentd-as-a-daemonset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying Fluentd as a DaemonSet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-the-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying the Stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#log-retention-and-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Retention and Rotation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Log Retention and Rotation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#managing-log-volume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managing Log Volume
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cost-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-with-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting with Logs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting with Logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#production-debugging-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Debugging Workflows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-log-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Log Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#production-logging-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Logging Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log-aggregation-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Aggregation Tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-dives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Dives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="logging-architecture">Logging Architecture</h1>
+<div class="admonition tip">
+<p class="admonition-title">Part of Level 6: Production Operations</p>
+<p>This article is part of <a href="../overview/">Level 6: Production Operations</a>. At this level, you're running production Kubernetes and need observability into what's happening across thousands of pods.</p>
+</div>
+<p>Your production cluster is running. Applications are deployed. Services are routing traffic. Everything seems fine—until someone asks, "Why did that API call fail at 3 AM?" or "Which pod threw that error?"</p>
+<p>You reach for the logs. But with 500 pods spread across 20 nodes, each generating thousands of log lines per minute, running <code>kubectl logs</code> on individual pods feels like trying to find a specific grain of sand on a beach.</p>
+<p><strong>This is the logging problem at scale.</strong> You need architecture, not just commands.</p>
+<div class="admonition info">
+<p class="admonition-title">What You'll Learn</p>
+<p>By the end of this article, you'll understand:</p>
+<ul>
+<li><strong>Container logging fundamentals</strong> - Where logs go in Kubernetes</li>
+<li><strong>Logging patterns</strong> - Structured logging, JSON, and best practices</li>
+<li><strong>Log aggregation architecture</strong> - Centralized logging at scale</li>
+<li><strong>Common solutions</strong> - Fluentd, Fluent Bit, ELK/EFK stack, Loki</li>
+<li><strong>Log retention and rotation</strong> - Managing log volume</li>
+<li><strong>Troubleshooting workflows</strong> - Finding what you need fast</li>
+<li><strong>Production logging checklist</strong> - What to implement for production</li>
+</ul>
+</div>
+<h2 id="the-logging-journey">The Logging Journey</h2>
+<pre class="mermaid"><code>graph TD
+    A[Container writes to stdout/stderr] --&gt; B[Container runtime captures]
+    B --&gt; C[Stored on node filesystem]
+    C --&gt; D[Log shipping agent&lt;br/&gt;Fluentd/Fluent Bit/Filebeat]
+    D --&gt; E[Centralized log storage&lt;br/&gt;Elasticsearch/Loki/S3]
+    E --&gt; F[Query interface&lt;br/&gt;Kibana/Grafana]
+
+    style A fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style E fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style F fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<hr />
+<h2 id="container-logging-fundamentals">Container Logging Fundamentals</h2>
+<h3 id="how-kubernetes-handles-logs">How Kubernetes Handles Logs</h3>
+<p>Kubernetes has a simple but powerful logging design: <strong>containers write to stdout/stderr, and Kubernetes captures it.</strong></p>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m9 16v-2H6v2zm3-4v-2H6v2z"/></svg></span> <strong>The Container Log Contract</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Kubernetes expects containerized applications to write logs to standard output (<code>stdout</code>) and standard error (<code>stderr</code>), not to files inside the container.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Application logs to stdout</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log-example</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp:1.0</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="c1"># Application should log to stdout/stderr</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="c1"># Kubernetes captures these streams automatically</span>
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Key insight:</strong> This is the 12-factor app logging pattern. No log files to manage inside containers—just write to stdout/stderr and let the platform handle it.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></svg></span> <strong>Where Logs Are Stored</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Understanding the log path helps you troubleshoot when aggregation systems fail.</p>
+<p><strong>On each node:</strong></p>
+<div class="language-bash highlight"><span class="filename">Node filesystem log location</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>/var/log/pods/&lt;namespace&gt;_&lt;pod-name&gt;_&lt;pod-uid&gt;/&lt;container-name&gt;/*.log
+</span></code></pre></div>
+<p><strong>Or symlinked from container runtime:</strong></p>
+<div class="language-bash highlight"><span class="filename">Container runtime logs (containerd)</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>/var/log/containers/&lt;pod-name&gt;_&lt;namespace&gt;_&lt;container-name&gt;-&lt;container-id&gt;.log
+</span></code></pre></div>
+<p><strong>Key insight:</strong> Logs are stored on the node where the pod runs. If the node dies, logs stored only there are lost (hence the need for centralized logging).</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 20H6.5q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20H13v-7.15l1.6 1.55L16 13l-4-4-4 4 1.4 1.4 1.6-1.55Z"/></svg></span> <strong>Log Lifecycle</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Logs on nodes are automatically rotated to prevent disk exhaustion, but this means you lose old logs unless you ship them elsewhere.</p>
+<p><strong>Default kubelet log rotation:</strong></p>
+<ul>
+<li>Maximum log file size: 10 MB</li>
+<li>Maximum files per container: 5</li>
+<li>Total log retention per container: ~50 MB</li>
+</ul>
+<p><strong>After rotation:</strong> Old logs are deleted. Without log aggregation, you lose historical logs.</p>
+<p><strong>Key insight:</strong> Node-local logs are ephemeral and space-limited. Production clusters MUST ship logs to centralized storage.</p>
+</li>
+</ul>
+</div>
+<h3 id="reading-logs-with-kubectl">Reading Logs with kubectl</h3>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">View logs from a specific pod</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># [2026-02-11 14:23:45] 10.244.1.5 - &quot;GET / HTTP/1.1&quot; 200 612</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># [2026-02-11 14:23:46] 10.244.1.7 - &quot;GET /api/users HTTP/1.1&quot; 200 1823</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Follow logs in real-time</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Streams logs continuously (Ctrl+C to stop)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">View logs from all containers in a pod</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p<span class="w"> </span>--all-containers<span class="o">=</span><span class="nb">true</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">View logs from previous container (after restart)</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p<span class="w"> </span>--previous
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># Shows logs from crashed container before restart</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">View recent logs (last 100 lines)</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p<span class="w"> </span>--tail<span class="o">=</span><span class="m">100</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">View logs since timestamp</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-deployment-7c5ddbdf54-x8f9p<span class="w"> </span>--since-time<span class="o">=</span><span class="m">2026</span>-02-11T14:00:00Z
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">kubectl logs Limitations</p>
+<p><code>kubectl logs</code> works for debugging individual pods, but breaks down at scale:</p>
+<ul>
+<li>Only shows logs from ONE pod at a time</li>
+<li>Can't search across multiple pods</li>
+<li>Can't aggregate logs by deployment or service</li>
+<li>Limited to kubelet's log retention (rotated after 50 MB)</li>
+<li>Requires knowing the exact pod name</li>
+</ul>
+<p><strong>For production troubleshooting, you need centralized logging.</strong></p>
+</div>
+<hr />
+<h2 id="logging-patterns-and-best-practices">Logging Patterns and Best Practices</h2>
+<h3 id="structured-logging">Structured Logging</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">JSON Structured Logs (Recommended)</label><label for="__tabbed_1_2">Plain Text Logs (Avoid)</label><label for="__tabbed_1_3">Kubernetes-Enriched Logs (Best)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Goal:</strong> Make logs machine-parseable for filtering, searching, and alerting.</p>
+<div class="language-json highlight"><span class="filename">Application outputs structured JSON</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-02-11T14:23:45.123Z&quot;</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database connection timeout&quot;</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-api&quot;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nt">&quot;trace_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc123def456&quot;</span><span class="p">,</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_42&quot;</span><span class="p">,</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="nt">&quot;duration_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TimeoutError&quot;</span><span class="p">,</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="nt">&quot;stack&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Filter by any field: <code>level:ERROR AND service:user-api</code></li>
+<li>Track requests across services with <code>trace_id</code></li>
+<li>Aggregate metrics from logs (e.g., average duration_ms)</li>
+<li>Parse automatically in log aggregation tools</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>Problem:</strong> Hard to parse, hard to search, hard to alert on.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>[ERROR] 2026-02-11 14:23:45 - Database connection timeout for user user_42 took 5000ms
+</span></code></pre></div>
+<p><strong>Issues:</strong></p>
+<ul>
+<li>Can't easily filter by user_id</li>
+<li>Can't aggregate duration values</li>
+<li>Requires complex regex parsing</li>
+<li>Different formats across services</li>
+</ul>
+<p><strong>When it's acceptable:</strong> Local development, very simple applications, legacy apps you can't change.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Goal:</strong> Your log aggregation system automatically adds Kubernetes metadata to every log line.</p>
+<div class="language-json highlight"><span class="filename">Fluentd/Fluent Bit adds Kubernetes context</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-02-11T14:23:45.123Z&quot;</span><span class="p">,</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database connection timeout&quot;</span><span class="p">,</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nt">&quot;kubernetes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="nt">&quot;namespace_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;production&quot;</span><span class="p">,</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">    </span><span class="nt">&quot;pod_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-api-7c5ddbdf54-x8f9p&quot;</span><span class="p">,</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="nt">&quot;container_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;api&quot;</span><span class="p">,</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="nt">&quot;labels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">      </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-api&quot;</span><span class="p">,</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">      </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.3.1&quot;</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">    </span><span class="nt">&quot;node_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;node-03&quot;</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">  </span><span class="nt">&quot;trace_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc123def456&quot;</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Now you can query:</strong></p>
+<ul>
+<li>All logs from <code>namespace: production</code></li>
+<li>All logs from pods with label <code>app: user-api</code></li>
+<li>All logs from <code>node-03</code> (useful when troubleshooting node issues)</li>
+</ul>
+</div>
+</div>
+</div>
+<h3 id="logging-levels">Logging Levels</h3>
+<p>Use appropriate log levels to control verbosity and enable troubleshooting:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Use For</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>Something failed, requires attention</td>
+<td>Database connection lost, API returned 500</td>
+</tr>
+<tr>
+<td><strong>WARN</strong></td>
+<td>Degraded state, not failing yet</td>
+<td>Retry attempt 3/5, cache miss rate high</td>
+</tr>
+<tr>
+<td><strong>INFO</strong></td>
+<td>Significant events in normal operation</td>
+<td>Request received, job completed, pod started</td>
+</tr>
+<tr>
+<td><strong>DEBUG</strong></td>
+<td>Detailed diagnostic info</td>
+<td>SQL query text, cache key lookups, algorithm steps</td>
+</tr>
+<tr>
+<td><strong>TRACE</strong></td>
+<td>Extremely verbose, every execution step</td>
+<td>Variable values at each function call</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Production Log Level Strategy</p>
+<p><strong>Default in production:</strong> INFO</p>
+<p><strong>Enable DEBUG temporarily:</strong> When troubleshooting specific issues, enable DEBUG for a single deployment or namespace, not cluster-wide.</p>
+<p><strong>Use environment variables or ConfigMaps</strong> to change log levels without rebuilding containers:</p>
+<div class="language-yaml highlight"><span class="filename">Configure log level via environment variable</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">env</span><span class="p">:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOG_LEVEL</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w">  </span><span class="c1"># Change to DEBUG when troubleshooting</span>
+</span></code></pre></div>
+</div>
+<h3 id="what-to-log">What to Log</h3>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg></span> <strong>DO Log</strong></p>
+<hr />
+<ul>
+<li><strong>Request/response metadata:</strong> Method, path, status code, duration</li>
+<li><strong>Errors and exceptions:</strong> Full stack traces, error context</li>
+<li><strong>State changes:</strong> Pod started, config reloaded, database migration ran</li>
+<li><strong>External calls:</strong> API calls, database queries, cache operations</li>
+<li><strong>Security events:</strong> Authentication failures, authorization denials</li>
+<li><strong>Trace IDs:</strong> Correlation IDs to track requests across services</li>
+</ul>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.53 0 10 4.47 10 10s-4.47 10-10 10S2 17.53 2 12 6.47 2 12 2m3.59 5L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41z"/></svg></span> <strong>DON'T Log</strong></p>
+<hr />
+<ul>
+<li><strong>Secrets or credentials:</strong> API keys, passwords, tokens, private keys</li>
+<li><strong>PII (Personally Identifiable Information):</strong> Social Security numbers, credit cards, full addresses (unless required and secured)</li>
+<li><strong>Excessive volume:</strong> Per-byte data transfer, every cache hit</li>
+<li><strong>Unstructured noise:</strong> Debug prints left behind during development</li>
+</ul>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="log-aggregation-architecture">Log Aggregation Architecture</h2>
+<h3 id="why-you-need-centralized-logging">Why You Need Centralized Logging</h3>
+<p><strong>The problem:</strong> In production, you have:</p>
+<ul>
+<li>500 pods across 20 nodes</li>
+<li>Pods that restart, scale up/down, or move between nodes</li>
+<li>Logs rotated off nodes after 50 MB per container</li>
+<li>No way to query "show me all errors from user-api service in the last hour"</li>
+</ul>
+<p><strong>The solution:</strong> Ship all logs from all pods to a centralized system where you can search, filter, and analyze.</p>
+<h3 id="common-log-aggregation-stacks">Common Log Aggregation Stacks</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">EFK Stack (Elasticsearch, Fluentd, Kibana)</label><label for="__tabbed_2_2">Fluent Bit + Loki + Grafana (PLG Stack)</label><label for="__tabbed_2_3">Cloud-Native Solutions</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Most popular for Kubernetes logging.</strong></p>
+<p><strong>Architecture:</strong></p>
+<pre class="mermaid"><code>graph LR
+    A[Pods write to stdout] --&gt; B[Fluentd DaemonSet&lt;br/&gt;on each node]
+    B --&gt; C[Elasticsearch cluster]
+    C --&gt; D[Kibana UI]
+
+    style A fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<p><strong>Components:</strong></p>
+<ul>
+<li><strong>Fluentd:</strong> Log collector running as DaemonSet (one pod per node), reads logs from node filesystem, enriches with Kubernetes metadata, sends to Elasticsearch</li>
+<li><strong>Elasticsearch:</strong> Stores and indexes logs for fast search</li>
+<li><strong>Kibana:</strong> Web UI for searching, visualizing, and creating dashboards</li>
+</ul>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Mature, widely adopted, excellent search capabilities</li>
+<li>Rich Kibana ecosystem (dashboards, visualizations, alerting)</li>
+<li>Strong community and support</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Resource-heavy (Elasticsearch cluster requires significant memory/CPU)</li>
+<li>Complex to operate at scale (index management, shard optimization)</li>
+<li>High disk I/O and storage costs</li>
+</ul>
+<p><strong>When to use:</strong> Established organizations with resources to run Elasticsearch, need powerful search, already using Elastic stack.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Lightweight alternative to EFK, designed for Kubernetes.</strong></p>
+<p><strong>Architecture:</strong></p>
+<pre class="mermaid"><code>graph LR
+    A[Pods write to stdout] --&gt; B[Fluent Bit DaemonSet&lt;br/&gt;lightweight collector]
+    B --&gt; C[Loki&lt;br/&gt;log aggregation]
+    C --&gt; D[Grafana UI]
+
+    style A fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<p><strong>Components:</strong></p>
+<ul>
+<li><strong>Fluent Bit:</strong> Lightweight log forwarder (10-20 MB memory vs Fluentd's 100+ MB)</li>
+<li><strong>Loki:</strong> Log aggregation designed by Grafana Labs, optimized for Kubernetes</li>
+<li><strong>Grafana:</strong> Unified UI for logs and metrics (if you're already using Grafana for monitoring)</li>
+</ul>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Much lighter resource footprint than Elasticsearch</li>
+<li>Designed specifically for Kubernetes (label-based indexing matches K8s labels)</li>
+<li>Lower cost (less compute/storage required)</li>
+<li>Unified UI if using Grafana for metrics</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Less powerful search than Elasticsearch (optimized for label-based queries)</li>
+<li>Smaller ecosystem, fewer pre-built dashboards</li>
+<li>Relatively newer (less battle-tested)</li>
+</ul>
+<p><strong>When to use:</strong> Resource-constrained environments, already using Grafana for monitoring, prefer lightweight solutions, label-based queries sufficient.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Managed services from cloud providers.</strong></p>
+<p><strong>Options:</strong></p>
+<ul>
+<li><strong>AWS:</strong> CloudWatch Logs (via Fluent Bit or Fluentd)</li>
+<li><strong>GCP:</strong> Cloud Logging (formerly Stackdriver)</li>
+<li><strong>Azure:</strong> Azure Monitor Logs</li>
+</ul>
+<p><strong>Architecture:</strong></p>
+<pre class="mermaid"><code>graph LR
+    A[Pods write to stdout] --&gt; B[Log forwarder&lt;br/&gt;Fluent Bit/Fluentd]
+    B --&gt; C[Cloud provider&lt;br/&gt;managed service]
+    C --&gt; D[Cloud UI]
+
+    style A fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style B fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style D fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Fully managed (no Elasticsearch or Loki cluster to operate)</li>
+<li>Integrated with cloud platform (IAM, billing, etc.)</li>
+<li>Automatic scaling and retention management</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Vendor lock-in</li>
+<li>Costs scale with log volume (can get expensive)</li>
+<li>Less flexibility for custom pipelines</li>
+</ul>
+<p><strong>When to use:</strong> Running managed Kubernetes (EKS/GKE/AKS), want fully managed solution, willing to pay for convenience.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="implementing-centralized-logging">Implementing Centralized Logging</h2>
+<h3 id="deploying-fluentd-as-a-daemonset">Deploying Fluentd as a DaemonSet</h3>
+<p>Fluentd runs as a <strong>DaemonSet</strong>—one pod per node—to collect logs from all containers on that node.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">fluentd-daemonset.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span>
+<span class="normal"><a href="#__codelineno-13-11">11</a></span>
+<span class="normal"><a href="#__codelineno-13-12">12</a></span>
+<span class="normal"><a href="#__codelineno-13-13">13</a></span>
+<span class="normal"><a href="#__codelineno-13-14">14</a></span>
+<span class="normal"><a href="#__codelineno-13-15">15</a></span>
+<span class="normal"><a href="#__codelineno-13-16">16</a></span>
+<span class="normal"><a href="#__codelineno-13-17">17</a></span>
+<span class="normal"><a href="#__codelineno-13-18">18</a></span>
+<span class="normal"><a href="#__codelineno-13-19">19</a></span>
+<span class="normal"><a href="#__codelineno-13-20">20</a></span>
+<span class="normal"><a href="#__codelineno-13-21">21</a></span>
+<span class="normal"><a href="#__codelineno-13-22">22</a></span>
+<span class="normal"><a href="#__codelineno-13-23">23</a></span>
+<span class="normal"><a href="#__codelineno-13-24">24</a></span>
+<span class="normal"><a href="#__codelineno-13-25">25</a></span>
+<span class="normal"><a href="#__codelineno-13-26">26</a></span>
+<span class="normal"><a href="#__codelineno-13-27">27</a></span>
+<span class="normal"><a href="#__codelineno-13-28">28</a></span>
+<span class="normal"><a href="#__codelineno-13-29">29</a></span>
+<span class="normal"><a href="#__codelineno-13-30">30</a></span>
+<span class="normal"><a href="#__codelineno-13-31">31</a></span>
+<span class="normal"><a href="#__codelineno-13-32">32</a></span>
+<span class="normal"><a href="#__codelineno-13-33">33</a></span>
+<span class="normal"><a href="#__codelineno-13-34">34</a></span>
+<span class="normal"><a href="#__codelineno-13-35">35</a></span>
+<span class="normal"><a href="#__codelineno-13-36">36</a></span>
+<span class="normal"><a href="#__codelineno-13-37">37</a></span>
+<span class="normal"><a href="#__codelineno-13-38">38</a></span>
+<span class="normal"><a href="#__codelineno-13-39">39</a></span>
+<span class="normal"><a href="#__codelineno-13-40">40</a></span>
+<span class="normal"><a href="#__codelineno-13-41">41</a></span>
+<span class="normal"><a href="#__codelineno-13-42">42</a></span>
+<span class="normal"><a href="#__codelineno-13-43">43</a></span>
+<span class="normal"><a href="#__codelineno-13-44">44</a></span>
+<span class="normal"><a href="#__codelineno-13-45">45</a></span>
+<span class="normal"><a href="#__codelineno-13-46">46</a></span>
+<span class="normal"><a href="#__codelineno-13-47">47</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DaemonSet</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17"></a><span class="w">      </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch</span><span class="w">  </span><span class="c1"># (4)!</span>
+</span><span id="__span-13-21"><a id="__codelineno-13-21" name="__codelineno-13-21"></a><span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+</span><span id="__span-13-22"><a id="__codelineno-13-22" name="__codelineno-13-22"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FLUENT_ELASTICSEARCH_HOST</span>
+</span><span id="__span-13-23"><a id="__codelineno-13-23" name="__codelineno-13-23"></a><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;elasticsearch.logging.svc.cluster.local&quot;</span><span class="w">  </span><span class="c1"># (5)!</span>
+</span><span id="__span-13-24"><a id="__codelineno-13-24" name="__codelineno-13-24"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FLUENT_ELASTICSEARCH_PORT</span>
+</span><span id="__span-13-25"><a id="__codelineno-13-25" name="__codelineno-13-25"></a><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9200&quot;</span>
+</span><span id="__span-13-26"><a id="__codelineno-13-26" name="__codelineno-13-26"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FLUENT_ELASTICSEARCH_SCHEME</span>
+</span><span id="__span-13-27"><a id="__codelineno-13-27" name="__codelineno-13-27"></a><span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span>
+</span><span id="__span-13-28"><a id="__codelineno-13-28" name="__codelineno-13-28"></a><span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w">  </span><span class="c1"># (6)!</span>
+</span><span id="__span-13-29"><a id="__codelineno-13-29" name="__codelineno-13-29"></a><span class="w">          </span><span class="nt">limits</span><span class="p">:</span>
+</span><span id="__span-13-30"><a id="__codelineno-13-30" name="__codelineno-13-30"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200Mi</span>
+</span><span id="__span-13-31"><a id="__codelineno-13-31" name="__codelineno-13-31"></a><span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+</span><span id="__span-13-32"><a id="__codelineno-13-32" name="__codelineno-13-32"></a><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+</span><span id="__span-13-33"><a id="__codelineno-13-33" name="__codelineno-13-33"></a><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200Mi</span>
+</span><span id="__span-13-34"><a id="__codelineno-13-34" name="__codelineno-13-34"></a><span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+</span><span id="__span-13-35"><a id="__codelineno-13-35" name="__codelineno-13-35"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">varlog</span>
+</span><span id="__span-13-36"><a id="__codelineno-13-36" name="__codelineno-13-36"></a><span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/log</span><span class="w">  </span><span class="c1"># (7)!</span>
+</span><span id="__span-13-37"><a id="__codelineno-13-37" name="__codelineno-13-37"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">varlibdockercontainers</span>
+</span><span id="__span-13-38"><a id="__codelineno-13-38" name="__codelineno-13-38"></a><span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/docker/containers</span><span class="w">  </span><span class="c1"># (8)!</span>
+</span><span id="__span-13-39"><a id="__codelineno-13-39" name="__codelineno-13-39"></a><span class="w">          </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-13-40"><a id="__codelineno-13-40" name="__codelineno-13-40"></a><span class="w">      </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</span><span id="__span-13-41"><a id="__codelineno-13-41" name="__codelineno-13-41"></a><span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-13-42"><a id="__codelineno-13-42" name="__codelineno-13-42"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">varlog</span>
+</span><span id="__span-13-43"><a id="__codelineno-13-43" name="__codelineno-13-43"></a><span class="w">        </span><span class="nt">hostPath</span><span class="p">:</span>
+</span><span id="__span-13-44"><a id="__codelineno-13-44" name="__codelineno-13-44"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/log</span>
+</span><span id="__span-13-45"><a id="__codelineno-13-45" name="__codelineno-13-45"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">varlibdockercontainers</span>
+</span><span id="__span-13-46"><a id="__codelineno-13-46" name="__codelineno-13-46"></a><span class="w">        </span><span class="nt">hostPath</span><span class="p">:</span>
+</span><span id="__span-13-47"><a id="__codelineno-13-47" name="__codelineno-13-47"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/docker/containers</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>DaemonSet ensures one Fluentd pod per node</li>
+<li>kube-system namespace for cluster infrastructure components</li>
+<li>ServiceAccount with RBAC permissions to read pod metadata</li>
+<li>Pre-built Fluentd image with Kubernetes and Elasticsearch plugins</li>
+<li>Elasticsearch service DNS name (assumes Elasticsearch deployed in cluster)</li>
+<li>Resource limits prevent log collector from consuming too many node resources</li>
+<li>Mount node's /var/log to read container logs</li>
+<li>Mount Docker/containerd log directory (read-only)</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">RBAC Required</p>
+<p>Fluentd needs permissions to read Kubernetes API for pod metadata (namespace, labels, annotations). Create a ServiceAccount with appropriate ClusterRole:</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">fluentd-rbac.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-14-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-14-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-14-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-14-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-14-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-14-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-14-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-14-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-14-10">10</a></span>
+<span class="normal"><a href="#__codelineno-14-11">11</a></span>
+<span class="normal"><a href="#__codelineno-14-12">12</a></span>
+<span class="normal"><a href="#__codelineno-14-13">13</a></span>
+<span class="normal"><a href="#__codelineno-14-14">14</a></span>
+<span class="normal"><a href="#__codelineno-14-15">15</a></span>
+<span class="normal"><a href="#__codelineno-14-16">16</a></span>
+<span class="normal"><a href="#__codelineno-14-17">17</a></span>
+<span class="normal"><a href="#__codelineno-14-18">18</a></span>
+<span class="normal"><a href="#__codelineno-14-19">19</a></span>
+<span class="normal"><a href="#__codelineno-14-20">20</a></span>
+<span class="normal"><a href="#__codelineno-14-21">21</a></span>
+<span class="normal"><a href="#__codelineno-14-22">22</a></span>
+<span class="normal"><a href="#__codelineno-14-23">23</a></span>
+<span class="normal"><a href="#__codelineno-14-24">24</a></span>
+<span class="normal"><a href="#__codelineno-14-25">25</a></span>
+<span class="normal"><a href="#__codelineno-14-26">26</a></span>
+<span class="normal"><a href="#__codelineno-14-27">27</a></span>
+<span class="normal"><a href="#__codelineno-14-28">28</a></span>
+<span class="normal"><a href="#__codelineno-14-29">29</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6"></a><span class="nn">---</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11"></a><span class="nt">rules</span><span class="p">:</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13"></a><span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">namespaces</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pods</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16"></a><span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17"></a><span class="nn">---</span>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22"></a><span class="nt">roleRef</span><span class="p">:</span>
+</span><span id="__span-14-23"><a id="__codelineno-14-23" name="__codelineno-14-23"></a><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+</span><span id="__span-14-24"><a id="__codelineno-14-24" name="__codelineno-14-24"></a><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+</span><span id="__span-14-25"><a id="__codelineno-14-25" name="__codelineno-14-25"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-14-26"><a id="__codelineno-14-26" name="__codelineno-14-26"></a><span class="nt">subjects</span><span class="p">:</span>
+</span><span id="__span-14-27"><a id="__codelineno-14-27" name="__codelineno-14-27"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+</span><span id="__span-14-28"><a id="__codelineno-14-28" name="__codelineno-14-28"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-14-29"><a id="__codelineno-14-29" name="__codelineno-14-29"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+</span></code></pre></div></td></tr></table></div>
+</div>
+<h3 id="deploying-the-stack">Deploying the Stack</h3>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Deploy Elasticsearch and Kibana (example, simplified)</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># In production, use Helm charts or operators</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>logging
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Apply Elasticsearch StatefulSet (simplified - production needs tuning)</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>elasticsearch-statefulset.yaml<span class="w"> </span>-n<span class="w"> </span>logging
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Apply Kibana Deployment</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>kibana-deployment.yaml<span class="w"> </span>-n<span class="w"> </span>logging
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># Apply Fluentd RBAC and DaemonSet</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>fluentd-rbac.yaml
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>fluentd-daemonset.yaml
+</span></code></pre></div>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Verify logging stack deployed</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>daemonset<span class="w"> </span>fluentd<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1"># NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1"># fluentd    3         3         3       3            3           &lt;none&gt;          2m</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>logging
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1"># NAME                      READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># elasticsearch-0           1/1     Running   0          5m</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="c1"># kibana-7c5ddbdf54-x8f9p   1/1     Running   0          5m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Access Kibana UI</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>logging<span class="w"> </span>service/kibana<span class="w"> </span><span class="m">5601</span>:5601
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># Open browser: http://localhost:5601</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Use Helm for Production</p>
+<p>The YAML examples above are simplified. For production deployments, use Helm charts:</p>
+<ul>
+<li><strong>Elastic stack:</strong> <a href="https://github.com/elastic/helm-charts">elastic/helm-charts</a></li>
+<li><strong>Loki stack:</strong> <a href="https://github.com/grafana/helm-charts">grafana/helm-charts</a></li>
+</ul>
+<p>These handle complexities like StatefulSet scaling, persistent storage, resource tuning, and upgrades.</p>
+</div>
+<hr />
+<h2 id="log-retention-and-rotation">Log Retention and Rotation</h2>
+<h3 id="managing-log-volume">Managing Log Volume</h3>
+<p><strong>The problem:</strong> Logs grow indefinitely. Elasticsearch/Loki disk fills up. Costs explode.</p>
+<p><strong>The solution:</strong> Define retention policies based on log age and importance.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 13h1.5v2.82l2.44 1.41-.75 1.3L15 16.69zm4-5H5v11h4.67c-.43-.91-.67-1.93-.67-3a7 7 0 0 1 7-7c1.07 0 2.09.24 3 .67zM5 21a2 2 0 0 1-2-2V5c0-1.11.89-2 2-2h1V1h2v2h8V1h2v2h1a2 2 0 0 1 2 2v6.1c1.24 1.26 2 2.99 2 4.9a7 7 0 0 1-7 7c-1.91 0-3.64-.76-4.9-2zm11-9.85A4.85 4.85 0 0 0 11.15 16c0 2.68 2.17 4.85 4.85 4.85A4.85 4.85 0 0 0 20.85 16c0-2.68-2.17-4.85-4.85-4.85"/></svg></span> <strong>Time-Based Retention</strong></p>
+<hr />
+<p><strong>Strategy:</strong> Delete logs older than X days.</p>
+<p><strong>Typical retention periods:</strong></p>
+<ul>
+<li><strong>Hot storage (fast search):</strong> 7-14 days</li>
+<li><strong>Warm storage (slower, cheaper):</strong> 30-90 days</li>
+<li><strong>Cold storage (archive):</strong> 365 days or longer (S3/Glacier)</li>
+</ul>
+<p><strong>Implementation in Elasticsearch:</strong></p>
+<p>Use Index Lifecycle Management (ILM) policies:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="p">{</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nt">&quot;policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="nt">&quot;phases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">      </span><span class="nt">&quot;hot&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">        </span><span class="nt">&quot;min_age&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0ms&quot;</span><span class="p">,</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">        </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">          </span><span class="nt">&quot;rollover&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">            </span><span class="nt">&quot;max_age&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1d&quot;</span><span class="p">,</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">            </span><span class="nt">&quot;max_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;50gb&quot;</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">          </span><span class="p">}</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">      </span><span class="nt">&quot;delete&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">        </span><span class="nt">&quot;min_age&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14d&quot;</span><span class="p">,</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">        </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">          </span><span class="nt">&quot;delete&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-18-21"><a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Implementation in Loki:</strong></p>
+<p>Configure retention in Loki config:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">limits_config</span><span class="p">:</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">retention_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">168h</span><span class="w">  </span><span class="c1"># 7 days</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 12v7.88c.04.3-.06.62-.29.83a.996.996 0 0 1-1.41 0l-2.01-2.01a.99.99 0 0 1-.29-.83V12h-.03L4.21 4.62a1 1 0 0 1 .17-1.4c.19-.14.4-.22.62-.22h14c.22 0 .43.08.62.22a1 1 0 0 1 .17 1.4L14.03 12z"/></svg></span> <strong>Importance-Based Retention</strong></p>
+<hr />
+<p><strong>Strategy:</strong> Keep ERROR logs longer than INFO logs.</p>
+<p><strong>Example retention by severity:</strong></p>
+<ul>
+<li>ERROR/FATAL: 90 days</li>
+<li>WARN: 30 days</li>
+<li>INFO: 14 days</li>
+<li>DEBUG: 7 days (or don't store at all)</li>
+</ul>
+<p><strong>Implementation:</strong> Configure Fluentd/Fluent Bit to route logs to different indices/streams based on log level, then apply different retention policies.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13c-2.17 0-4.07 1.16-5.12 2.89-.6.07-1.23.11-1.88.11-4.42 0-8-1.79-8-4V9c0 2.21 3.58 4 8 4s8-1.79 8-4v3c0 .36-.1.71-.28 1.05C19.5 13 19.24 13 19 13m-7-2c4.42 0 8-1.79 8-4s-3.58-4-8-4-8 1.79-8 4 3.58 4 8 4m1.1 6.96c-.36.04-.73.04-1.1.04-4.42 0-8-1.79-8-4v3c0 2.21 3.58 4 8 4 .46 0 .9 0 1.33-.06A6 6 0 0 1 13 19c0-.36.04-.7.1-1.04M20 20v-4h-2v4h-2l3 3 3-3z"/></svg></span> <strong>Archival to Object Storage</strong></p>
+<hr />
+<p><strong>Strategy:</strong> Move old logs from Elasticsearch/Loki to cheap object storage (S3, GCS, Azure Blob).</p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Much cheaper per GB ($0.023/GB/month for S3 vs Elasticsearch disk costs)</li>
+<li>Still accessible for compliance or forensic analysis</li>
+<li>Searchable with tools like Athena (AWS) or BigQuery (GCP)</li>
+</ul>
+<p><strong>Implementation:</strong></p>
+<ul>
+<li><strong>Elasticsearch:</strong> Use snapshot/restore to S3</li>
+<li><strong>Loki:</strong> Configure object storage backend</li>
+<li><strong>Fluentd:</strong> Directly archive to S3 after processing</li>
+</ul>
+</li>
+</ul>
+</div>
+<h3 id="cost-optimization">Cost Optimization</h3>
+<p><strong>Log volume directly impacts infrastructure costs.</strong> Strategies to control costs:</p>
+<ol>
+<li><strong>Filter unnecessary logs at collection time</strong> - Don't ship DEBUG logs from non-critical services</li>
+<li><strong>Sample high-volume logs</strong> - Keep 1% of successful request logs, 100% of errors</li>
+<li><strong>Compress logs</strong> - Fluentd/Fluent Bit support compression before sending</li>
+<li><strong>Use tiered storage</strong> - Hot/warm/cold architecture (Elasticsearch ILM, Loki compactor)</li>
+<li><strong>Monitor log volume by namespace</strong> - Identify noisy applications and optimize them</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Balance Cost vs. Observability</p>
+<p>Aggressive log filtering saves money but can make troubleshooting impossible. Always keep:</p>
+<ul>
+<li>All ERROR and WARN logs</li>
+<li>Request logs with response codes 4xx and 5xx</li>
+<li>Security-relevant events</li>
+<li>State changes and deployments</li>
+</ul>
+<p>Consider sampling/filtering only repetitive INFO logs from known-healthy services.</p>
+</div>
+<hr />
+<h2 id="troubleshooting-with-logs">Troubleshooting with Logs</h2>
+<h3 id="production-debugging-workflows">Production Debugging Workflows</h3>
+<p><strong>Scenario: "The API returned 500 errors between 2 AM and 2:15 AM. What happened?"</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Using Kibana (EFK Stack)</label><label for="__tabbed_3_2">Using Grafana Loki</label><label for="__tabbed_3_3">Using kubectl (No Aggregation)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Goal:</strong> Find all ERROR logs from the API service during the incident window.</p>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<p><strong>Step 1: Time range</strong></p>
+<ul>
+<li>Select time range: 2026-02-11 02:00:00 to 02:15:00</li>
+</ul>
+<p><strong>Step 2: Filter by service</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>kubernetes.labels.app: &quot;user-api&quot; AND level: &quot;ERROR&quot;
+</span></code></pre></div>
+<p><strong>Step 3: Aggregate by error type</strong></p>
+<ul>
+<li>Create visualization: "Top 10 error.type values"</li>
+<li>See: <code>DatabaseTimeoutError: 147 occurrences</code></li>
+</ul>
+<p><strong>Step 4: Deep dive</strong></p>
+<ul>
+<li>Click on DatabaseTimeoutError entries</li>
+<li>View full log with stack trace and trace_id</li>
+<li>Correlate with database monitoring (was DB slow during this window?)</li>
+</ul>
+<p><strong>Step 5: Identify pattern</strong></p>
+<ul>
+<li>All errors from pods on node-05</li>
+<li>Check node metrics: network saturation on node-05 during incident</li>
+<li>Root cause: network issue on specific node</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>Goal:</strong> Query logs using LogQL (Loki's query language).</p>
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<p><strong>Step 1: Filter by labels</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>{namespace=&quot;production&quot;, app=&quot;user-api&quot;}
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>  |~ &quot;ERROR&quot;
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>  | json
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>  | error_type = &quot;DatabaseTimeoutError&quot;
+</span></code></pre></div>
+<p><strong>Step 2: Count occurrences</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sum(count_over_time({namespace=&quot;production&quot;, app=&quot;user-api&quot;}
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>  |~ &quot;DatabaseTimeoutError&quot; [15m]))
+</span></code></pre></div>
+<p><strong>Step 3: View logs by node</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>{namespace=&quot;production&quot;, app=&quot;user-api&quot;, node_name=&quot;node-05&quot;}
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>  | json
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>  | level=&quot;ERROR&quot;
+</span></code></pre></div>
+<p><strong>Step 4: Correlate with metrics</strong></p>
+<ul>
+<li>In Grafana, overlay logs with metrics (CPU, network) on same dashboard</li>
+<li>Visually correlate spike in errors with network saturation</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>Problem:</strong> Without centralized logging, you're stuck.</p>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>Can't query across all pods at once</li>
+<li>Can't filter by time range (logs may have rotated off)</li>
+<li>Can't aggregate error types</li>
+<li>Must know which pods were running during incident (may have been deleted/restarted)</li>
+</ul>
+<p><strong>Best you can do:</strong></p>
+<div class="language-bash highlight"><span class="filename">Manually check each pod (tedious)</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>user-api<span class="w"> </span>-n<span class="w"> </span>production
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># List all pods</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>user-api-7c5ddbdf54-x8f9p<span class="w"> </span>-n<span class="w"> </span>production<span class="w"> </span>--since-time<span class="o">=</span><span class="m">2026</span>-02-11T02:00:00Z<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ERROR
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="c1"># Repeat for each pod...</span>
+</span></code></pre></div>
+<p><strong>This doesn't scale.</strong> Centralized logging is essential for production troubleshooting.</p>
+</div>
+</div>
+</div>
+<h3 id="common-log-queries">Common Log Queries</h3>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg></span> <strong>Find all errors in last hour</strong></p>
+<hr />
+<p><strong>Kibana:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>level: &quot;ERROR&quot; AND @timestamp: [now-1h TO now]
+</span></code></pre></div></p>
+<p><strong>Loki (LogQL):</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>{namespace=&quot;production&quot;} | json | level=&quot;ERROR&quot; [1h]
+</span></code></pre></div></p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 12c2.5 0 4.5 2 4.5 4.5 0 .88-.25 1.71-.69 2.4l3.08 3.1L21 23.39l-3.12-3.07c-.69.43-1.51.68-2.38.68-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5m0 2a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5M10 4a4 4 0 0 1 4 4c0 .91-.31 1.75-.82 2.43-.86.32-1.63.83-2.27 1.47L10 12a4 4 0 0 1-4-4 4 4 0 0 1 4-4M2 20v-2c0-2.12 3.31-3.86 7.5-4-.32.78-.5 1.62-.5 2.5 0 1.29.38 2.5 1 3.5z"/></svg></span> <strong>Find logs for specific user</strong></p>
+<hr />
+<p><strong>Kibana:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>user_id: &quot;user_12345&quot;
+</span></code></pre></div></p>
+<p><strong>Loki (LogQL):</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>{namespace=&quot;production&quot;} | json | user_id=&quot;user_12345&quot;
+</span></code></pre></div></p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 4a8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8m0 2a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6 6 6 0 0 0-6-6m-1 2h1.5v3.78l2.33 2.33-1.06 1.06L14 12.4zM2 18a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3.83c.31.71.71 1.38 1.17 2zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h2.05L5 12l.05 1zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3c-.46.62-.86 1.29-1.17 2z"/></svg></span> <strong>Find slow requests (&gt;5 seconds)</strong></p>
+<hr />
+<p><strong>Kibana:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>duration_ms: &gt;5000
+</span></code></pre></div></p>
+<p><strong>Loki (LogQL):</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>{namespace=&quot;production&quot;} | json | duration_ms &gt; 5000
+</span></code></pre></div></p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 14a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2m11.46-5.14-1.59 6.89L15 14.16l3.8-2.38A7.97 7.97 0 0 0 12 8c-3.95 0-7.23 2.86-7.88 6.63l-1.97-.35C2.96 9.58 7.06 6 12 6c3.58 0 6.73 1.89 8.5 4.72z"/></svg></span> <strong>Trace request across services</strong></p>
+<hr />
+<p><strong>Kibana:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>trace_id: &quot;abc123def456&quot;
+</span></code></pre></div></p>
+<p><strong>Loki (LogQL):</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>{namespace=&quot;production&quot;} | json | trace_id=&quot;abc123def456&quot;
+</span></code></pre></div></p>
+<p><strong>This is why trace IDs are critical</strong>—follow a request through multiple microservices.</p>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="production-logging-checklist">Production Logging Checklist</h2>
+<p>Before going to production, ensure you have:</p>
+<ul>
+<li>[ ] <strong>Centralized log aggregation</strong> - Fluentd/Fluent Bit + Elasticsearch/Loki deployed</li>
+<li>[ ] <strong>Structured logging</strong> - Applications output JSON logs with consistent schema</li>
+<li>[ ] <strong>Kubernetes metadata enrichment</strong> - Logs include namespace, pod, labels, node</li>
+<li>[ ] <strong>Log retention policy</strong> - Time-based or size-based retention configured</li>
+<li>[ ] <strong>Archival strategy</strong> - Old logs moved to object storage (S3/GCS/Blob)</li>
+<li>[ ] <strong>Access control</strong> - RBAC configured for who can view logs</li>
+<li>[ ] <strong>Dashboards and saved searches</strong> - Pre-built queries for common troubleshooting scenarios</li>
+<li>[ ] <strong>Alerting on log patterns</strong> - Alerts for ERROR spikes, specific error types</li>
+<li>[ ] <strong>Cost monitoring</strong> - Track log volume and storage costs per namespace/team</li>
+<li>[ ] <strong>Trace ID propagation</strong> - All services include trace IDs in logs for request correlation</li>
+<li>[ ] <strong>Documentation</strong> - Runbooks for common log queries and troubleshooting workflows</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Start Simple, Iterate</p>
+<p>Don't try to build the perfect logging system on day one:</p>
+<ol>
+<li><strong>Phase 1:</strong> Deploy basic EFK or PLG stack, ship all logs, default retention</li>
+<li><strong>Phase 2:</strong> Add structured logging to critical services, tune retention</li>
+<li><strong>Phase 3:</strong> Build dashboards, optimize costs, add alerting</li>
+<li><strong>Phase 4:</strong> Implement archival, advanced analytics, trace correlation</li>
+</ol>
+<p>The goal is visibility first, optimization second.</p>
+</div>
+<hr />
+<h2 id="practice-exercises">Practice Exercises</h2>
+<details class="question">
+<summary>Exercise 1: View logs from a deployment</summary>
+<p><strong>Goal:</strong> Use <code>kubectl logs</code> to view logs from all pods in a deployment.</p>
+<p><strong>Scenario:</strong> You have a deployment named <code>api-server</code> with 3 replicas in the <code>production</code> namespace. View logs from all pods.</p>
+<p><strong>Hint:</strong> Use label selectors to target all pods in the deployment.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p><strong>Step 1: Find pods in deployment</strong></p>
+<div class="language-bash highlight"><span class="filename">List pods with label selector</span><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>api-server<span class="w"> </span>-n<span class="w"> </span>production
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="c1"># NAME                          READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="c1"># api-server-7c5ddbdf54-2xkqn   1/1     Running   0          1h</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># api-server-7c5ddbdf54-8mz4p   1/1     Running   0          1h</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="c1"># api-server-7c5ddbdf54-kx9qw   1/1     Running   0          1h</span>
+</span></code></pre></div>
+<p><strong>Step 2: View logs from specific pod</strong></p>
+<div class="language-bash highlight"><span class="filename">View logs from one pod</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>api-server-7c5ddbdf54-2xkqn<span class="w"> </span>-n<span class="w"> </span>production
+</span></code></pre></div>
+<p><strong>Step 3: View logs from all pods (recent versions of kubectl)</strong></p>
+<div class="language-bash highlight"><span class="filename">View logs from all pods in deployment</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>api-server<span class="w"> </span>-n<span class="w"> </span>production<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="c1"># Shows last 50 lines from each pod</span>
+</span></code></pre></div>
+<p><strong>Step 4: Follow logs from all pods</strong></p>
+<div class="language-bash highlight"><span class="filename">Stream logs from all pods</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>api-server<span class="w"> </span>-n<span class="w"> </span>production<span class="w"> </span>-f
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="c1"># Streams logs from all pods (Ctrl+C to stop)</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Using label selectors to target multiple pods</li>
+<li>Viewing logs from deployments without knowing pod names</li>
+<li>Following live logs across multiple pods</li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 2: Identify why a pod crashed</summary>
+<p><strong>Goal:</strong> Use logs to diagnose why a pod restarted.</p>
+<p><strong>Scenario:</strong> You notice a pod has <code>RESTARTS: 3</code>. Find out why it crashed.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p><strong>Step 1: Check pod status</strong></p>
+<div class="language-bash highlight"><span class="filename">See restart count and status</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="c1"># NAME                     READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="c1"># myapp-7c5ddbdf54-x8f9p   1/1     Running   3          10m</span>
+</span></code></pre></div>
+<p><strong>Step 2: View current logs</strong></p>
+<div class="language-bash highlight"><span class="filename">View logs from current container</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>myapp-7c5ddbdf54-x8f9p
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1"># May not show crash reason if container restarted</span>
+</span></code></pre></div>
+<p><strong>Step 3: View logs from previous container</strong></p>
+<div class="language-bash highlight"><span class="filename">View logs from crashed container</span><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>myapp-7c5ddbdf54-x8f9p<span class="w"> </span>--previous
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1"># [ERROR] Uncaught exception: database connection failed</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="c1"># [ERROR] Fatal: cannot start without database</span>
+</span></code></pre></div>
+<p><strong>Step 4: View pod events</strong></p>
+<div class="language-bash highlight"><span class="filename">See crash events</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>myapp-7c5ddbdf54-x8f9p
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="c1"># Events:</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="c1"># ...</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a><span class="c1"># Back-off restarting failed container</span>
+</span></code></pre></div>
+<p><strong>Root cause:</strong> Application crashes if it can't connect to database at startup. Check database connectivity or add retry logic.</p>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Using <code>--previous</code> flag to view logs from crashed containers</li>
+<li>Combining logs with <code>kubectl describe</code> for full context</li>
+<li>Diagnosing crash loop scenarios</li>
+</ul>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 3: Configure Fluentd to filter out debug logs</summary>
+<p><strong>Goal:</strong> Modify Fluentd configuration to exclude DEBUG logs from being sent to Elasticsearch.</p>
+<p><strong>Scenario:</strong> Your Elasticsearch cluster is overwhelmed by DEBUG log volume. Filter out DEBUG logs at collection time.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p><strong>Fluentd uses filters to transform or drop logs before sending.</strong></p>
+<p><strong>Add filter to Fluentd ConfigMap:</strong></p>
+<div class="language-xml highlight"><span class="filename">Fluentd configuration snippet</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="nt">&lt;filter</span><span class="w"> </span><span class="err">kubernetes.**</span><span class="nt">&gt;</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="w">  </span>@type<span class="w"> </span>grep
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="w">  </span><span class="nt">&lt;exclude&gt;</span>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="w">    </span>key<span class="w"> </span>level
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a><span class="w">    </span>pattern<span class="w"> </span>/^DEBUG$/
+</span><span id="__span-41-6"><a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a><span class="w">  </span><span class="nt">&lt;/exclude&gt;</span>
+</span><span id="__span-41-7"><a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a><span class="nt">&lt;/filter&gt;</span>
+</span></code></pre></div>
+<p><strong>Full workflow:</strong></p>
+<p><strong>Step 1: Edit Fluentd ConfigMap</strong></p>
+<div class="language-bash highlight"><span class="filename">Edit ConfigMap</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>kubectl<span class="w"> </span>edit<span class="w"> </span>configmap<span class="w"> </span>fluentd-config<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div>
+<p>Add the filter configuration above to the <code>fluent.conf</code> section.</p>
+<p><strong>Step 2: Restart Fluentd DaemonSet</strong></p>
+<div class="language-bash highlight"><span class="filename">Restart Fluentd pods</span><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>daemonset<span class="w"> </span>fluentd<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="c1"># Pods will restart with new configuration</span>
+</span></code></pre></div>
+<p><strong>Step 3: Verify filtering</strong></p>
+<ul>
+<li>Check Kibana: DEBUG logs should stop appearing</li>
+<li>Check Fluentd logs: <code>kubectl logs -l app=fluentd -n kube-system</code></li>
+</ul>
+<p><strong>Alternative: Filter by namespace or label</strong></p>
+<div class="language-xml highlight"><span class="filename">Exclude logs from test namespaces</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="nt">&lt;filter</span><span class="w"> </span><span class="err">kubernetes.**</span><span class="nt">&gt;</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="w">  </span>@type<span class="w"> </span>grep
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="w">  </span><span class="nt">&lt;exclude&gt;</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="w">    </span>key<span class="w"> </span>$.kubernetes.namespace_name
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a><span class="w">    </span>pattern<span class="w"> </span>/^test-/
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="w">  </span><span class="nt">&lt;/exclude&gt;</span>
+</span><span id="__span-44-7"><a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a><span class="nt">&lt;/filter&gt;</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong></p>
+<ul>
+<li>Using Fluentd filters to drop unwanted logs</li>
+<li>Restarting DaemonSet to apply config changes</li>
+<li>Reducing log volume at collection time</li>
+</ul>
+</details>
+</details>
+<hr />
+<h2 id="quick-recap">Quick Recap</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>stdout/stderr</strong></td>
+<td>Where containers write logs (12-factor app pattern)</td>
+</tr>
+<tr>
+<td><strong>kubectl logs</strong></td>
+<td>View logs from individual pods (not scalable)</td>
+</tr>
+<tr>
+<td><strong>Fluentd/Fluent Bit</strong></td>
+<td>Collect logs from nodes, enrich with K8s metadata, ship to storage</td>
+</tr>
+<tr>
+<td><strong>Elasticsearch/Loki</strong></td>
+<td>Store and index logs for search and analysis</td>
+</tr>
+<tr>
+<td><strong>Kibana/Grafana</strong></td>
+<td>Query and visualize logs</td>
+</tr>
+<tr>
+<td><strong>Structured logging (JSON)</strong></td>
+<td>Make logs machine-parseable</td>
+</tr>
+<tr>
+<td><strong>Log retention</strong></td>
+<td>Delete old logs to control costs</td>
+</tr>
+<tr>
+<td><strong>Trace IDs</strong></td>
+<td>Correlate logs across services</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="further-reading">Further Reading</h2>
+<h3 id="official-documentation">Official Documentation</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Kubernetes Docs: Logging Architecture</a> - Official logging concepts and patterns</li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#logs">kubectl Reference: logs</a> - Full <code>kubectl logs</code> command reference</li>
+<li><a href="https://12factor.net/logs">12-Factor App: Logs</a> - The logging philosophy behind container logs</li>
+</ul>
+<h3 id="log-aggregation-tools">Log Aggregation Tools</h3>
+<ul>
+<li><a href="https://docs.fluentd.org/">Fluentd Documentation</a> - Comprehensive Fluentd setup and configuration</li>
+<li><a href="https://docs.fluentbit.io/">Fluent Bit Documentation</a> - Lightweight log forwarder</li>
+<li><a href="https://grafana.com/docs/loki/latest/">Grafana Loki Documentation</a> - Loki setup, LogQL query language</li>
+<li><a href="https://www.elastic.co/guide/index.html">Elastic Stack Documentation</a> - Elasticsearch, Kibana, Filebeat</li>
+</ul>
+<h3 id="deep-dives">Deep Dives</h3>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management.html">Elasticsearch ILM (Index Lifecycle Management)</a> - Managing retention and cost</li>
+<li><a href="https://grafana.com/docs/loki/latest/best-practices/">Loki Best Practices</a> - Optimizing Loki for Kubernetes</li>
+<li><a href="https://www.cncf.io/blog/2018/08/21/observability-at-cncf/">CNCF Observability Whitepaper</a> - Observability strategy including logging</li>
+</ul>
+<h3 id="related-articles">Related Articles</h3>
+<ul>
+<li><a href="../monitoring/">Monitoring and Metrics</a> - How to monitor cluster and application health</li>
+<li><a href="../probes/">Health Checks and Probes</a> - Application health and readiness</li>
+<li><a href="../overview/">Level 6 Overview</a> - All production operations topics</li>
+</ul>
+<hr />
+<h2 id="whats-next">What's Next?</h2>
+<p>You understand how to collect, aggregate, and query logs at scale. Next in Level 6:</p>
+<ul>
+<li><strong>Monitoring and Metrics</strong> - Track cluster health with Prometheus and Grafana</li>
+<li><strong>Health Checks and Probes</strong> - Configure liveness and readiness probes for applications</li>
+</ul>
+<p>Logging tells you <strong>what happened</strong>. Monitoring tells you <strong>what's happening now</strong>. Together, they give you complete observability.</p>
+<hr />
+<p><strong>Your production cluster now has eyes and ears.</strong></p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bradpenney" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/bradpenney" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "content.code.highlight", "content.tooltips", "content.code.mermaid"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
