@@ -108,18 +108,16 @@ spec:
     **How label matching works:**
 
     ```mermaid
-    flowchart TD
+    graph TD
         Deployment["<b>Deployment</b><br/>selector:<br/>matchLabels:<br/>app: nginx"]
-        Pod1["<b>Pod 1</b><br/>labels:<br/>app: nginx"]
-        Pod2["<b>Pod 2</b><br/>labels:<br/>app: nginx"]
-        Service["<b>Service</b><br/>selector:<br/>app: nginx"]
-        Traffic["Traffic"]
 
-        Deployment -->|"Creates Pods with<br/>matching labels"| Pod1
-        Deployment -->|"Creates Pods with<br/>matching labels"| Pod2
-        Service -->|"Routes to Pods<br/>with matching labels"| Pod1
-        Service -->|"Routes to Pods<br/>with matching labels"| Pod2
-        Traffic -->|"Incoming requests"| Service
+        Deployment -->|"creates & manages"| Pod1["<b>Pod 1</b><br/>labels:<br/>app: nginx"]
+        Deployment -->|"creates & manages"| Pod2["<b>Pod 2</b><br/>labels:<br/>app: nginx"]
+
+        Pod1 <-->|"label match:<br/>app: nginx"| Service["<b>Service</b><br/>selector:<br/>app: nginx"]
+        Pod2 <-->|"label match:<br/>app: nginx"| Service
+
+        Service -->|"external traffic"| Traffic["Traffic"]
 
         style Deployment fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
         style Pod1 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
