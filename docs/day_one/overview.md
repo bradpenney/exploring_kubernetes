@@ -1,7 +1,11 @@
+---
+title: Getting Started with Kubernetes - Day One Guide
+description: A developer-focused introduction to Kubernetes. Learn what Kubernetes is and how to deploy your first application with confidence.
+---
 # Day One: Getting Started with Kubernetes
 
 !!! tip "Your First Day with Kubernetes"
-    You just got kubectl access to your company's dev cluster. You have an application to deploy. You're probably thinking: *What is this? How do I use it? Will I break something?*
+    You just got access to your company's dev cluster. You have an application to deploy. You're probably thinking: *What is this? How do I use it? Will I break something?*
 
 ## Welcome to Kubernetes
 
@@ -19,44 +23,86 @@ This guide is for application developers who need to deploy their code to a Kube
 By the end of Day One, you'll know how to:
 
 - **Understand Kubernetes** - What it is, why your company uses it, what problem it solves
-- **Connect to your cluster** - kubectl setup, contexts, namespaces
+- **Connect to your cluster** - Authentication, contexts, and namespaces
 - **Deploy your first application** - From container image to running pods
-- **Use essential kubectl commands** - The 10 commands you'll use daily
+- **Use essential commands** - The tools you'll use daily for deployment and troubleshooting
 - **Understand what you just did** - What actually happens when you deploy
-- **Explore safely** - Read-only commands, troubleshooting basics
+- **Explore safely** - Read-only vs. destructive operations, troubleshooting basics
 
 ## Your First Day: The Journey
 
-```mermaid
-flowchart TD
-    Start[You receive kubectl<br/>credentials]
-    Connect[Connect to cluster<br/>kubectl config]
-    Verify[Verify access<br/>kubectl get nodes]
-    Check[Check your namespace<br/>kubectl config view]
-    Deploy[Deploy your app<br/>kubectl apply -f app.yaml]
-    Watch[Watch deployment<br/>kubectl get pods]
-    Logs[Check logs<br/>kubectl logs pod-name]
-    Success[App running!<br/>Confidence built]
+Day One offers two paths depending on how your team works with Kubernetes:
 
-    Start --> Connect
-    Connect --> Verify
-    Verify --> Check
-    Check --> Deploy
-    Deploy --> Watch
-    Watch --> Logs
-    Logs --> Success
+- **kubectl Path (From Scratch)**: Write YAML manifests manually and deploy with `kubectl apply` commands
+- **Helm Path (Package Manager)**: Use packaged charts and deploy with `helm install` commands
 
-    style Start fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Connect fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Verify fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Check fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Deploy fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Watch fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Logs fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Success fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
-```
+Both paths follow a similar pattern and reach the same destination—a deployed application. The difference is in the tools you use. Choose the journey that matches how your team deploys applications:
 
-This is the practical journey you'll take—from credentials in hand to deployed application.
+=== "kubectl Journey (From Scratch)"
+
+    ```mermaid
+    flowchart TD
+        Start[You receive kubectl<br/>credentials]
+        Connect[Connect to cluster<br/>kubectl config]
+        Verify[Verify access<br/>kubectl get nodes]
+        Check[Check your namespace<br/>kubectl config view]
+        Deploy[Deploy your app<br/>kubectl apply -f app.yaml]
+        Watch[Watch deployment<br/>kubectl get pods]
+        Logs[Check logs<br/>kubectl logs pod-name]
+        Success[App running!<br/>Confidence built]
+
+        Start --> Connect
+        Connect --> Verify
+        Verify --> Check
+        Check --> Deploy
+        Deploy --> Watch
+        Watch --> Logs
+        Logs --> Success
+
+        style Start fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Connect fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Verify fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Check fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Deploy fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Watch fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Logs fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Success fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    ```
+
+    **The kubectl path:** Write YAML manifests by hand, deploy with `kubectl apply`, understand every building block from the ground up.
+
+=== "Helm Journey (Package Manager)"
+
+    ```mermaid
+    flowchart TD
+        Start[You receive kubectl<br/>credentials]
+        InstallHelm[Install Helm CLI<br/>brew install helm]
+        Connect[Connect to cluster<br/>helm list]
+        Repo[Add chart repository<br/>helm repo add]
+        Deploy[Deploy your app<br/>helm install my-app chart/]
+        Watch[Watch deployment<br/>helm status my-app]
+        Logs[Check logs<br/>kubectl logs pod-name]
+        Success[App running!<br/>Confidence built]
+
+        Start --> InstallHelm
+        InstallHelm --> Connect
+        Connect --> Repo
+        Repo --> Deploy
+        Deploy --> Watch
+        Watch --> Logs
+        Logs --> Success
+
+        style Start fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style InstallHelm fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Connect fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Repo fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Deploy fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Watch fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Logs fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Success fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    ```
+
+    **The Helm path:** Use packaged charts (from CI/CD or vendors), deploy with `helm install`, customize through values files rather than raw YAML.
 
 ## Understanding Your Context
 
@@ -71,10 +117,11 @@ This guide is written for a specific situation—one that's incredibly common bu
     **You have:**
 
     - A containerized application (Docker image in a registry)
-    - `kubectl` installed and configured (IT/ops did this for you)
+    - Cluster access configured (IT/ops gave you credentials)
     - Access to a development Kubernetes cluster (real cluster, not minikube)
     - A namespace you can deploy to
     - Basic understanding that containers exist
+    - Either `kubectl` for manual YAML or Helm charts from your CI/CD pipeline
 
     **You don't have:**
 
@@ -104,7 +151,7 @@ This guide is written for a specific situation—one that's incredibly common bu
 
     **This guide gets you unblocked.** Not certified, not expert-level—just competent enough to ship code and debug when things break.
 
-    **You're not alone.** Thousands of application developers are in the exact same situation: handed `kubectl` credentials and told "figure it out." This guide is for all of you.
+    **You're not alone.** Thousands of application developers are in the exact same situation: handed cluster credentials and told "figure it out." This guide is for all of you.
 
 </div>
 
@@ -112,18 +159,29 @@ This guide is written for a specific situation—one that's incredibly common bu
 
 ## Common Developer Scenarios
 
-Why are you really here? Probably one of these situations:
+Why are you really here? Probably one of these situations (examples show both paths):
 
 === ":material-rocket-launch: Deploy My App to Dev"
 
     **Your situation:** QA needs to test your latest build. You have a Docker image. Now what?
 
-    **What you need to learn:**
+    === "kubectl Path"
 
-    - How to write a deployment YAML (or modify the existing one)
-    - `kubectl apply -f deployment.yaml` - push your changes
-    - `kubectl get pods` - verify it's running
-    - `kubectl rollout status` - watch the deployment happen
+        **What you need to learn:**
+
+        - How to write a deployment YAML (or modify the existing one)
+        - `kubectl apply -f deployment.yaml` - push your changes
+        - `kubectl get pods` - verify it's running
+        - `kubectl rollout status` - watch the deployment happen
+
+    === "Helm Path"
+
+        **What you need to learn:**
+
+        - How to customize your chart's `values.yaml` file
+        - `helm install my-app ./chart` - deploy your application
+        - `kubectl get pods` - verify it's running (same as kubectl path!)
+        - `helm status my-app` - check deployment status
 
     **Day One gets you here.** By the end, you'll deploy confidently.
 
@@ -131,12 +189,15 @@ Why are you really here? Probably one of these situations:
 
     **Your situation:** QA says "it's broken in dev" or "I'm seeing weird errors." You need to investigate.
 
-    **What you need to learn:**
+    **What you need to learn (same for both paths):**
 
     - `kubectl get pods` - find your pod name
     - `kubectl logs pod-name-xyz` - see what's failing
     - `kubectl logs -f pod-name-xyz` - follow logs live
     - `kubectl describe pod pod-name-xyz` - see why it crashed
+
+    !!! info "Both Paths Use kubectl for Debugging"
+        Even Helm users rely on `kubectl` commands for troubleshooting. Helm deploys resources, but you inspect and debug them with kubectl.
 
     **Essential Commands teaches this.** Debugging becomes routine.
 
@@ -144,12 +205,23 @@ Why are you really here? Probably one of these situations:
 
     **Your situation:** Need to point to a different database, change an API key, or update a config value.
 
-    **What you need to learn:**
+    === "kubectl Path"
 
-    - ConfigMaps and Secrets (where config lives)
-    - How to update them
-    - How to restart your deployment to pick up changes
-    - How to verify the new value is being used
+        **What you need to learn:**
+
+        - ConfigMaps and Secrets (where config lives)
+        - How to update them with `kubectl edit` or `kubectl apply`
+        - How to restart your deployment to pick up changes
+        - How to verify the new value is being used
+
+    === "Helm Path"
+
+        **What you need to learn:**
+
+        - How values flow from `values.yaml` to ConfigMaps/Secrets
+        - Update `values.yaml` with new configuration
+        - Run `helm upgrade my-app ./chart` to apply changes
+        - How to verify the new value is being used
 
     **Level 1: ConfigMaps and Secrets covers this.** Configuration management made clear.
 
@@ -157,23 +229,44 @@ Why are you really here? Probably one of these situations:
 
     **Your situation:** You deployed something and now dev is broken. You need to undo it. Fast.
 
-    **What you need to learn:**
+    === "kubectl Path"
 
-    - `kubectl rollout undo deployment/yourapp` - instant rollback
-    - `kubectl rollout history` - see what versions exist
-    - How to verify you're back to the working version
+        **What you need to learn:**
 
-    **Level 2: Deployments Explained teaches this.** Rollbacks become your safety net.
+        - `kubectl rollout undo deployment/yourapp` - instant rollback
+        - `kubectl rollout history` - see what versions exist
+        - How to verify you're back to the working version
+
+    === "Helm Path"
+
+        **What you need to learn:**
+
+        - `helm rollback my-app` - instant rollback to previous release
+        - `helm history my-app` - see all release versions
+        - How to verify you're back to the working version
+
+    **Day One and Level 2 cover this.** Rollbacks become your safety net.
 
 === ":material-scale-balance: Scale Up for Load Testing"
 
     **Your situation:** Performance team wants to load test. You need more instances running.
 
-    **What you need to learn:**
+    === "kubectl Path"
 
-    - `kubectl scale deployment/yourapp --replicas=10` - simple scaling
-    - How to verify all replicas are running
-    - How to scale back down when done
+        **What you need to learn:**
+
+        - `kubectl scale deployment/yourapp --replicas=10` - simple scaling
+        - How to verify all replicas are running
+        - How to scale back down when done
+
+    === "Helm Path"
+
+        **What you need to learn:**
+
+        - Update `replicas: 10` in your `values.yaml`
+        - Run `helm upgrade my-app ./chart` to apply new scale
+        - How to verify all replicas are running
+        - Update values and upgrade again to scale back down
 
     **Level 2: Deployments covers scaling.** It's easier than you think.
 
@@ -181,46 +274,92 @@ Why are you really here? Probably one of these situations:
 
 ---
 
-## The Articles
+## Which Day One Path Are You On?
 
-Work through these in order for the complete Day One experience:
+Not sure which path to choose? Use these criteria to decide:
 
 <div class="grid cards" markdown>
 
--   :material-help-circle: **[What Is Kubernetes and Why?](what_is_kubernetes.md)**
+-   :material-console: **The kubectl Path**
 
     ---
 
-    Understand the container orchestration problem and why companies adopt Kubernetes. No jargon, just practical context.
+    **Choose this if:**
 
--   :material-connection: **[Getting kubectl Access](kubectl_access.md)**
+    - You're learning Kubernetes from the ground up
+    - You'll be writing your own YAML manifests
+    - Your team deploys with `kubectl apply`
+    - You want to understand every building block
 
-    ---
-
-    Connect to your company's cluster. Understand kubeconfig, contexts, namespaces, and how to verify you're ready.
-
--   :material-rocket-launch: **[Your First Deployment](first_deployment.md)**
-
-    ---
-
-    Deploy a simple application and see it run. Hands-on, step-by-step, with YAML explained.
-
--   :material-console: **[Essential kubectl Commands](essential_commands.md)**
+-   :material-dharmachakra: **The Helm Path (Coming Soon)**
 
     ---
 
-    The 10 commands you'll use every single day: get, describe, logs, exec, apply, delete, and more.
+    **Choose this if:**
 
--   :material-lightbulb: **Understanding What Happened** *(coming soon)*
-
-    ---
-
-    What actually runs when you deploy? Learn about Pods, ReplicaSets, Services, and how they fit together.
+    - Your CI/CD pipeline generates Helm charts for you
+    - You need to deploy vendor charts (PostgreSQL, Redis, etc.)
+    - Your team standardizes on Helm for all deployments
+    - You were told "just run `helm install`"
 
 </div>
 
-!!! note "Day One Articles"
-    Four articles are now available! Start with "What Is Kubernetes?" and work through in order. "Understanding What Happened" is coming soon to complete the Day One journey.
+---
+
+## The Articles
+
+### Shared Foundation
+- :material-help-circle: **[What Is Kubernetes and Why?](what_is_kubernetes.md)** - Understand the problem Kubernetes solves.
+
+=== "kubectl Path (From Scratch)"
+
+    <div class="grid cards" markdown>
+
+    - :material-connection: **[Getting kubectl Access](kubectl/access.md)**
+      Connect to your company's cluster and verify access.
+
+    - :material-rocket-launch: **[Your First Deployment](kubectl/first_deploy.md)**
+      Deploy a simple application from a YAML file.
+
+    - :material-console: **[Essential kubectl Commands](kubectl/commands.md)**
+      The 10 commands you'll use every single day.
+
+    - :material-lightbulb: **[Understanding What Happened](kubectl/understanding.md)**
+      Learn about Pods, ReplicaSets, and how they fit together.
+
+    </div>
+
+=== "Helm Path (Package Manager) 🚧"
+
+    !!! info "Coming Soon"
+        The Helm path articles are currently in development. In the meantime, the kubectl path will teach you the foundational Kubernetes concepts that apply to both approaches.
+
+    **Planned articles:**
+
+    <div class="grid cards" markdown>
+
+    - :material-connection: **Getting Helm Access**
+
+      Install Helm CLI and connect to your cluster using existing kubectl credentials.
+
+    - :material-dharmachakra: **Your First Helm Deployment**
+
+      Deploy your first chart from CI/CD pipeline or vendor repository.
+
+    - :material-console: **Essential Helm Commands**
+
+      Master `helm install`, `helm upgrade`, `helm rollback`, and release management.
+
+    - :material-lightbulb: **Understanding What Helm Created**
+
+      See how Helm translates values into Kubernetes resources under the hood.
+
+    </div>
+
+!!! success "kubectl Path Complete!"
+    The kubectl path through Day One is complete! Start with **[What Is Kubernetes?](what_is_kubernetes.md)** and work through the five articles to complete your first day with Kubernetes.
+
+    The Helm path articles are in development and will be released soon.
 
 ---
 
@@ -283,7 +422,7 @@ Day One focuses on **practical, immediate needs**—the skills you need to deplo
 
 ## What's Next?
 
-Once you're comfortable deploying applications and using kubectl confidently, you're ready for **Level 1: Core Primitives**. That's where you'll dive deeper into Pods, Services, ConfigMaps, and the fundamental building blocks of Kubernetes.
+Once you're comfortable deploying applications and troubleshooting them, you're ready for **Level 1: Core Primitives**. That's where you'll dive deeper into Pods, Services, ConfigMaps, and the fundamental building blocks of Kubernetes—regardless of whether you deployed them with kubectl or Helm.
 
 But first, let's get you deploying applications. That's what Day One is all about.
 

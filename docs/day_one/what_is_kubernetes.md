@@ -1,3 +1,7 @@
+---
+title: What Is Kubernetes and Why Does It Matter?
+description: An easy-to-understand introduction to Kubernetes (K8s) for beginners. Learn about container orchestration, why it exists, and the benefits of using it.
+---
 # What Is Kubernetes and Why?
 
 !!! tip "Part of Day One: Getting Started"
@@ -7,7 +11,14 @@ You just found out your company uses Kubernetes. Or maybe you saw it on a job de
 
 **Let's make it make sense.**
 
----
+!!! info "What You'll Learn"
+    By the end of this article, you'll understand:
+
+    - **What Kubernetes is** - Container orchestration at scale
+    - **Why it exists** - The problem it solves (managing thousands of containers)
+    - **Why your company uses it** - Real-world benefits (reliability, scaling, zero-downtime deploys)
+    - **What problems it doesn't solve** - Setting realistic expectations
+    - **Whether you need to learn it** - Spoiler: yes, if you're deploying to it!
 
 ## The Container Orchestration Challenge
 
@@ -22,10 +33,10 @@ flowchart TD
     Prod --> Manual
     Manual -.->|Solution| K8s
 
-    style Dev fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Dev fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style Prod fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Manual fill:#e53e3e,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style K8s fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Manual fill:#c53030,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style K8s fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
 ## The Problem: Too Many Containers, Not Enough Hands
@@ -71,6 +82,48 @@ Think of it like an operating system for a data center:
 - Kubernetes manages containers, servers, and networking
 
 **The key idea:** You tell Kubernetes what you want ("I want 3 copies of my API running"), and Kubernetes makes it happen. If something breaks, Kubernetes fixes it automatically.
+
+??? info "Wait, What's the Difference Between Container, Image, and Pod?"
+    **If you're new to containers, these terms can be confusing.** Here's the relationship:
+
+    **Container Image (the blueprint):**
+
+    - A packaged file containing your application code and all its dependencies
+    - Like a `.zip` file or installer—it doesn't run by itself, it's just the package
+    - Stored in a registry (Docker Hub, AWS ECR, Google Artifact Registry, etc.)
+    - Example: `nginx:1.21` is an image—the nginx web server version 1.21 packaged up
+
+    **Container (the running instance):**
+
+    - A running instance of an image
+    - Like opening an application from an installer—now it's actually executing
+    - Has its own filesystem, process space, and network
+    - Example: When you run `docker run nginx:1.21`, you start a **container** from the **image**
+
+    **Pod (Kubernetes wrapper):**
+
+    - Kubernetes doesn't run containers directly—it wraps them in **Pods**
+    - A Pod is the smallest unit Kubernetes manages
+    - Usually 1 container per Pod (but can have multiple containers that work together)
+    - Example: Your nginx container runs **inside** a Pod managed by Kubernetes
+
+    **The flow:**
+
+    ```mermaid
+    flowchart LR
+        Image["<b>Container Image</b><br/>nginx:1.21<br/>(stored in registry)"]
+        Container["<b>Container</b><br/>Running nginx process<br/>(executing)"]
+        Pod["<b>Pod</b><br/>Kubernetes wrapper<br/>(managed by K8s)"]
+
+        Image -->|"docker run<br/>or kubectl"| Container
+        Container -->|"wrapped inside"| Pod
+
+        style Image fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Container fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Pod fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    ```
+
+    **TL;DR:** Image = packaged app, Container = running app, Pod = Kubernetes' management unit for containers
 
 ??? example "What Does 'Telling Kubernetes What You Want' Look Like?"
     You interact with Kubernetes using the `kubectl` command-line tool.
@@ -391,7 +444,7 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 
 ## What's Next?
 
-You understand why Kubernetes exists. Now let's get you connected: **[Getting kubectl Access](kubectl_access.md)** will show you how to connect to your company's cluster and verify you're ready to deploy.
+You understand why Kubernetes exists. Now let's get you connected: **[Getting kubectl Access](kubectl/access.md)** will show you how to connect to your company's cluster and verify you're ready to deploy.
 
 ---
 

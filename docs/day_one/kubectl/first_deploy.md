@@ -1,7 +1,11 @@
+---
+title: Your First Kubernetes Deployment - Using kubectl
+description: Step-by-step guide to deploying your first containerized application to Kubernetes using the kubectl command line.
+---
 # Your First Deployment
 
 !!! tip "Part of Day One: Getting Started"
-    This is the third article in [Day One: Getting Started](overview.md). Make sure you've completed [Getting kubectl Access](kubectl_access.md) first.
+    This is the third article in [Day One: Getting Started](../overview.md). Make sure you've completed [Getting kubectl Access](access.md) first.
 
 You're connected to your cluster. You have `kubectl` working. Now comes the moment of truth: deploying something.
 
@@ -91,6 +95,46 @@ spec:
 6. Pods get this label—must match selector above
 7. Container image to run—always pin versions (not `:latest`)
 8. Port the container listens on inside the Pod
+
+!!! tip "Labels Are the Glue"
+    Notice the `app: nginx` label appears three times in that YAML:
+
+    1. **Deployment metadata** - Identifying the Deployment itself
+    2. **Selector matchLabels** - The Deployment finds "its" Pods using this
+    3. **Pod template labels** - The Pods get this label when created
+
+    This label matching is how Kubernetes connects resources. Your Service will also use `app: nginx` to find these Pods. **If the labels don't match, nothing works.** We'll explore this in depth in [Understanding What Happened](understanding.md#labels-the-glue).
+
+    **How label matching works:**
+
+    ```mermaid
+    flowchart TD
+        Deployment["<b>Deployment</b><br/>selector:<br/>matchLabels:<br/>app: nginx"]
+        Pod1["<b>Pod 1</b><br/>labels:<br/>app: nginx"]
+        Pod2["<b>Pod 2</b><br/>labels:<br/>app: nginx"]
+        Service["<b>Service</b><br/>selector:<br/>app: nginx"]
+        Traffic["Traffic"]
+
+        Deployment -->|"Creates Pods with<br/>matching labels"| Pod1
+        Deployment -->|"Creates Pods with<br/>matching labels"| Pod2
+        Service -->|"Routes to Pods<br/>with matching labels"| Pod1
+        Service -->|"Routes to Pods<br/>with matching labels"| Pod2
+        Traffic -->|"Incoming requests"| Service
+
+        style Deployment fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Pod1 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Pod2 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Service fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+        style Traffic fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    ```
+
+    **The critical rule:** All three must have `app: nginx` for this to work:
+
+    - Deployment's `selector.matchLabels` → finds Pods to manage
+    - Pod's `labels` → identifies which Deployment owns it
+    - Service's `selector` → finds Pods to route traffic to
+
+    **If labels don't match, nothing connects.** This is the #1 beginner mistake.
 
 **Don't memorize this.** Just understand the key parts:
 
@@ -183,7 +227,7 @@ spec:
 2. We're creating a Service—routes traffic to Pods
 3. Name of the Service (used for DNS)
 4. NodePort exposes the service externally for testing
-5. Routes traffic to Pods with this label (matches our Deployment)
+5. **CRITICAL:** This selector must match the Pod labels from your Deployment—this is how Services find Pods
 6. Port the Service listens on
 7. Port to forward to on the Pod (container's port 80)
 8. External port on the node (range 30000-32767)
@@ -245,24 +289,20 @@ kubectl get service my-first-app-svc
 
 ## Understanding What Happened
 
-Think of a **Deployment like a Factory Manager**.
+Think of a **Deployment like a Factory Manager**. You hand the Manager a blueprint (your YAML) and say "I want 2 copies running." The Manager hires a Supervisor (**ReplicaSet**) to watch the factory floor and keep exactly 2 machines (**Pods**) running at all times.
 
-You (the owner) hand the Manager a blueprint (the YAML) and say, "I want 2 copies of this app running at all times." The Manager doesn't build them personally; they hire a Supervisor (**ReplicaSet**) to watch the factory floor. If a machine (**Pod**) breaks, the Supervisor notices immediately and starts a new one to keep the count at 2.
+Your Service acts like a reception desk—it routes visitors to whichever machines are currently operational.
 
-Here is how that looks in Kubernetes-speak:
+**The key:** You declared what you wanted. Kubernetes figured out how to make it happen—and will keep it that way automatically.
 
-1. **You ran `kubectl apply`** - You handed the blueprint to the Factory Manager.
-2. **Deployment created** - The Manager (Deployment) accepted the blueprint.
-3. **ReplicaSet created** - The Manager hired a Supervisor (ReplicaSet).
-4. **Pods created** - The Supervisor started 2 machines (Pods).
-5. **Containers started** - Each machine pulled the `nginx` engine and started running.
-6. **Service created** - You installed a Lobby (Service) so people can reach your machines.
-
-**All automatic. You just declared what you wanted.**
+!!! tip "Want the Full Technical Breakdown?"
+    This is enough to understand your deployment worked. For the complete step-by-step flow (what actually happened in the cluster, which components did what, and how it all connects), see **[Understanding What Happened](understanding.md)**—the final Day One article that explains the architecture.
 
 ### Common Pitfalls
 
-Things don't always go smoothly. Here are the issues you're most likely to encounter:
+Things don't always go smoothly. Here are the issues you're most likely to encounter.
+
+**Don't try to memorize these**—if something goes wrong, come back to this section or jump to [Essential kubectl Commands](commands.md) for detailed troubleshooting workflows. This is a reference for when you need it, not a study guide.
 
 ??? question "Pods Stuck in 'ImagePullBackOff'"
     **Problem:** Kubernetes can't download your container image.
@@ -281,6 +321,80 @@ Things don't always go smoothly. Here are the issues you're most likely to encou
     - **Network/registry access issue** - Cluster can't reach Docker Hub
 
     **Fix:** Correct the image name in your YAML and reapply.
+
+    ??? warning "Private Registry Authentication (Common in Companies)"
+        **If your company uses a private container registry** (AWS ECR, Google Artifact Registry, Azure Container Registry, or self-hosted), Kubernetes needs authentication credentials to pull images.
+
+        **How to tell if this is your issue:**
+        ```bash title="Check the error message"
+        kubectl describe pod my-app-7c5ddbdf54-2xkqn
+        # Events:
+        #   Warning  Failed   10s  Failed to pull image "mycompany.azurecr.io/my-app:latest"
+        #   Warning  Failed   10s  Error: ErrImagePull
+        # Look for "unauthorized" or "authentication required"
+        ```
+
+        **The fix: imagePullSecrets**
+
+        Your platform team should provide:
+
+        1. **The registry credentials** (username/password or token)
+        2. **Instructions to create the secret**
+        3. **The secret name to reference**
+
+        **Typical workflow:**
+
+        ```bash title="1. Create imagePullSecret (platform team provides credentials)"
+        kubectl create secret docker-registry my-registry-secret \
+          --docker-server=mycompany.azurecr.io \
+          --docker-username=<username> \
+          --docker-password=<password> \
+          --docker-email=<your-email>
+        # secret/my-registry-secret created
+        ```
+
+        ```yaml title="2. Reference the secret in your Deployment"
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: my-app
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              app: my-app
+          template:
+            metadata:
+              labels:
+                app: my-app
+            spec:
+              imagePullSecrets:  # Add this
+              - name: my-registry-secret  # Reference the secret
+              containers:
+              - name: my-app
+                image: mycompany.azurecr.io/my-app:1.0  # Private image
+                ports:
+                - containerPort: 80
+        ```
+
+        ```bash title="3. Reapply the Deployment"
+        kubectl apply -f deployment.yaml
+        # Now Kubernetes can authenticate and pull the private image
+        ```
+
+        **Important notes:**
+
+        - **Don't hardcode credentials** in YAML—always use Secrets
+        - **Platform teams often automate this** - Check if your namespace has default imagePullSecrets already configured
+        - **Cloud provider managed registries** (ECR, GCR, ACR) often use cluster IAM roles instead of imagePullSecrets
+
+        **Ask your platform team:**
+
+        - "Do I need imagePullSecrets for our registry?"
+        - "Is there a default imagePullSecret already configured in my namespace?"
+        - "How do I authenticate to pull images from our private registry?"
+
+        They may have already configured automatic authentication at the cluster or namespace level.
 
 ??? question "Deployment Shows '0/2 Ready'"
     **Problem:** Deployment created, but no Pods are running.
@@ -586,9 +700,9 @@ kubectl delete -f nginx-service.yaml
 
 ### Related Articles
 
-- [Day One Overview](overview.md) - See all Day One articles
-- [Getting kubectl Access](kubectl_access.md) - Review how to connect to your cluster
-- [What Is Kubernetes?](what_is_kubernetes.md) - Understanding Kubernetes fundamentals
+- [Day One Overview](../overview.md) - See all Day One articles
+- [Getting kubectl Access](access.md) - Review how to connect to your cluster
+- [What Is Kubernetes?](../what_is_kubernetes.md) - Understanding Kubernetes fundamentals
 
 ---
 
@@ -596,10 +710,10 @@ kubectl delete -f nginx-service.yaml
 
 You've deployed your first application! Next up in the Day One series:
 
-- **[Essential kubectl Commands](essential_commands.md)** - Master the 10 commands you'll use every day
-- **Understanding What Happened** - Deep dive into Deployments, ReplicaSets, and Pods (coming soon)
+- **[Essential kubectl Commands](commands.md)** - Master the 10 commands you'll use every day
+- **[Understanding What Happened](understanding.md)** - Deep dive into Deployments, ReplicaSets, and Pods
 
-Check the [Day One Overview](overview.md) for the complete learning path.
+Check the [Day One Overview](../overview.md) for the complete learning path.
 
 ---
 

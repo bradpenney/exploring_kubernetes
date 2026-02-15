@@ -21,6 +21,40 @@ This file provides guidance to Claude Code when working with this repository.
 
 **MkDocs Operations**: The user handles running `mkdocs serve` and `mkdocs build` themselves. Do not run these commands.
 
+## CRITICAL: No Repetition - Respect Reader's Time
+
+**This is an absolute deal-breaker for content quality.**
+
+### The Principle
+
+Avoid duplication and repetition at all costs. Every time we repeat information, we waste the reader's time and make the content feel bloated.
+
+### The Rules
+
+1. **Cross-link instead of repeating** - If a concept is explained elsewhere, link to it
+2. **Only repeat for significantly different perspectives** - Brief intro vs. deep dive is acceptable; same explanation twice is not
+3. **Progressive depth, not repetition** - Each article builds WITHOUT re-explaining previous articles
+4. **Audit before publishing** - Search for repeated concepts across published articles
+
+### Before Explaining Any Concept, Ask:
+
+1. Have we explained this elsewhere in this section (Day One, Level 1, etc.)?
+2. If yes, is my perspective SIGNIFICANTLY different?
+3. If no, add a cross-link: "Remember X from [Article]? Now let's see how..."
+4. If yes, explicitly state the new angle: "Earlier we covered X operationally - now let's understand the architecture"
+
+### Common Traps to Avoid:
+
+- Explaining "what happens when you deploy" multiple times
+- kubectl command tutorials in every article (one reference, cross-link from others)
+- Safety warnings repeated (one detailed, brief cross-links elsewhere)
+- Architecture explanations duplicated
+- Analogies re-explained (use once, reference later)
+
+### Required: Pre-Publication Repetition Audit
+
+Before marking any article complete, use the Explore agent to search for repeated concepts across published articles in the same section. If found, consolidate and cross-link.
+
 ## Critical Persona Insight
 
 **IMPORTANT**: This site has a unique audience assumption that differs from typical Kubernetes tutorials:
@@ -330,7 +364,8 @@ Articles must not be simple command references. They must teach skills with cont
      - Standard Node (Slate 800): `fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff`
      - Highlighted Node (Slate 700): `fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff`
      - Darker Node (Slate 900): `fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff`
-     - Accent Node (Green): `fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff`
+     - Accent Node (Green 600): `fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff`
+     - Warning/Danger (Red 600): `fill:#c53030,stroke:#cbd5e0,stroke-width:2px,color:#fff`
 
 2. **Card Grids** (for categorization)
    - Use `<div class="grid cards" markdown>` for grouping related concepts
@@ -519,6 +554,7 @@ Before uncommenting an article in `mkdocs.yaml`:
 
 **✅ Content Quality:**
 
+- [ ] **NO REPETITION AUDIT** - Searched for repeated concepts across published articles in this section (CRITICAL!)
 - [ ] Opening hooks with real-world relevance (app developer persona for Day One/Level 1-2)
 - [ ] Clear learning objectives
 - [ ] kubectl commands with actual output shown

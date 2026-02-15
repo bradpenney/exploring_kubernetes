@@ -1,4 +1,18 @@
 site_name: "Exploring Kubernetes"
+site_url: https://kubernetes.bradpenney.io
+site_description: A progressive journey through Kubernetes, from your first deployment to production operations.
+site_author: Brad Penney
+
+extra:
+  analytics:
+    provider: google
+    property: G-V01MJ4R3SQ
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bradpenney
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/bradpenney
+
 extra_css:
   - stylesheets/extra.css
 theme:
@@ -33,6 +47,11 @@ theme:
 
 plugins:
   - search
+  - social:
+      cards: true
+      cards_layout_options:
+        background_color: "#1a202c"
+        color: "#cbd5e0"
   - htmlproofer:
       enabled: true
       validate_rendered_template: true
@@ -72,14 +91,22 @@ extra_javascript:
 
 nav:
   - Home: index.md
+
   - Day One - Getting Started:
       - Overview: day_one/overview.md
       - What Is Kubernetes?: day_one/what_is_kubernetes.md
-      - Getting kubectl Access: day_one/kubectl_access.md
-      - Your First Deployment: day_one/first_deployment.md
-      - Essential kubectl Commands: day_one/essential_commands.md
-      # Additional Day One articles coming soon:
-      # - Understanding What Happened: day_one/understanding_deployment.md
+
+      - From Scratch (kubectl):
+          - Getting kubectl Access: day_one/kubectl/access.md
+          - Your First Deployment: day_one/kubectl/first_deploy.md
+          - Essential kubectl Commands: day_one/kubectl/commands.md
+          - Understanding What Happened: day_one/kubectl/understanding.md
+
+      # Using Helm (Coming Soon):
+      #     - Getting Helm Access: day_one/helm/access.md
+      #     - Your First Helm Deployment: day_one/helm/first_deploy.md
+      #     - Essential Helm Commands: day_one/helm/commands.md
+      #     - Understanding What Helm Created: day_one/helm/understanding.md
 
   # EDITORIAL NOTE: Content below is commented out pending quality review
   # Goal: Implement progressive learning journey (Day One → Level 6)

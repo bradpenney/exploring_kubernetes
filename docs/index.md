@@ -1,3 +1,7 @@
+---
+title: Exploring Kubernetes - From First Deployment to Production Operations
+description: A practical journey through Kubernetes for developers and platform engineers. Learn core concepts, kubectl, and Helm through real-world scenarios.
+---
 <img src="images/exploring_kubernetes.png" alt="Exploring Kubernetes" class="img-responsive-right" width="300">
 
 # Exploring Kubernetes
@@ -12,25 +16,61 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
 
 ## Learning Path
 
+### Day One: Getting Started
+
+**Everyone starts here:** Learn what Kubernetes is and why it exists, then choose your path based on how you'll deploy applications.
+
+**Shared foundation (read these first):**
+
+- [Day One Overview](day_one/overview.md) - Your complete Day One roadmap
+- [What Is Kubernetes?](day_one/what_is_kubernetes.md) - The problem Kubernetes solves and why companies adopt it
+
+**Then choose your deployment path:**
+
 <div class="grid cards" markdown>
 
-- :material-rocket-launch: **[Day One - Getting Started](day_one/overview.md)**
+- :material-code-braces: **Path 1: From Scratch (kubectl)**
 
     ---
 
-    **For:** Application developers with `kubectl` access to a real cluster (that's probably you!)
+    **For:** Learning Kubernetes fundamentals by writing YAML and using `kubectl` directly
 
-    **Goal:** Deploy your first application successfully and understand what you're doing
+    **Your situation:** You're learning Kubernetes from the ground up, or your team deploys with raw YAML manifests
 
-    **Your situation:** Your manager said "we're using Kubernetes now," your team doesn't know it, and you need to deploy your app to dev so QA can test it.
+    **What you'll do:** Write Deployment and Service YAML, apply with `kubectl`, understand Pods, ReplicaSets, and Services from first principles
 
     **Articles:**
 
-    - [What Is Kubernetes?](day_one/what_is_kubernetes.md)
-    - [Getting `kubectl` Access](day_one/kubectl_access.md)
-    - [Your First Deployment](day_one/first_deployment.md)
-    - [Essential `kubectl` Commands](day_one/essential_commands.md)
-    - Understanding What Happened *(coming soon)*
+    - [Getting `kubectl` Access](day_one/kubectl/access.md)
+    - [Your First Deployment](day_one/kubectl/first_deploy.md)
+    - [Essential `kubectl` Commands](day_one/kubectl/commands.md)
+    - [Understanding What Happened](day_one/kubectl/understanding.md)
+
+- :material-package-variant: **Path 2: Using Helm** *(coming soon)*
+
+    ---
+
+    **For:** Working with Helm charts—either from CI/CD pipelines or vendor distributions
+
+    **Your situation:** Your CI/CD pipeline (Jenkins, GitLab CI, GitHub Actions, etc.) generates Helm charts, or you need to deploy vendor software like MongoDB/Prometheus from Bitnami charts
+
+    **What you'll do:** Deploy and customize Helm charts with `values.yaml`, use `helm` commands, understand what Helm creates under the hood
+
+    **Articles:** *(in development)*
+
+    - Getting Helm Access
+    - Your First Helm Deployment
+    - Essential Helm Commands
+    - Understanding What Helm Created
+
+</div>
+
+!!! tip "Both Paths Converge at Level 1"
+    Whether you start From Scratch or Using Helm, both paths teach you to deploy applications and understand Kubernetes. They converge at Level 1 where everyone needs the same deep knowledge of Pods, Services, and Deployments.
+
+### Continuing Your Journey
+
+<div class="grid cards" markdown>
 
 - :material-cube: **Level 1 - Core Primitives** *(Coming Soon)*
 
@@ -178,14 +218,19 @@ flowchart TD
 
 === "Starting Point: Application Developer"
 
-    **Day One and Level 1-2** assume you're an application developer with:
+    **Day One (both paths) and Level 1-2** assume you're an application developer with:
 
-    - `kubectl` access to a real development cluster (not minikube!)
-    - An application to deploy
+    - Access to a real development cluster (not minikube!)
+    - An application to deploy (or vendor software to install)
     - Limited command-line experience
     - No Kubernetes knowledge
     - **A team where nobody knows Kubernetes either** (you're all figuring this out)
     - **A manager who said "we're using Kubernetes now"** (but can't teach you)
+
+    **After the shared foundation, choose your path:**
+
+    - **[From Scratch (kubectl)](day_one/kubectl/access.md)** if you're writing YAML or learning fundamentals
+    - **Using Helm** *(coming soon)* if your CI/CD pipeline generates charts or you're deploying vendor products
 
     **The reality:** Your company adopted Kubernetes. Your teammates are learning alongside you. Nobody expects you to become an expert—just functional enough to deploy your code and debug when things break.
 
@@ -206,14 +251,18 @@ flowchart TD
 
 This site takes a unique approach to teaching Kubernetes:
 
-- **Assumes real cluster access** — You already have `kubectl` credentials, skip the local setup
+- **Two entry points** — Learn from scratch with YAML, or start with Helm charts (both valid!)
+- **Assumes real cluster access** — You already have credentials, skip the local setup
 - **Starts with deployment** — Get working first, understand architecture later
 - **Acknowledges the reality** — Your team is figuring this out together, you're not alone
 - **Builds confidence gradually** — Read-only commands first, then move to changes
 - **Progressive personas** — Start as app developer (Day One - Level 2), grow into platform engineer (Level 3-6)
 - **Production safety throughout** — Namespace awareness, command labels, safety-first approach
 
-**If you just received `kubectl` credentials to your company's dev cluster** and need to deploy your app, start with [Day One](day_one/overview.md).
+**Start with the shared foundation** (Overview + What Is Kubernetes?), then:
+
+- **If you're writing YAML manifests** or learning fundamentals → [Day One: From Scratch (kubectl)](day_one/kubectl/access.md)
+- **If you're working with Helm charts** from CI/CD pipelines or vendors → Day One: Using Helm *(coming soon)*
 
 **If you're a platform engineer** preparing to run production clusters, you'll still benefit from the progressive learning path, but can move faster through early levels.
 

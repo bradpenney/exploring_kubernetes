@@ -1,7 +1,11 @@
+---
+title: Essential kubectl Commands - A Developer's Cheat Sheet
+description: Master the most important kubectl commands for managing pods, deployments, services, and troubleshooting your applications.
+---
 # Essential kubectl Commands
 
 !!! tip "Part of Day One: Getting Started"
-    This is the fourth article in [Day One: Getting Started](overview.md). If you haven't deployed anything yet, do [Your First Deployment](first_deployment.md) first.
+    This is the fourth article in [Day One: Getting Started](../overview.md). If you haven't deployed anything yet, do [Your First Deployment](first_deploy.md) first.
 
 You just deployed your first application to Kubernetes. It worked! But you also noticed something: you ran `kubectl apply`, then `kubectl get pods`, then `kubectl describe`, then `kubectl logs`... and you're starting to wonder: **how many of these commands do I actually need to know?**
 
@@ -9,17 +13,14 @@ Good news: despite hundreds of possible `kubectl` commands and flags, you'll use
 
 This guide organizes the essential commands by what you're trying to do, shows you exactly what output to expect, and gives you the confidence to explore safely.
 
-## What You'll Learn
+!!! info "What You'll Learn"
+    By the end of this article, you'll know:
 
-By the end of this article, you'll know:
-
-- The daily commands you'll run dozens of times (read-only and safe)
-- The deployment commands that modify resources (use with awareness)
-- The troubleshooting commands that save you when things break
-- How to combine commands with useful flags
-- Which commands are safe vs. destructive
-
----
+    - The daily commands you'll run dozens of times (read-only and safe)
+    - The deployment commands that modify resources (use with awareness)
+    - The troubleshooting commands that save you when things break
+    - How to combine commands with useful flags
+    - Which commands are safe vs. destructive
 
 ## The Daily Commands
 
@@ -183,26 +184,104 @@ These are the commands you'll run dozens of times per day. They're all equally i
 ??? tip "Pro Tips - Click to Expand"
     **Create shell aliases for commands you run constantly:**
 
-    ```bash title="Add to ~/.bashrc or ~/.zshrc"
-    alias k=kubectl
-    alias kgp='kubectl get pods'
-    alias kgd='kubectl get deployments'
-    alias kgs='kubectl get svc'
-    alias kga='kubectl get all'
-    alias kd='kubectl describe'
-    alias kl='kubectl logs'
-    alias kaf='kubectl apply -f'
-    alias kdel='kubectl delete'
-    ```
+    === "bash/zsh (Linux/Mac)"
 
-    After adding these, run `source ~/.bashrc` (or `source ~/.zshrc`), then you can use `k get pods` instead of `kubectl get pods`.
+        ```bash title="Add to ~/.bashrc or ~/.zshrc"
+        alias k=kubectl
+        alias kgp='kubectl get pods'
+        alias kgd='kubectl get deployments'
+        alias kgs='kubectl get svc'
+        alias kga='kubectl get all'
+        alias kd='kubectl describe'
+        alias kl='kubectl logs'
+        alias kaf='kubectl apply -f'
+        alias kdel='kubectl delete'
+        ```
+
+        After adding these, run `source ~/.bashrc` (or `source ~/.zshrc`), then you can use `k get pods` instead of `kubectl get pods`.
+
+    === "PowerShell (Windows)"
+
+        ```powershell title="Add to your PowerShell profile"
+        # Find your profile location:
+        # $PROFILE
+
+        # Edit your profile (creates if missing):
+        # notepad $PROFILE
+
+        # Add these functions:
+        function k { kubectl $args }
+        function kgp { kubectl get pods $args }
+        function kgd { kubectl get deployments $args }
+        function kgs { kubectl get svc $args }
+        function kga { kubectl get all $args }
+        function kd { kubectl describe $args }
+        function kl { kubectl logs $args }
+        function kaf { kubectl apply -f $args }
+        function kdel { kubectl delete $args }
+        ```
+
+        After adding these, restart PowerShell, then you can use `k get pods` instead of `kubectl get pods`.
+
+        !!! tip "Reload Without Restarting"
+            After editing your profile, reload it:
+            ```powershell
+            . $PROFILE
+            ```
+
+    **Enable kubectl autocomplete** for tab completion of commands and resource names:
+
+    === "bash"
+
+        ```bash title="Add to ~/.bashrc"
+        # Enable kubectl autocompletion
+        source <(kubectl completion bash)
+
+        # If using alias 'k', add completion for it:
+        complete -o default -F __start_kubectl k
+        ```
+
+        After adding, run `source ~/.bashrc` or restart your terminal.
+
+    === "zsh"
+
+        ```bash title="Add to ~/.zshrc"
+        # Enable kubectl autocompletion
+        source <(kubectl completion zsh)
+
+        # If using alias 'k', add completion for it:
+        compdef __start_kubectl k
+        ```
+
+        After adding, run `source ~/.zshrc` or restart your terminal.
+
+    === "PowerShell"
+
+        ```powershell title="Add to your PowerShell profile"
+        # Enable kubectl autocompletion
+        kubectl completion powershell | Out-String | Invoke-Expression
+
+        # Optional: Set alias 'k' to kubectl
+        Set-Alias -Name k -Value kubectl
+        ```
+
+        After adding, restart PowerShell or run `. $PROFILE`.
+
+    **With autocomplete enabled:** Press `Tab` while typing commands:
+
+    - `kubectl get po` + `Tab` → `kubectl get pods`
+    - `kubectl describe pod my-app-` + `Tab` → shows matching pod names
+    - `kubectl -n ` + `Tab` → shows available namespaces
 
     **Set your default namespace** so you don't need `-n namespace` every time:
 
-    ```bash title="Set Default Namespace"
+    ```bash title="Set Default Namespace (Works in all shells)"
     kubectl config set-context --current --namespace=your-namespace
     # Now all commands use this namespace by default
     ```
+
+    !!! tip "Need to switch between multiple contexts?"
+        If you work with multiple clusters (dev, staging, prod), you'll use `kubectl config use-context` to switch between them. See **[Getting kubectl Access: Switching Contexts](access.md#switching-contexts)** for the full workflow.
 
 ---
 
@@ -285,7 +364,7 @@ graph TD
 
     **How it works:** `kubectl apply` is declarative—it figures out what needs to be created, updated, or left alone. Run it multiple times safely; it only makes necessary changes.
 
-    ⚠️ **Caution:** Creates or modifies resources in your namespace - can trigger pod restarts if changing images or resource limits
+    ⚠️ **Caution:** Creates or modifies resources in your namespace - can trigger Pod restarts if changing images or resource limits
 
 === "kubectl delete"
 
@@ -590,7 +669,7 @@ These flags work with most `kubectl` commands and dramatically increase their po
 
     ### Labels
 
-    Filter resources by labels (the key/value pairs attached to resources):
+    Labels are key/value pairs attached to resources—the fundamental way Kubernetes connects resources together.
 
     ```bash title="Filter by Label"
     kubectl get pods -l app=nginx
@@ -605,6 +684,27 @@ These flags work with most `kubectl` commands and dramatically increase their po
     # NAME                        READY   STATUS    LABELS
     # my-app-7c5ddbdf54-2xkqn     1/1     Running   app=nginx,pod-template-hash=7c5ddbdf54
     ```
+
+    ```bash title="Trace Label Matching (Troubleshooting)"
+    # 1. Check what label your Service is looking for
+    kubectl get service my-app-svc -o jsonpath='{.spec.selector}'
+    # {"app":"nginx"}
+
+    # 2. Check if your Pods have that label
+    kubectl get pods -l app=nginx
+    # If empty, labels don't match!
+
+    # 3. Check Service endpoints
+    kubectl get endpoints my-app-svc
+    # Should show Pod IPs - if empty, labels don't match
+    ```
+
+    !!! tip "Understanding Labels"
+        Labels are how Services find Pods, how Deployments manage Pods, and how you filter resources. Without matching labels, Services can't route traffic—this is the #1 cause of "my service returns 503" problems.
+
+        **Visual explanation:** See the [label matching diagram in Your First Deployment](first_deploy.md#your-first-deployment) showing how Deployment, Pods, and Service connect via labels.
+
+        **Deep dive:** For the complete explanation, see **[Understanding What Happened: Labels - The Glue](understanding.md#labels-the-glue)**
 
 === "Watch"
 
@@ -1145,8 +1245,8 @@ Common pitfalls that trip up even experienced users:
 
 ### Related Articles
 
-- [Your First Deployment](first_deployment.md) - How you got here
-- [Understanding What Happened](understanding_deployment.md) - What's next: understand the architecture
+- [Your First Deployment](first_deploy.md) - How you got here
+- [Understanding What Happened](understanding.md) - What's next: understand the architecture
 
 ---
 
@@ -1154,4 +1254,4 @@ Common pitfalls that trip up even experienced users:
 
 You've mastered the essential commands. Now understand what actually happens when you deploy:
 
-**[Understanding What Happened](understanding_deployment.md)** - Learn about the Kubernetes architecture, how controllers work, and what all those resources (`Deployment`, `ReplicaSet`, `Pod`, `Service`) actually do behind the scenes.
+**[Understanding What Happened](understanding.md)** - Learn about the Kubernetes architecture, how controllers work, and what all those resources (`Deployment`, `ReplicaSet`, `Pod`, `Service`) actually do behind the scenes.
