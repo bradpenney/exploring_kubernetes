@@ -47,6 +47,7 @@ theme:
 
 plugins:
   - search
+  - meta
   - social:
       cards: true
       cards_layout_options:
