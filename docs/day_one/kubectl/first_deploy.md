@@ -1,6 +1,6 @@
 ---
 title: Your First Kubernetes Deployment - Using kubectl
-description: Step-by-step guide to deploying your first containerized application to Kubernetes using the kubectl command line.
+description: Deploy your first containerized application to Kubernetes with kubectl. Step-by-step guide covering Pods, Services, and troubleshooting common issues.
 ---
 # Your First Deployment
 

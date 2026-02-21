@@ -1,6 +1,6 @@
 ---
 title: Getting kubectl Access - Configuring Your Environment
-description: Learn how to install kubectl and configure cluster access using kubeconfig files. The essential first step for Kubernetes management.
+description: Install kubectl and configure Kubernetes cluster access using kubeconfig files. Complete setup guide for AWS, Azure, GCP, and on-premises clusters.
 ---
 # Getting kubectl Access
 

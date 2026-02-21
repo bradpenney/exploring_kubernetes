@@ -1,6 +1,6 @@
 ---
 title: Essential kubectl Commands - A Developer's Cheat Sheet
-description: Master the most important kubectl commands for managing pods, deployments, services, and troubleshooting your applications.
+description: Master essential kubectl commands for managing Pods, Deployments, and Services. Practical cheat sheet with examples for troubleshooting K8s applications.
 ---
 # Essential kubectl Commands
 

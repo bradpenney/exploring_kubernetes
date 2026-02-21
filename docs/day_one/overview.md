@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Kubernetes - Day One Guide
-description: A developer-focused introduction to Kubernetes. Learn what Kubernetes is and how to deploy your first application with confidence.
+description: Developer-focused introduction to Kubernetes. Learn what K8s is, deploy your first application, and master essential kubectl commands with confidence.
 ---
 # Day One: Getting Started with Kubernetes
 
@@ -18,16 +18,15 @@ This is your first time working with Kubernetes, and you're probably feeling one
 
 This guide is for application developers who need to deploy their code to a Kubernetes cluster. Not infrastructure engineers (yet)—just developers who need to ship their applications.
 
-## What You'll Learn
+!!! info "What You'll Learn"
+    By the end of Day One, you'll know how to:
 
-By the end of Day One, you'll know how to:
-
-- **Understand Kubernetes** - What it is, why your company uses it, what problem it solves
-- **Connect to your cluster** - Authentication, contexts, and namespaces
-- **Deploy your first application** - From container image to running pods
-- **Use essential commands** - The tools you'll use daily for deployment and troubleshooting
-- **Understand what you just did** - What actually happens when you deploy
-- **Explore safely** - Read-only vs. destructive operations, troubleshooting basics
+    - **Understand Kubernetes** - What it is, why your company uses it, what problem it solves
+    - **Connect to your cluster** - Authentication, contexts, and namespaces
+    - **Deploy your first application** - From container image to running pods
+    - **Use essential commands** - The tools you'll use daily for deployment and troubleshooting
+    - **Understand what you just did** - What actually happens when you deploy
+    - **Explore safely** - Read-only vs. destructive operations, troubleshooting basics
 
 ## Your First Day: The Journey
 
@@ -291,14 +290,14 @@ Not sure which path to choose? Use these criteria to decide:
     - Your team deploys with `kubectl apply`
     - You want to understand every building block
 
--   :material-dharmachakra: **The Helm Path (Coming Soon)**
+-   :material-dharmachakra: **The Helm Path**
 
     ---
 
     **Choose this if:**
 
     - Your CI/CD pipeline generates Helm charts for you
-    - You need to deploy vendor charts (PostgreSQL, Redis, etc.)
+    - You need to deploy vendor charts (Prometheus, Grafana, Redis, etc.)
     - Your team standardizes on Helm for all deployments
     - You were told "just run `helm install`"
 
@@ -329,37 +328,37 @@ Not sure which path to choose? Use these criteria to decide:
 
     </div>
 
-=== "Helm Path (Package Manager) 🚧"
+=== "Helm Path (Package Manager)"
 
-    !!! info "Coming Soon"
-        The Helm path articles are currently in development. In the meantime, the kubectl path will teach you the foundational Kubernetes concepts that apply to both approaches.
-
-    **Planned articles:**
+    !!! info "Helm Path Now Available"
+        The first Helm article is now published! The remaining articles are in development. Both paths teach the same foundational Kubernetes concepts.
 
     <div class="grid cards" markdown>
 
-    - :material-connection: **Getting Helm Access**
+    - :material-connection: **[Getting Helm Access](helm/access.md)**
 
       Install Helm CLI and connect to your cluster using existing kubectl credentials.
 
-    - :material-dharmachakra: **Your First Helm Deployment**
+    - :material-dharmachakra: **Your First Helm Deployment** *(coming soon)*
 
       Deploy your first chart from CI/CD pipeline or vendor repository.
 
-    - :material-console: **Essential Helm Commands**
+    - :material-console: **Essential Helm Commands** *(coming soon)*
 
       Master `helm install`, `helm upgrade`, `helm rollback`, and release management.
 
-    - :material-lightbulb: **Understanding What Helm Created**
+    - :material-lightbulb: **Understanding What Helm Created** *(coming soon)*
 
       See how Helm translates values into Kubernetes resources under the hood.
 
     </div>
 
-!!! success "kubectl Path Complete!"
-    The kubectl path through Day One is complete! Start with **[What Is Kubernetes?](what_is_kubernetes.md)** and work through the five articles to complete your first day with Kubernetes.
+!!! success "Day One Paths Available"
+    **kubectl Path:** Complete! All four articles published.
 
-    The Helm path articles are in development and will be released soon.
+    **Helm Path:** First article now available ([Getting Helm Access](helm/access.md)). Additional articles coming soon.
+
+    Start with **[What Is Kubernetes?](what_is_kubernetes.md)** then choose your path!
 
 ---
 

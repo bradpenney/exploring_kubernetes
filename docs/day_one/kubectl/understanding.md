@@ -1,6 +1,6 @@
 ---
-title: Understanding Kubernetes Objects - Pods, Deployments, and Services
-description: A deep dive into what happens behind the scenes when you deploy to Kubernetes. Learn the relationship between Pods and Deployments.
+title: Understanding Kubernetes Objects - Pods and Deployments
+description: Deep dive into Kubernetes architecture. Learn how Deployments, ReplicaSets, and Pods work together when you deploy applications to K8s clusters.
 ---
 # Understanding What Happened
 

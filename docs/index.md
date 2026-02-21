@@ -1,5 +1,5 @@
 ---
-title: Exploring Kubernetes - From First Deployment to Production Operations
+title: Exploring Kubernetes - Developer to Platform Engineer Guide
 description: A practical journey through Kubernetes for developers and platform engineers. Learn core concepts, kubectl, and Helm through real-world scenarios.
 ---
 <img src="images/exploring_kubernetes.png" alt="Exploring Kubernetes" class="img-responsive-right" width="300">
@@ -46,22 +46,22 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
     - [Essential `kubectl` Commands](day_one/kubectl/commands.md)
     - [Understanding What Happened](day_one/kubectl/understanding.md)
 
-- :material-package-variant: **Path 2: Using Helm** *(coming soon)*
+- :material-package-variant: **Path 2: Using Helm**
 
     ---
 
     **For:** Working with Helm charts—either from CI/CD pipelines or vendor distributions
 
-    **Your situation:** Your CI/CD pipeline (Jenkins, GitLab CI, GitHub Actions, etc.) generates Helm charts, or you need to deploy vendor software like MongoDB/Prometheus from Bitnami charts
+    **Your situation:** Your CI/CD pipeline (Jenkins, GitLab CI, GitHub Actions, etc.) generates Helm charts, or you need to deploy vendor software like Prometheus/Grafana from Bitnami charts
 
     **What you'll do:** Deploy and customize Helm charts with `values.yaml`, use `helm` commands, understand what Helm creates under the hood
 
-    **Articles:** *(in development)*
+    **Articles:**
 
-    - Getting Helm Access
-    - Your First Helm Deployment
-    - Essential Helm Commands
-    - Understanding What Helm Created
+    - [Getting Helm Access](day_one/helm/access.md)
+    - Your First Helm Deployment *(coming soon)*
+    - Essential Helm Commands *(coming soon)*
+    - Understanding What Helm Created *(coming soon)*
 
 </div>
 
@@ -230,7 +230,7 @@ flowchart TD
     **After the shared foundation, choose your path:**
 
     - **[From Scratch (kubectl)](day_one/kubectl/access.md)** if you're writing YAML or learning fundamentals
-    - **Using Helm** *(coming soon)* if your CI/CD pipeline generates charts or you're deploying vendor products
+    - **[Using Helm](day_one/helm/access.md)** if your CI/CD pipeline generates charts or you're deploying vendor products
 
     **The reality:** Your company adopted Kubernetes. Your teammates are learning alongside you. Nobody expects you to become an expert—just functional enough to deploy your code and debug when things break.
 
@@ -262,7 +262,7 @@ This site takes a unique approach to teaching Kubernetes:
 **Start with the shared foundation** (Overview + What Is Kubernetes?), then:
 
 - **If you're writing YAML manifests** or learning fundamentals → [Day One: From Scratch (kubectl)](day_one/kubectl/access.md)
-- **If you're working with Helm charts** from CI/CD pipelines or vendors → Day One: Using Helm *(coming soon)*
+- **If you're working with Helm charts** from CI/CD pipelines or vendors → [Day One: Using Helm](day_one/helm/access.md)
 
 **If you're a platform engineer** preparing to run production clusters, you'll still benefit from the progressive learning path, but can move faster through early levels.
 

@@ -44,3 +44,28 @@
 .grid.cards {
   grid-template-columns: 1fr !important;
 }
+
+/* Center all tables */
+.md-typeset table {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+
+.md-typeset .md-typeset__scrollwrap,
+.md-typeset .md-typeset__table {
+  display: flex;
+  justify-content: center;
+}
+
+/* Center table headers, left-align content */
+.md-typeset table th {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.md-typeset table td {
+  text-align: left !important;
+  vertical-align: middle !important;
+}
