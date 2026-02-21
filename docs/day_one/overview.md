@@ -209,7 +209,7 @@ Why are you really here? Probably one of these situations (examples show both pa
         **What you need to learn:**
 
         - ConfigMaps and Secrets (where config lives)
-        - How to update them with `kubectl edit` or `kubectl apply`
+        - How to update them with `kubectl apply`
         - How to restart your deployment to pick up changes
         - How to verify the new value is being used
 

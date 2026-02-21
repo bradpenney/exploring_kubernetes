@@ -333,8 +333,11 @@ Here's what happens when you deploy an application:
 
     ⚠️ **Caution (Modifies Resources):**
 
-    ```bash title="Update to Nginx 1.22"
-    kubectl set image deployment/nginx-deployment nginx=nginx:1.22
+    ```yaml title="deployment.yaml — update image tag, then apply"
+    # Change the image tag in your YAML file:
+    #   image: nginx:1.21  →  image: nginx:1.22
+    # Then apply the change:
+    # kubectl apply -f deployment.yaml
     ```
 
     **The flow:**
@@ -539,10 +542,11 @@ spec:
         # nginx-deployment-7c5ddbdf54   3         3         3       10m
         ```
 
-        Update the image:
+        Update the image by editing `nginx-deployment.yaml` — change `nginx:1.21` to `nginx:1.22`, save, then apply:
 
-        ```bash title="Update to Nginx 1.22"
-        kubectl set image deployment/nginx-deployment nginx=nginx:1.22
+        ```bash title="Apply the Updated Image Tag"
+        kubectl apply -f nginx-deployment.yaml
+        # deployment.apps/nginx-deployment configured
         ```
 
         Watch the rollout:

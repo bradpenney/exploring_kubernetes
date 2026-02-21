@@ -45,8 +45,8 @@ Imagine you've containerized your application. You have:
 
 - A frontend container (React app)
 - A backend container (API server)
-- A database container (PostgreSQL)
-- Maybe a cache (Redis)
+- A cache container (Redis)
+- Maybe a message queue (RabbitMQ)
 
 **On your laptop:** Docker Compose handles this beautifully. One `docker-compose up` and everything runs.
 

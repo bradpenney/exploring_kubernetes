@@ -555,28 +555,16 @@ graph TD
 
         **Common debugging tasks (if you have `exec` access):**
 
-
-
         - Check if config files are mounted correctly
-
         - Test network connectivity (`curl`, `ping`)
-
         - Verify environment variables
-
         - Inspect file permissions
-
-
 
         🚨 **DANGER:**
 
-
-
         - You can modify the container's filesystem (changes lost when pod/container restarts)
-
         - You have network access to internal cluster services
-
         - Your actions are audited—use responsibly and only in dev/test environments
-
         - Never use `exec` in production unless explicitly authorized
 
 === "kubectl rollout"
@@ -1182,13 +1170,11 @@ Common pitfalls that trip up even experienced users:
         ```
 
         ```bash title="4. Fix the Deployment"
-        # Edit the YAML file - change image to nginx:1.21
-        # Or use kubectl edit:
-        kubectl edit deployment broken-app
-        # This opens your editor - change image to nginx:1.21, save, exit
-
-        # Or update the file and reapply:
-        # (Edit broken-deployment.yaml to use nginx:1.21)
+        # Edit broken-deployment.yaml and change:
+        #   image: nginx:nonexistent-tag
+        # to:
+        #   image: nginx:1.21
+        # Save the file, then reapply:
         kubectl apply -f broken-deployment.yaml
         # deployment.apps/broken-app configured
         ```
