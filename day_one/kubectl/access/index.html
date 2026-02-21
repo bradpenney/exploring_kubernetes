@@ -1,0 +1,2929 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Install kubectl and configure Kubernetes cluster access using kubeconfig files. Complete setup guide for AWS, Azure, GCP, and on-premises clusters.">
+      
+      
+        <meta name="author" content="Brad Penney">
+      
+      
+        <link rel="canonical" href="https://kubernetes.bradpenney.io/day_one/kubectl/access/">
+      
+      
+        <link rel="prev" href="../../what_is_kubernetes/">
+      
+      
+        <link rel="next" href="../first_deploy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../images/exploring_kubernetes.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Getting kubectl Access - Configuring Your Environment - Exploring Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1%207.775V2.75C1%201.784%201.784%201%202.75%201h5.025c.464%200%20.91.184%201.238.513l6.25%206.25a1.75%201.75%200%200%201%200%202.474l-5.026%205.026a1.75%201.75%200%200%201-2.474%200l-6.25-6.25A1.75%201.75%200%200%201%201%207.775m1.5%200c0%20.066.026.13.073.177l6.25%206.25a.25.25%200%200%200%20.354%200l5.025-5.025a.25.25%200%200%200%200-.354l-6.25-6.25a.25.25%200%200%200-.177-.073H2.75a.25.25%200%200%200-.25.25ZM6%205a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.5%201.75v11.5c0%20.138.112.25.25.25h3.17a.75.75%200%200%201%200%201.5H2.75A1.75%201.75%200%200%201%201%2013.25V1.75C1%20.784%201.784%200%202.75%200h8.5C12.216%200%2013%20.784%2013%201.75v7.736a.75.75%200%200%201-1.5%200V1.75a.25.25%200%200%200-.25-.25h-8.5a.25.25%200%200%200-.25.25m13.274%209.537zl-4.557%204.45a.75.75%200%200%201-1.055-.008l-1.943-1.95a.75.75%200%200%201%201.062-1.058l1.419%201.425%204.026-3.932a.75.75%200%201%201%201.048%201.074M4.75%204h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M4%207.75A.75.75%200%200%201%204.75%207h2a.75.75%200%200%201%200%201.5h-2A.75.75%200%200%201%204%207.75%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3.499.75a.75.75%200%200%201%201.5%200v.996C5.9%202.903%206.793%203.65%207.662%204.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873%2010.794-.045%2012.622.26%2014.408.558%2016%201.94%2016%204.25c0%201.278-.954%202.575-2.44%202.734l.146.508.065.22c.203.701.412%201.455.476%202.226.142%201.707-.4%203.03-1.487%203.898C11.714%2014.671%2010.27%2015%208.75%2015h-6a.75.75%200%200%201%200-1.5h1.376a4.5%204.5%200%200%201-.563-1.191%203.84%203.84%200%200%201-.05-2.063%204.65%204.65%200%200%201-2.025-.293.75.75%200%200%201%20.525-1.406c1.357.507%202.376-.006%202.698-.318l.009-.01a.747.747%200%200%201%201.06%200%20.75.75%200%200%201-.012%201.074c-.912.92-.992%201.835-.768%202.586.221.74.745%201.337%201.196%201.621H8.75c1.343%200%202.398-.296%203.074-.836.635-.507%201.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4%202.4%200%200%201-.507-.441%203.1%203.1%200%200%201-.633-1.248.75.75%200%200%201%201.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738%200%201.25-.615%201.25-1.25%200-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706%201.345-.46.92-.27%201.774.019%203.062l.042.19.01.05c.348.443.666.949.94%201.553a.75.75%200%201%201-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7%205.527c-.814-.68-1.75-1.462-2.692-2.619a3.7%203.7%200%200%200-1.023.88c-.406.495-.663%201.036-.722%201.508.116.122.306.21.591.239.388.038.797-.06%201.032-.19a.75.75%200%200%201%20.728%201.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75%205.677V5.5c0-.984.48-1.94%201.077-2.664.46-.559%201.05-1.055%201.673-1.353z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M13.78%204.22a.75.75%200%200%201%200%201.06l-7.25%207.25a.75.75%200%200%201-1.06%200L2.22%209.28a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018L6%2010.94l6.72-6.72a.75.75%200%200%201%201.06%200%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.92%206.085h.001a.749.749%200%201%201-1.342-.67c.169-.339.436-.701.849-.977C6.845%204.16%207.369%204%208%204a2.76%202.76%200%200%201%201.637.525c.503.377.863.965.863%201.725%200%20.448-.115.83-.329%201.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6%206%200%200%200-.26.16%201%201%200%200%200-.276.245.75.75%200%200%201-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1%201%200%200%200%20.277-.245C8.96%206.514%209%206.427%209%206.25a.61.61%200%200%200-.262-.525A1.27%201.27%200%200%200%208%205.5c-.369%200-.595.09-.74.187a1%201%200%200%200-.34.398M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.344%202.343za8%208%200%200%201%2011.314%2011.314A8.002%208.002%200%200%201%20.234%2010.089a8%208%200%200%201%202.11-7.746m1.06%2010.253a6.5%206.5%200%201%200%209.108-9.275%206.5%206.5%200%200%200-9.108%209.275M6.03%204.97%208%206.94l1.97-1.97a.749.749%200%200%201%201.275.326.75.75%200%200%201-.215.734L9.06%208l1.97%201.97a.749.749%200%200%201-.326%201.275.75.75%200%200%201-.734-.215L8%209.06l-1.97%201.97a.749.749%200%200%201-1.275-.326.75.75%200%200%201%20.215-.734L6.94%208%204.97%206.03a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.72.22a.75.75%200%200%201%201.06%200l1%20.999a3.5%203.5%200%200%201%202.441%200l.999-1a.748.748%200%200%201%201.265.332.75.75%200%200%201-.205.729l-.775.776c.616.63.995%201.493.995%202.444v.327q0%20.15-.025.292c.408.14.764.392%201.029.722l1.968-.787a.75.75%200%200%201%20.556%201.392L13%207.258V9h2.25a.75.75%200%200%201%200%201.5H13v.5q-.002.615-.141%201.186l2.17.868a.75.75%200%200%201-.557%201.392l-2.184-.873A5%205%200%200%201%208%2016a5%205%200%200%201-4.288-2.427l-2.183.873a.75.75%200%200%201-.558-1.392l2.17-.868A5%205%200%200%201%203%2011v-.5H.75a.75.75%200%200%201%200-1.5H3V7.258L.971%206.446a.75.75%200%200%201%20.558-1.392l1.967.787c.265-.33.62-.583%201.03-.722a1.7%201.7%200%200%201-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72%201.28a.75.75%200%200%201%200-1.06m.53%206.28a.75.75%200%200%200-.75.75V11a3.5%203.5%200%201%200%207%200V7.25a.75.75%200%200%200-.75-.75ZM6.173%205h3.654A.17.17%200%200%200%2010%204.827V4.5a2%202%200%201%200-4%200v.327c0%20.096.077.173.173.173%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-V01MJ4R3SQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-V01MJ4R3SQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-V01MJ4R3SQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Getting kubectl Access - Configuring Your Environment - Exploring Kubernetes" />
+<meta property="og:description" content="Install kubectl and configure Kubernetes cluster access using kubeconfig files. Complete setup guide for AWS, Azure, GCP, and on-premises clusters." />
+<meta property="og:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/access.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://kubernetes.bradpenney.io/day_one/kubectl/access/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Getting kubectl Access - Configuring Your Environment - Exploring Kubernetes" />
+<meta property="twitter:description" content="Install kubectl and configure Kubernetes cluster access using kubeconfig files. Complete setup guide for AWS, Azure, GCP, and on-premises clusters." />
+<meta property="twitter:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/access.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#getting-kubectl-access" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Exploring Kubernetes" class="md-header__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Exploring Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Getting kubectl Access - Configuring Your Environment
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Exploring Kubernetes" class="md-nav__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    Exploring Kubernetes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day One - Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Day One - Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../what_is_kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Kubernetes?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Scratch (kubectl)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    From Scratch (kubectl)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-connecting-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Connecting To
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing kubectl
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing kubectl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-if-i-cant-install-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What If I Can't Install kubectl?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-openshift-use-oc-instead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using OpenShift? Use oc Instead
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-your-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Your Credentials
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Your Credentials">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#which-method-does-your-company-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Method Does Your Company Use?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-your-company-authenticates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Your Company Authenticates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credential-lifecycle-what-happens-over-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credential Lifecycle: What Happens Over Time?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credential Lifecycle: What Happens Over Time?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Contexts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-multiple-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Multiple Contexts?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Contexts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contexts-vs-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexts vs Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verifying-your-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Your Connection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verifying Your Connection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-check-cluster-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Check cluster connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-check-your-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Check your namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-try-listing-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Try listing pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-connection-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Connection Problems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-your-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Your Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Your Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Can Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-cant-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Can't Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-kubectl-cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The kubectl Cheat Sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-dives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Dives
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../understanding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using Helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Helm Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Helm Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youre-connecting-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You're Connecting To
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing kubectl
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing kubectl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-if-i-cant-install-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What If I Can't Install kubectl?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-openshift-use-oc-instead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using OpenShift? Use oc Instead
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-your-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Your Credentials
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Your Credentials">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#which-method-does-your-company-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which Method Does Your Company Use?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-your-company-authenticates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Your Company Authenticates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credential-lifecycle-what-happens-over-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Credential Lifecycle: What Happens Over Time?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Credential Lifecycle: What Happens Over Time?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Contexts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-multiple-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Multiple Contexts?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-contexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching Contexts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contexts-vs-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contexts vs Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verifying-your-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying Your Connection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verifying Your Connection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-check-cluster-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Check cluster connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-check-your-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Check your namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-try-listing-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Try listing pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-connection-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Connection Problems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-your-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Your Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding Your Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Can Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-cant-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Can't Do
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-kubectl-cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The kubectl Cheat Sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-dives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Dives
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="getting-kubectl-access">Getting kubectl Access</h1>
+<div class="admonition tip">
+<p class="admonition-title">Part of Day One: Getting Started</p>
+<p>This is the second article in <a href="../../overview/">Day One: Getting Started</a>. Make sure you've read <a href="../../what_is_kubernetes/">What Is Kubernetes?</a> first.</p>
+</div>
+<p><strong>Before starting, your platform team should have provided:</strong></p>
+<div class="admonition info">
+<p class="admonition-title">Kubernetes Onboarding Checklist</p>
+<p>Before you can connect, your platform team needs to give you:</p>
+<p><strong>Required:</strong></p>
+<ul>
+<li><strong>Cluster name</strong> - Which Kubernetes cluster to connect to (e.g., <code>dev-cluster</code>, <code>eks-production</code>)</li>
+<li><strong>Your namespace</strong> - Where you can deploy (e.g., <code>dev-yourteam</code>, <code>yourname-dev</code>)</li>
+<li><strong>Authentication method</strong> - How to login (AWS CLI, Azure CLI, OIDC, etc.)</li>
+<li><strong>Connection instructions</strong> - Commands to run or documentation link</li>
+</ul>
+<p><strong>Optional (depends on your company's setup):</strong></p>
+<ul>
+<li><strong>Cluster region/location</strong> - For cloud providers (e.g., <code>us-west-2</code>, <code>europe-west1</code>)</li>
+<li><strong>VPN requirements</strong> - Do you need to be on VPN to access the cluster?</li>
+<li><strong>Registry credentials</strong> - For pulling images from private container registries</li>
+<li><strong>Kubeconfig file</strong> - Some companies provide a ready-to-use config file</li>
+<li><strong>Resource limits</strong> - What your namespace is allowed to use (CPU/memory quotas)</li>
+<li><strong>Support channel</strong> - Slack channel or contact for help</li>
+</ul>
+<p><strong>Missing something?</strong> Ask your platform team:</p>
+<ul>
+<li>"What cluster should I connect to?"</li>
+<li>"What namespace am I assigned?"</li>
+<li>"How do I authenticate to the cluster?"</li>
+<li>"Do I need VPN to access the cluster?"</li>
+</ul>
+</div>
+<p>If your platform team sent you a Slack message like "install <code>kubectl</code> and run this command," you're ready to start!</p>
+<p><strong>Good news:</strong> Modern Kubernetes authentication generates YOUR individual credentials automatically. No shared passwords, no precious files to protect. Your identity = your credentials = audit trail shows what YOU did.</p>
+<p>Let's get you connected.</p>
+<div class="admonition info">
+<p class="admonition-title">What You'll Learn</p>
+<p>By the end of this article, you'll be able to:</p>
+<ul>
+<li>Install <code>kubectl</code> on your operating system (macOS, Linux, or Windows)</li>
+<li>Understand which authentication method your company uses (cloud provider, OIDC, or certificates)</li>
+<li>Connect to your company's Kubernetes cluster with YOUR individual credentials</li>
+<li>Verify your access and check which namespace you're assigned</li>
+<li>Switch between multiple Kubernetes contexts (dev, staging, prod)</li>
+<li>Troubleshoot common connection problems</li>
+</ul>
+</div>
+<h2 id="what-youre-connecting-to">What You're Connecting To</h2>
+<p>Your company has a Kubernetes cluster—a group of servers running Kubernetes. You're not managing the cluster; you're just deploying your applications to it.</p>
+<p><strong>Think of it like:</strong></p>
+<ul>
+<li>The cluster is a shared server</li>
+<li>Your namespace is your home directory</li>
+<li><code>kubectl</code> is your SSH client</li>
+</ul>
+<p>You have access to YOUR namespace, not the whole cluster.</p>
+<p><strong>Namespace isolation means you only see resources in YOUR namespace by design.</strong> Other teams have their own namespaces isolated from yours. If <code>kubectl get pods</code> returns "No resources found," that's normal—you haven't deployed anything yet. Other teams' applications are running in their namespaces, invisible to you unless you explicitly switch namespaces with <code>-n other-namespace</code>. This isolation is a security and organizational feature, not a limitation.</p>
+<pre class="mermaid"><code>graph TD
+    You[You&lt;br/&gt;Developer]
+    kubectl[kubectl CLI]
+    auth[Your Identity&lt;br/&gt;AWS IAM / Azure AD / OIDC / Cert]
+    kubeconfig[~/.kube/config&lt;br/&gt;generated config]
+    cluster[Kubernetes Cluster]
+    namespace[Your Namespace&lt;br/&gt;dev-yourteam]
+
+    You --&gt;|runs commands| kubectl
+    kubectl --&gt;|reads| kubeconfig
+    kubeconfig --&gt;|authenticates with| auth
+    auth --&gt;|proves identity to| cluster
+    cluster --&gt;|grants access to| namespace
+
+    style You fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style kubectl fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style auth fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style kubeconfig fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style cluster fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style namespace fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<hr />
+<h2 id="installing-kubectl">Installing kubectl</h2>
+<p><code>kubectl</code> (pronounced "kube-control" or "kube-cuttle") is the command-line tool for talking to Kubernetes.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">macOS</label><label for="__tabbed_1_2">Linux</label><label for="__tabbed_1_3">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Using Homebrew:</strong>
+<div class="language-bash highlight"><span class="filename">Install kubectl with Homebrew</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>brew<span class="w"> </span>install<span class="w"> </span>kubectl
+</span></code></pre></div></p>
+<p><strong>Verify installation:</strong>
+<div class="language-bash highlight"><span class="filename">Verify kubectl installation</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>version<span class="w"> </span>--client
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Should show: Client Version: v1.28.x or similar</span>
+</span></code></pre></div></p>
+<div class="admonition tip">
+<p class="admonition-title">Apple Silicon (M1/M2/M3) Macs</p>
+<p><strong>Using Homebrew?</strong> You're all set—Homebrew automatically installs the correct ARM64 version.</p>
+<p><strong>Manual download?</strong> Use the <code>darwin/arm64</code> binary instead of <code>darwin/amd64</code>:</p>
+<div class="language-bash highlight"><span class="filename">Download kubectl for Apple Silicon</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span><span class="s2">&quot;https://dl.k8s.io/release/</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>-s<span class="w"> </span>https://dl.k8s.io/release/stable.txt<span class="k">)</span><span class="s2">/bin/darwin/arm64/kubectl&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>kubectl
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>mv<span class="w"> </span>kubectl<span class="w"> </span>/usr/local/bin/
+</span></code></pre></div>
+<p><strong>Intel Mac?</strong> Use <code>darwin/amd64</code> instead of <code>darwin/arm64</code> in the URL above.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<p><strong>Download and install:</strong>
+<div class="language-bash highlight"><span class="filename">Download and install kubectl</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span><span class="s2">&quot;https://dl.k8s.io/release/</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>-s<span class="w"> </span>https://dl.k8s.io/release/stable.txt<span class="k">)</span><span class="s2">/bin/linux/amd64/kubectl&quot;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>kubectl
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>mv<span class="w"> </span>kubectl<span class="w"> </span>/usr/local/bin/
+</span></code></pre></div></p>
+<p><strong>Verify installation:</strong>
+<div class="language-bash highlight"><span class="filename">Verify kubectl installation</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>version<span class="w"> </span>--client
+</span></code></pre></div></p>
+<details class="tip">
+<summary>Don't have sudo access? Install to your home directory</summary>
+<p>If you don't have sudo privileges or prefer a user-space installation:</p>
+<div class="language-bash highlight"><span class="filename">Install kubectl without sudo</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Download kubectl</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>curl<span class="w"> </span>-LO<span class="w"> </span><span class="s2">&quot;https://dl.k8s.io/release/</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>-s<span class="w"> </span>https://dl.k8s.io/release/stable.txt<span class="k">)</span><span class="s2">/bin/linux/amd64/kubectl&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Make it executable</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>chmod<span class="w"> </span>+x<span class="w"> </span>kubectl
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Create local bin directory if it doesn&#39;t exist</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/bin
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Move kubectl there</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>mv<span class="w"> </span>kubectl<span class="w"> </span>~/.local/bin/
+</span></code></pre></div>
+<p><strong>Add to PATH</strong> (if not already):</p>
+<div class="language-bash highlight"><span class="filename">Add ~/.local/bin to PATH</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Add to your shell config (~/.bashrc, ~/.zshrc, etc.)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export PATH=&quot;$HOME/.local/bin:$PATH&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Reload your shell config</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</span></code></pre></div>
+<p><strong>Verify:</strong>
+<div class="language-bash highlight"><span class="filename">Verify kubectl installation</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl<span class="w"> </span>version<span class="w"> </span>--client
+</span></code></pre></div></p>
+</details>
+</div>
+<div class="tabbed-block">
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">PowerShell (Recommended)</label><label for="__tabbed_2_2">Manual Download</label><label for="__tabbed_2_3">Package Managers</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Open PowerShell as Administrator and run:</p>
+<div class="language-powershell highlight"><span class="filename">Download kubectl</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c"># Download a recent stable release (check https://kubernetes.io/releases/ for latest)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-LO</span> <span class="s2">&quot;https://dl.k8s.io/release/v1.31.0/bin/windows/amd64/kubectl.exe&quot;</span>  <span class="c"># (1)!</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c"># Move to a permanent location</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nb">New-Item</span> <span class="n">-Path</span> <span class="s2">&quot;$env:USERPROFILE\bin&quot;</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nb">Move-Item</span> <span class="n">-Path</span> <span class="s2">&quot;kubectl.exe&quot;</span> <span class="n">-Destination</span> <span class="s2">&quot;$env:USERPROFILE\bin\kubectl.exe&quot;</span>
+</span></code></pre></div>
+<ol>
+<li>v1.31.0 is used as an example - <code>kubectl</code> versions are typically compatible across multiple Kubernetes versions. Your cluster's version doesn't need to match exactly. Check <a href="https://kubernetes.io/releases/">Kubernetes releases</a> for the latest stable version.</li>
+</ol>
+<p>Add to your PATH (still in PowerShell as Administrator):</p>
+<div class="language-powershell highlight"><span class="filename">Add kubectl to PATH</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c"># Get current PATH</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nv">$currentPath</span> <span class="p">=</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c"># Add kubectl directory to PATH</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="s2">&quot;Path&quot;</span><span class="p">,</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="s2">&quot;$currentPath;$env:USERPROFILE\bin&quot;</span><span class="p">,</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="s2">&quot;User&quot;</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Close and reopen PowerShell</strong> (needed for PATH change to take effect).</p>
+</div>
+<div class="tabbed-block">
+<p>If you prefer clicking through:</p>
+<ol>
+<li>
+<p>Download a recent release:</p>
+<ul>
+<li><strong>For latest version:</strong> Check <a href="https://kubernetes.io/releases/">Kubernetes releases</a> first, then download</li>
+<li><strong>Or use v1.31.0 (example):</strong> <a href="https://dl.k8s.io/release/v1.31.0/bin/windows/amd64/kubectl.exe">Download <code>kubectl.exe</code></a></li>
+<li>Save the file to your Downloads folder</li>
+</ul>
+</li>
+<li>
+<p>Create a directory for <code>kubectl</code>:</p>
+<ul>
+<li>Open File Explorer</li>
+<li>Navigate to <code>C:\Users\YourUsername\</code></li>
+<li>Create a new folder called <code>bin</code></li>
+<li>Move <code>kubectl.exe</code> from Downloads to <code>C:\Users\YourUsername\bin\</code></li>
+</ul>
+</li>
+<li>
+<p>Add to PATH:</p>
+<ul>
+<li>Press <code>Win + X</code>, select "System"</li>
+<li>Click "Advanced system settings" (right side)</li>
+<li>Click "Environment Variables" button</li>
+<li>Under "User variables", find and select "Path", click "Edit"</li>
+<li>Click "New" and add: <code>C:\Users\YourUsername\bin</code></li>
+<li>Click OK on all windows</li>
+<li><strong>Restart any open PowerShell or Command Prompt windows</strong></li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<p>If you use Chocolatey:
+<div class="language-powershell highlight"><span class="filename">Install with Chocolatey</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">choco</span> <span class="n">install</span> <span class="n">kubernetes-cli</span>
+</span></code></pre></div></p>
+<p>If you use winget (Windows 10+):
+<div class="language-powershell highlight"><span class="filename">Install with winget</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">winget</span> <span class="n">install</span> <span class="n">-e</span> <span class="p">-</span><span class="n">-id</span> <span class="n">Kubernetes</span><span class="p">.</span><span class="n">kubectl</span>
+</span></code></pre></div></p>
+</div>
+</div>
+</div>
+<p><strong>Verify Installation:</strong></p>
+<p>Open a <strong>new</strong> PowerShell window (not as Administrator needed) and run:</p>
+<div class="language-powershell highlight"><span class="filename">Verify kubectl works</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">kubectl</span> <span class="n">version</span> <span class="p">-</span><span class="n">-client</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c"># Should show: Client Version: v1.31.x</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Troubleshooting</p>
+<p>If you get "<code>kubectl</code> is not recognized":</p>
+<ol>
+<li>Make sure you opened a <strong>new</strong> PowerShell window after changing PATH</li>
+<li>Verify <code>kubectl.exe</code> exists: <code>Test-Path "$env:USERPROFILE\bin\kubectl.exe"</code></li>
+<li>Check your PATH includes the bin folder: <code>$env:PATH -split ';' | Select-String 'bin'</code></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<h3 id="what-if-i-cant-install-kubectl">What If I Can't Install kubectl?</h3>
+<div class="admonition warning">
+<p class="admonition-title">Restricted Corporate Environment?</p>
+<p><strong>If you can't install kubectl</strong> (restricted machine, lack of permissions, security policies), you have options:</p>
+</div>
+<p><strong>Common Scenarios:</strong></p>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12h7c-.53 4.11-3.28 7.78-7 8.92zH5V6.3l7-3.11M12 1 3 5v6c0 5.55 3.84 10.73 9 12 5.16-1.27 9-6.45 9-12V5z"/></svg></span> <strong>No Admin/Sudo Access</strong></p>
+<hr />
+<p><strong>Solution:</strong> Install to your home directory (no permissions needed)</p>
+<ul>
+<li><strong>Linux/Mac:</strong> Use the "Don't have sudo access?" section above</li>
+<li><strong>Windows:</strong> Install to <code>$env:USERPROFILE\bin</code> (PowerShell method works without admin)</li>
+</ul>
+<p>All installation methods shown above work without admin privileges.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5 5 5 0 0 1 5 5v2zm-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3"/></svg></span> <strong>Corporate Security Blocks kubectl</strong></p>
+<hr />
+<p><strong>Solution:</strong> Contact your platform or IT team</p>
+<p>Your company may provide:</p>
+<ul>
+<li>Pre-approved kubectl installer package</li>
+<li>Company-managed software portal</li>
+<li>Already installed on developer VMs</li>
+<li>Web-based kubectl access (Kubernetes Dashboard, Lens, k9s)</li>
+</ul>
+<p><strong>Ask:</strong> "How do I get kubectl installed on my machine?" or "Is there an approved kubectl installer?"</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 20q-2.28 0-3.89-1.57Q1 16.85 1 14.58q0-1.95 1.17-3.48 1.18-1.53 3.08-1.95.63-2.3 2.5-3.72Q9.63 4 12 4q2.93 0 4.96 2.04Q19 8.07 19 11q1.73.2 2.86 1.5 1.14 1.28 1.14 3 0 1.88-1.31 3.19T18.5 20Z"/></svg></span> <strong>Using a Managed Development Environment</strong></p>
+<hr />
+<p><strong>Solution:</strong> kubectl might already be there</p>
+<p>If your company provides:</p>
+<ul>
+<li>Cloud-based IDEs (GitHub Codespaces, GitPod, AWS Cloud9)</li>
+<li>Jump boxes or bastion hosts</li>
+<li>Developer VMs</li>
+</ul>
+<p><strong>Check first:</strong> Run <code>kubectl version --client</code> in your terminal—it might already be installed.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2m-5.15 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56M14.34 14H9.66c-.1-.66-.16-1.32-.16-2s.06-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2M12 19.96c-.83-1.2-1.5-2.53-1.91-3.96h3.82c-.41 1.43-1.08 2.76-1.91 3.96M8 8H5.08A7.92 7.92 0 0 1 9.4 4.44C8.8 5.55 8.35 6.75 8 8m-2.92 8H8c.35 1.25.8 2.45 1.4 3.56A8 8 0 0 1 5.08 16m-.82-2C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2M12 4.03c.83 1.2 1.5 2.54 1.91 3.97h-3.82c.41-1.43 1.08-2.77 1.91-3.97M18.92 8h-2.95a15.7 15.7 0 0 0-1.38-3.56c1.84.63 3.37 1.9 4.33 3.56M12 2C6.47 2 2 6.5 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2"/></svg></span> <strong>Can't Install Anything</strong></p>
+<hr />
+<p><strong>Solution:</strong> Web-based alternatives exist</p>
+<p>Ask your platform team if they provide:</p>
+<ul>
+<li><strong>Kubernetes Dashboard</strong> - Web UI for the cluster</li>
+<li><strong>Rancher</strong> - Multi-cluster management with web UI</li>
+<li><strong>Lens</strong> - Desktop Kubernetes IDE (might be pre-approved)</li>
+<li><strong>OpenShift Console</strong> - Built-in web UI (if using OpenShift)</li>
+</ul>
+<p>These aren't as powerful as <code>kubectl</code>, but they let you explore and deploy.</p>
+</li>
+</ul>
+</div>
+<p><strong>Bottom line:</strong> If you're blocked, your platform team can help. They want you to deploy—they'll have a solution.</p>
+<hr />
+<h2 id="using-openshift-use-oc-instead">Using OpenShift? Use <code>oc</code> Instead</h2>
+<div class="admonition info">
+<p class="admonition-title">OpenShift Users: Read This First</p>
+<p><strong>If your company uses Red Hat OpenShift</strong> (not vanilla Kubernetes), you'll use the <code>oc</code> command instead of <code>kubectl</code>.</p>
+<p><strong>Good news:</strong> The <code>oc</code> command is fully compatible with <code>kubectl</code>—all the commands you'll learn in this series work identically.</p>
+</div>
+<p><strong>What's OpenShift?</strong></p>
+<p>OpenShift is Red Hat's Kubernetes distribution (like Ubuntu is a Linux distribution). It adds enterprise features on top of Kubernetes, but the core is still Kubernetes.</p>
+<p><strong>Do I use <code>oc</code> or <code>kubectl</code>?</strong></p>
+<p>Ask your platform team, or check their instructions:</p>
+<ul>
+<li>If they mention <strong>"OpenShift"</strong> or <strong>"oc login"</strong> → use <code>oc</code></li>
+<li>If they mention <strong>"EKS"</strong> (AWS), <strong>"GKE"</strong> (Google), or <strong>"AKS"</strong> (Azure) → use <code>kubectl</code></li>
+<li>Not sure? Try <code>oc version</code> in your terminal—if it's installed, you're probably using OpenShift</li>
+</ul>
+<p><strong>Installing <code>oc</code>:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">macOS</label><label for="__tabbed_3_2">Linux</label><label for="__tabbed_3_3">Windows</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">Install oc with Homebrew</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>brew<span class="w"> </span>install<span class="w"> </span>openshift-cli
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Download from <a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz">Red Hat OpenShift downloads</a>:</p>
+<div class="language-bash highlight"><span class="filename">Install oc on Linux</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>wget<span class="w"> </span>https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>tar<span class="w"> </span>-xzf<span class="w"> </span>openshift-client-linux.tar.gz
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sudo<span class="w"> </span>mv<span class="w"> </span>oc<span class="w"> </span>/usr/local/bin/
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>kubectl<span class="w"> </span>/usr/local/bin/<span class="w">  </span><span class="c1"># OpenShift includes kubectl too</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Download from <a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-windows.zip">Red Hat OpenShift downloads</a>:</p>
+<ol>
+<li>Download and extract the ZIP</li>
+<li>Move <code>oc.exe</code> to <code>C:\Users\YourUsername\bin\</code></li>
+<li>Add to PATH (same steps as kubectl installation above)</li>
+</ol>
+</div>
+</div>
+</div>
+<p><strong>Using <code>oc</code> with this guide:</strong></p>
+<p>Throughout this series, whenever you see <code>kubectl</code>, just use <code>oc</code> instead:</p>
+<ul>
+<li><code>kubectl get pods</code> → <code>oc get pods</code> (works identically)</li>
+<li><code>kubectl apply -f file.yaml</code> → <code>oc apply -f file.yaml</code> (works identically)</li>
+<li><code>kubectl describe pod my-pod</code> → <code>oc describe pod my-pod</code> (works identically)</li>
+</ul>
+<p><strong>Bonus:</strong> <code>oc</code> has some OpenShift-specific commands (<code>oc new-app</code>, <code>oc new-project</code>) that <code>kubectl</code> doesn't have, but you don't need those for Day One.</p>
+<div class="admonition tip">
+<p class="admonition-title">For the Rest of This Article</p>
+<p>We'll use <code>kubectl</code> in all examples, but if you're using OpenShift, mentally substitute <code>oc</code> every time you see it.</p>
+</div>
+<hr />
+<h2 id="getting-your-credentials">Getting Your Credentials</h2>
+<p><code>kubectl</code> needs to know:</p>
+<ol>
+<li>Where the cluster is (API server address)</li>
+<li>Who you are (YOUR credentials, not shared)</li>
+<li>Which namespace to use</li>
+</ol>
+<p>This information gets stored in a <strong>kubeconfig file</strong>:</p>
+<ul>
+<li><strong>Linux/Mac:</strong> <code>~/.kube/config</code></li>
+<li><strong>Windows:</strong> <code>%USERPROFILE%\.kube\config</code> (or <code>$env:USERPROFILE\.kube\config</code> in PowerShell)</li>
+</ul>
+<p>But you don't create this file manually—your platform team's instructions will generate it with YOUR individual credentials.</p>
+<h3 id="which-method-does-your-company-use">Which Method Does Your Company Use?</h3>
+<p><strong>Check what your platform team told you:</strong></p>
+<pre class="mermaid"><code>graph TD
+    Start[Platform team gave you&lt;br/&gt;instructions]
+    CheckInstructions{What did they&lt;br/&gt;tell you to install?}
+
+    AWS[AWS CLI&lt;br/&gt;aws]
+    GCP[gcloud CLI&lt;br/&gt;gcloud]
+    Azure[Azure CLI&lt;br/&gt;az]
+    Browser[Login via&lt;br/&gt;browser/portal]
+    CertFile[Certificate files&lt;br/&gt;.crt and .key]
+    ConfigFile[kubeconfig file&lt;br/&gt;to copy]
+
+    Start --&gt; CheckInstructions
+
+    CheckInstructions --&gt;|aws CLI| AWS
+    CheckInstructions --&gt;|gcloud CLI| GCP
+    CheckInstructions --&gt;|az CLI| Azure
+    CheckInstructions --&gt;|Browser login&lt;br/&gt;URL/portal| Browser
+    CheckInstructions --&gt;|Certificate files| CertFile
+    CheckInstructions --&gt;|Just a config file| ConfigFile
+
+    AWS --&gt; CloudProvider[☁️ Cloud Provider&lt;br/&gt;AWS EKS tab]
+    GCP --&gt; CloudProvider2[☁️ Cloud Provider&lt;br/&gt;GKE tab]
+    Azure --&gt; CloudProvider3[☁️ Cloud Provider&lt;br/&gt;AKS tab]
+    Browser --&gt; OIDC[🔐 OIDC/SSO Login tab]
+    CertFile --&gt; Certificate[🔑 Certificate-Based Auth tab]
+    ConfigFile --&gt; Shared[⚠️ Shared Config File tab&lt;br/&gt;Anti-pattern]
+
+    style Start fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CheckInstructions fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CloudProvider fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CloudProvider2 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CloudProvider3 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style OIDC fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Certificate fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Shared fill:#c53030,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style AWS fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style GCP fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Azure fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Browser fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CertFile fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style ConfigFile fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.64 10.38c0 .25.02.45.07.62.05.12.12.28.21.46.04.04.05.1.05.15 0 .07-.04.13-.13.2l-.42.28c-.06.04-.12.06-.17.06-.07 0-.13-.04-.2-.1-.09-.1-.17-.2-.24-.31-.06-.11-.13-.24-.2-.39-.52.61-1.17.92-1.96.92-.56 0-1-.16-1.33-.48-.32-.32-.49-.75-.49-1.29 0-.55.2-1 .6-1.36.41-.34.95-.52 1.63-.52.23 0 .44.02.71.06.23.03.5.08.76.14v-.48c0-.51-.1-.84-.31-1.07-.22-.21-.57-.3-1.08-.3-.24 0-.48.03-.72.08-.25.06-.49.13-.72.23-.11.04-.2.07-.23.08-.05.02-.08.02-.11.02-.09 0-.14-.06-.14-.2v-.33c0-.1.01-.18.05-.23q.045-.075.18-.12c.24-.14.51-.24.84-.32a4 4 0 0 1 1.04-.13q1.185 0 1.74.54c.37.36.55.91.55 1.64v2.15zm-2.7 1.02c.22 0 .44-.04.68-.12s.45-.23.63-.43c.11-.13.19-.27.25-.43 0-.16.05-.35.05-.58v-.27c-.2-.07-.4-.07-.62-.12a7 7 0 0 0-.62-.04c-.45 0-.77.09-.99.27s-.32.43-.32.76c0 .32.07.56.24.71.16.17.39.25.7.25m5.34.71a.6.6 0 0 1-.28-.06c-.03-.05-.08-.14-.12-.26L8.32 6.65c-.04-.15-.06-.22-.06-.27 0-.11.05-.17.16-.17h.65c.13 0 .22.02.26.07.06.04.1.13.14.26l1.11 4.4 1.04-4.4c.03-.13.07-.22.13-.26.05-.04.14-.07.25-.07h.55c.12 0 .21.02.26.07.05.04.1.13.13.26L14 11l1.14-4.46c.04-.13.09-.22.13-.26.06-.04.14-.07.26-.07h.62c.11 0 .17.06.17.17 0 .03-.01.07-.02.12 0 0-.02.08-.04.15l-1.61 5.14c-.04.14-.08.21-.15.26-.04.04-.13.07-.24.07h-.57c-.13 0-.19-.02-.27-.07a.45.45 0 0 1-.12-.26L12.27 7.5l-1.03 4.28q-.045.195-.12.27a.5.5 0 0 1-.27.06zm8.55.18c-.33 0-.7-.04-1.03-.12s-.59-.17-.76-.26a.5.5 0 0 1-.21-.19.4.4 0 0 1-.04-.18v-.34c0-.14.05-.2.15-.2h.12c.04 0 .1.05.17.08.22.1.47.18.73.23.27.05.54.08.79.08.42 0 .75-.07.97-.22.23-.17.35-.36.35-.63 0-.19-.07-.34-.18-.47-.12-.12-.35-.24-.67-.34l-.97-.3c-.48-.16-.84-.38-1.06-.68a1.58 1.58 0 0 1-.33-.97c0-.28.06-.52.18-.73.12-.22.28-.4.46-.55.22-.15.44-.26.71-.34q.39-.12.84-.12.21 0 .45.03c.14.02.28.05.42.07.14.04.26.07.38.11s.2.08.28.12c.09.05.16.1.2.16s.06.13.06.22v.32q0 .21-.15.21c-.05 0-.14-.03-.26-.08-.37-.17-.8-.26-1.27-.26-.38 0-.66.06-.89.19-.2.12-.31.32-.31.59 0 .19.07.35.2.47.13.13.38.25.73.37l.95.3c.48.14.82.36 1.03.64q.3.405.3.93c0 .28-.06.54-.17.77-.12.22-.28.42-.5.58-.19.17-.44.29-.72.38s-.62.13-.95.13m1.25 3.24C17.89 17.14 14.71 18 12 18c-3.85 0-7.3-1.42-9.91-3.77-.21-.19-.02-.44.23-.29 2.82 1.63 6.29 2.62 9.89 2.62 2.43 0 5.1-.5 7.55-1.56.37-.15.68.26.32.53M21 14.5c-.29-.37-1.86-.18-2.57-.1-.21.03-.24-.16-.05-.3 1.25-.87 3.31-.6 3.54-.33.24.3-.06 2.36-1.23 3.34-.19.15-.36.07-.28-.11.27-.68.86-2.16.59-2.5"/></svg></span> <strong>AWS EKS</strong></p>
+<hr />
+<p><strong>You know it's AWS if:</strong></p>
+<ul>
+<li>Instructions mention "EKS" or "Elastic Kubernetes Service"</li>
+<li>You were told to install AWS CLI (<code>aws</code>)</li>
+<li>You have AWS IAM access or AWS SSO login</li>
+</ul>
+<p>→ Use the <strong>Cloud Provider (AWS EKS)</strong> tab below</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23 14.75C23 18.2 20.2 21 16.75 21h-9.5C3.8 21 1 18.2 1 14.75c0-2.14 1.08-4.03 2.71-5.15C4.58 5.82 7.96 3 12 3s7.42 2.82 8.29 6.6A6.22 6.22 0 0 1 23 14.75M16.63 17c1.31 0 2.37-1.06 2.37-2.37 0-1.28-1-2.33-2.28-2.38l.03-.5a4.754 4.754 0 0 0-8.32-3.14c1.5.29 2.8 1.11 3.71 2.25L9.5 13.5c-.42-.73-1.21-1.25-2.12-1.25-1.32 0-2.38 1.06-2.38 2.38 0 1.27 1 2.3 2.25 2.37z"/></svg></span> <strong>Google Cloud GKE</strong></p>
+<hr />
+<p><strong>You know it's GKE if:</strong></p>
+<ul>
+<li>Instructions mention "GKE" or "Google Kubernetes Engine"</li>
+<li>You were told to install <code>gcloud</code></li>
+<li>You have a Google Cloud project assigned</li>
+</ul>
+<p>→ Use the <strong>Cloud Provider (GKE)</strong> tab below</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.05 4.24 6.56 18.05 2 18l5.09-8.76zm.7 1.09L22 19.76H6.74l9.3-1.66-4.87-5.79z"/></svg></span> <strong>Azure AKS</strong></p>
+<hr />
+<p><strong>You know it's AKS if:</strong></p>
+<ul>
+<li>Instructions mention "AKS" or "Azure Kubernetes Service"</li>
+<li>You were told to install Azure CLI (<code>az</code>)</li>
+<li>You have Azure Active Directory access</li>
+</ul>
+<p>→ Use the <strong>Cloud Provider (AKS)</strong> tab below</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 7 9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8z"/></svg></span> <strong>Company SSO (Okta, Azure AD, Google)</strong></p>
+<hr />
+<p><strong>You know it's SSO if:</strong></p>
+<ul>
+<li>Instructions mention logging in through a browser</li>
+<li>You were given a URL or portal to visit</li>
+<li>You log in with your company email/password + 2FA</li>
+</ul>
+<p>→ Use the <strong>OIDC/SSO Login</strong> tab below</p>
+</li>
+</ul>
+</div>
+<p><strong>Still not sure?</strong> Ask your platform team: "What authentication method does our Kubernetes cluster use?"</p>
+<h3 id="how-your-company-authenticates">How Your Company Authenticates</h3>
+<p>Most enterprises use one of these methods:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Cloud Provider (Most Common)</label><label for="__tabbed_4_2">OIDC/SSO Login</label><label for="__tabbed_4_3">Certificate-Based Auth</label><label for="__tabbed_4_4">⚠️ Shared Config File (Anti-Pattern)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Why it matters:</strong> Your company's cloud identity (AWS IAM, Google Cloud, Azure AD) becomes your Kubernetes identity. No separate passwords, automatic credential refresh, and IT manages everything in one place. This is the most common approach for companies using managed Kubernetes services (EKS, GKE, AKS).</p>
+<p><strong>If your cluster runs on AWS, Google Cloud, or Azure</strong>, your cloud identity generates Kubernetes credentials automatically.</p>
+<p><strong>AWS EKS:</strong></p>
+<p>Your platform team should tell you the cluster name and region. If they didn't, here's how to find it:</p>
+<details class="question">
+<summary>How do I find my cluster name and region?</summary>
+<p><strong>Ask your platform team first</strong> - they should tell you which cluster to use.</p>
+<p>If you have AWS CLI access and need to discover clusters:</p>
+<div class="language-bash highlight"><span class="filename">List all EKS clusters you have access to</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># List clusters in a specific region</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>aws<span class="w"> </span>eks<span class="w"> </span>list-clusters<span class="w"> </span>--region<span class="w"> </span>us-west-2
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Check multiple common regions</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="k">for</span><span class="w"> </span>region<span class="w"> </span><span class="k">in</span><span class="w"> </span>us-east-1<span class="w"> </span>us-west-2<span class="w"> </span>eu-west-1<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking </span><span class="nv">$region</span><span class="s2">...&quot;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span>aws<span class="w"> </span>eks<span class="w"> </span>list-clusters<span class="w"> </span>--region<span class="w"> </span><span class="nv">$region</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="k">done</span>
+</span></code></pre></div>
+<p><strong>Most companies have a naming convention:</strong>
+- <code>dev-cluster</code>, <code>staging-cluster</code>, <code>prod-cluster</code>
+- <code>teamname-dev</code>, <code>teamname-prod</code>
+- <code>companyname-k8s-dev</code></p>
+<p><strong>Check your onboarding docs, Confluence, or internal wiki</strong> for cluster details.</p>
+</details>
+<div class="language-bash highlight"><span class="filename">Connect to your EKS cluster</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Replace with your actual cluster name and region</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>aws<span class="w"> </span>eks<span class="w"> </span>update-kubeconfig<span class="w"> </span>--name<span class="w"> </span>my-cluster<span class="w"> </span>--region<span class="w"> </span>us-west-2
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># This generates ~/.kube/config with YOUR AWS IAM identity</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># Credentials auto-refresh using your `aws` CLI session</span>
+</span></code></pre></div>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li><code>aws eks update-kubeconfig</code> called the EKS API to get cluster connection details</li>
+<li>It added/updated <code>~/.kube/config</code> with the cluster's API server address</li>
+<li>It configured authentication to use YOUR AWS IAM identity (via <code>aws</code> CLI)</li>
+<li>Every <code>kubectl</code> command now authenticates as YOU using your AWS credentials</li>
+</ul>
+<p><strong>Google Cloud GKE:</strong></p>
+<p>Your platform team should tell you the cluster name and zone/region. If they didn't:</p>
+<details class="question">
+<summary>How do I find my cluster name and zone?</summary>
+<p><strong>Ask your platform team first</strong> - they should specify which cluster and project to use.</p>
+<p>If you have gcloud CLI access:</p>
+<div class="language-bash highlight"><span class="filename">List all GKE clusters you have access to</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># List clusters in current project</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>list
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># List clusters in a specific project</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>list<span class="w"> </span>--project<span class="o">=</span>my-project-id
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># See which project you&#39;re currently using</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>gcloud<span class="w"> </span>config<span class="w"> </span>get-value<span class="w"> </span>project
+</span></code></pre></div>
+<p><strong>The output shows:</strong> cluster name, location (zone or region), and status.</p>
+<p><strong>Check your onboarding documentation</strong> for the correct project and cluster names.</p>
+</details>
+<div class="language-bash highlight"><span class="filename">Connect to your GKE cluster</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Replace with your actual cluster name and zone</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>my-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Or if using a regional cluster (multi-zone):</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>my-cluster<span class="w"> </span>--region<span class="w"> </span>us-central1
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># This generates ~/.kube/config with YOUR Google identity</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Credentials auto-refresh using your `gcloud` session</span>
+</span></code></pre></div>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li><code>gcloud container clusters get-credentials</code> fetched cluster details from GKE API</li>
+<li>It updated <code>~/.kube/config</code> with the cluster's API server address</li>
+<li>It configured authentication to use YOUR Google Cloud identity (via <code>gcloud</code> CLI)</li>
+<li>Every <code>kubectl</code> command authenticates as YOU using your Google credentials</li>
+</ul>
+<p><strong>Azure AKS:</strong></p>
+<p>Your platform team should tell you the cluster name and resource group. If they didn't:</p>
+<details class="question">
+<summary>How do I find my cluster name and resource group?</summary>
+<p><strong>Ask your platform team first</strong> - they should specify which cluster and subscription to use.</p>
+<p>If you have Azure CLI access:</p>
+<div class="language-bash highlight"><span class="filename">List all AKS clusters you have access to</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># List clusters in current subscription</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>az<span class="w"> </span>aks<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>table
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># List clusters in a specific resource group</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>az<span class="w"> </span>aks<span class="w"> </span>list<span class="w"> </span>--resource-group<span class="w"> </span>my-resource-group<span class="w"> </span>--output<span class="w"> </span>table
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># See which subscription you&#39;re currently using</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>az<span class="w"> </span>account<span class="w"> </span>show
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="c1"># List all your subscriptions</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>az<span class="w"> </span>account<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>table
+</span></code></pre></div>
+<p><strong>The output shows:</strong> cluster name, resource group, location, and status.</p>
+<p><strong>Resource groups typically named:</strong>
+- <code>rg-dev</code>, <code>rg-staging</code>, <code>rg-prod</code>
+- <code>teamname-resources</code>, <code>projectname-k8s</code></p>
+<p><strong>Check your onboarding documentation</strong> for cluster and resource group names.</p>
+</details>
+<div class="language-bash highlight"><span class="filename">Connect to your AKS cluster</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Replace with your actual cluster name and resource group</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>az<span class="w"> </span>aks<span class="w"> </span>get-credentials<span class="w"> </span>--name<span class="w"> </span>my-cluster<span class="w"> </span>--resource-group<span class="w"> </span>my-rg
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># This generates ~/.kube/config with YOUR Azure AD identity</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># Credentials auto-refresh using your `az` CLI session</span>
+</span></code></pre></div>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li><code>az aks get-credentials</code> fetched cluster details from AKS API</li>
+<li>It updated <code>~/.kube/config</code> with the cluster's API server address</li>
+<li>It configured authentication to use YOUR Azure AD identity (via <code>az</code> CLI)</li>
+<li>Every <code>kubectl</code> command authenticates as YOU using your Azure credentials</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Why this is better</p>
+<ul>
+<li><strong>Your identity</strong> = Audit logs show what YOU did, not "shared-user"</li>
+<li><strong>Auto-refresh</strong> = No expired credentials</li>
+<li><strong>Revocation</strong> = You leave the company? Your cloud access is revoked = <code>kubectl</code> access revoked</li>
+<li><strong>No shared secrets</strong> = Nothing precious to protect</li>
+</ul>
+</div>
+</div>
+<div class="tabbed-block">
+<p><strong>Why it matters:</strong> Single sign-on means one password for everything—Kubernetes, email, internal tools. Your IT team adds/removes you from a group in Okta or Azure AD, and your Kubernetes access updates instantly. Browser-based login with 2FA is more secure than long-lived credentials.</p>
+<p><strong>If your company uses Okta, Azure AD, or Google Workspace</strong>, you authenticate through your SSO provider using a browser login.</p>
+<p><strong>Common tools your company might use:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">kubelogin (Azure AD)</label><label for="__tabbed_5_2">Teleport</label><label for="__tabbed_5_3">Generic OIDC (Okta, Google, etc.)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>If your company uses <strong>Azure Active Directory</strong> for Kubernetes authentication:</p>
+<p><strong>Install kubelogin:</strong>
+<div class="language-bash highlight"><span class="filename">Install kubelogin for Azure AD authentication</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># macOS</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>brew<span class="w"> </span>install<span class="w"> </span>Azure/kubelogin/kubelogin
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># Linux</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/Azure/kubelogin/releases/latest/download/kubelogin-linux-amd64.zip
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>unzip<span class="w"> </span>kubelogin-linux-amd64.zip<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>mv<span class="w"> </span>bin/linux_amd64/kubelogin<span class="w"> </span>/usr/local/bin/
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="c1"># Windows</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>choco<span class="w"> </span>install<span class="w"> </span>kubelogin
+</span></code></pre></div></p>
+<p><strong>Your platform team will provide:</strong>
+- The kubeconfig file or command to generate it
+- Instructions to convert it to use Azure AD auth</p>
+<p><strong>Typical flow:</strong>
+<div class="language-bash highlight"><span class="filename">Configure Azure AD authentication for kubectl</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Get kubeconfig (platform team provides cluster name)</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>az<span class="w"> </span>aks<span class="w"> </span>get-credentials<span class="w"> </span>--name<span class="w"> </span>my-cluster<span class="w"> </span>--resource-group<span class="w"> </span>my-rg
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Convert to Azure AD login</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>kubelogin<span class="w"> </span>convert-kubeconfig<span class="w"> </span>-l<span class="w"> </span>azurecli
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="c1"># Now when you run kubectl, it will open your browser for login</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span></code></pre></div></p>
+<p><strong>What happens:</strong> First <code>kubectl</code> command opens browser → Azure AD login → token stored → future commands use the token until it expires (typically 1 hour).</p>
+</div>
+<div class="tabbed-block">
+<p>If your company uses <strong>Teleport</strong> for access management:</p>
+<p><strong>Install Teleport client:</strong>
+<div class="language-bash highlight"><span class="filename">Install Teleport</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># macOS</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>brew<span class="w"> </span>install<span class="w"> </span>teleport
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Linux - download from https://goteleport.com/download/</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1"># Windows - download installer from https://goteleport.com/download/</span>
+</span></code></pre></div></p>
+<p><strong>Your platform team will provide:</strong>
+- Teleport proxy URL (e.g., <code>teleport.company.com</code>)
+- Cluster name to connect to</p>
+<p><strong>Login flow:</strong>
+<div class="language-bash highlight"><span class="filename">Login to Kubernetes via Teleport</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Login to Teleport (opens browser for SSO)</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>tsh<span class="w"> </span>login<span class="w"> </span>--proxy<span class="o">=</span>teleport.company.com<span class="w"> </span>--user<span class="o">=</span>your.email@company.com
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># List available Kubernetes clusters</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>tsh<span class="w"> </span>kube<span class="w"> </span>ls
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="c1"># Login to specific cluster</span>
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>tsh<span class="w"> </span>kube<span class="w"> </span>login<span class="w"> </span>my-cluster
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>
+</span><span id="__span-24-10"><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a><span class="c1"># Now kubectl commands work</span>
+</span><span id="__span-24-11"><a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span></code></pre></div></p>
+<p><strong>What happens:</strong> <code>tsh</code> generates short-lived certificates (typically 12 hours) and updates your kubeconfig automatically.</p>
+</div>
+<div class="tabbed-block">
+<p>If your company uses <strong>Okta, Google Workspace, or another OIDC provider</strong>:</p>
+<p><strong>Your platform team should provide:</strong></p>
+<ul>
+<li>Specific <code>kubectl</code> plugin or tool to install</li>
+<li>The issuer URL (identity provider)</li>
+<li>Client ID for the Kubernetes cluster</li>
+</ul>
+<p><strong>Common pattern with <code>kubectl oidc-login</code> plugin:</strong>
+<div class="language-bash highlight"><span class="filename">Setup generic OIDC authentication</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Install plugin (example for macOS)</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>brew<span class="w"> </span>install<span class="w"> </span>int128/kubelogin/kubelogin
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="c1"># Platform team provides kubeconfig or setup command</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>kubectl<span class="w"> </span>oidc-login<span class="w"> </span>setup<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">  </span>--oidc-issuer-url<span class="o">=</span>https://accounts.company.com<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">  </span>--oidc-client-id<span class="o">=</span>kubernetes-cluster-id
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="c1"># First kubectl command opens browser</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span></code></pre></div></p>
+<p><strong>Company-specific tools:</strong></p>
+<p>Some companies build internal tools. Your instructions might look like:
+<div class="language-bash highlight"><span class="filename">Company-specific authentication tool</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Company-specific login command (example)</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>company-k8s-login<span class="w"> </span>dev
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># Or a web portal where you download a kubeconfig</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="c1"># Visit https://k8s.company.com → Login → Download Config</span>
+</span></code></pre></div></p>
+</div>
+</div>
+</div>
+<p><strong>General OIDC Flow:</strong></p>
+<ol>
+<li>Run the command or first <code>kubectl</code> command</li>
+<li>Browser opens automatically</li>
+<li>Log in with company email + password + 2FA</li>
+<li>Browser shows "Success! You can close this window"</li>
+<li>Token stored in <code>~/.kube/cache/</code> or similar</li>
+<li>Token valid for hours/days (depends on company policy)</li>
+<li>When expired, you'll be prompted to login again</li>
+</ol>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li>Your identity provider (Okta, Azure AD, Google) verified who you are</li>
+<li>It issued a time-limited token proving your identity</li>
+<li>Kubernetes cluster trusts tokens from your company's identity provider</li>
+<li>Every <code>kubectl</code> command includes this token - audit logs show YOUR username</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Why this is better</p>
+<ul>
+<li><strong>Your identity</strong> = Audit trail shows your actual user account</li>
+<li><strong>Centralized access control</strong> = IT manages permissions in one place (add/remove from Okta group → instant K8s access change)</li>
+<li><strong>Token expiration</strong> = Automatic security boundary (lost laptop = tokens expire)</li>
+<li><strong>Single sign-on</strong> = Same login for Kubernetes, AWS, internal tools</li>
+</ul>
+</div>
+</div>
+<div class="tabbed-block">
+<p><strong>Why it matters:</strong> Certificates work offline (no external identity provider needed) and are cryptographically secure. Common in self-hosted clusters, air-gapped environments, and industries with strict compliance requirements. You own the private key—maximum control, maximum responsibility.</p>
+<p><strong>Less common in 2026</strong>, but some companies issue individual X.509 client certificates for Kubernetes authentication.</p>
+<p><strong>When you'd see this:</strong></p>
+<ul>
+<li>Self-hosted Kubernetes clusters (not managed cloud services)</li>
+<li>Companies with strict security requirements (defense, finance, healthcare)</li>
+<li>Environments where OIDC integration isn't available</li>
+<li>OpenShift clusters (uses certificates internally)</li>
+</ul>
+<p><strong>How certificates work:</strong></p>
+<ul>
+<li>Your company's Kubernetes cluster has a Certificate Authority (CA)</li>
+<li>Platform team generates a certificate + private key signed by that CA</li>
+<li>Certificate contains YOUR username (in the Common Name field)</li>
+<li>Kubernetes cluster trusts certificates signed by its CA</li>
+<li><strong>Certificates expire</strong> (typically 30-90 days) for security</li>
+</ul>
+<p><strong>Common workflows:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Automated Tool (Easiest)</label><label for="__tabbed_6_2">Self-Service Portal</label><label for="__tabbed_6_3">CSR Workflow (Advanced)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>If your platform team provides a script or command-line tool:</p>
+<div class="language-bash highlight"><span class="filename">Generate certificate with automated tool</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Platform team provides a script or tool</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>company-k8s-cert-generator<span class="w"> </span>--user<span class="w"> </span>yourname@company.com<span class="w"> </span>--cluster<span class="w"> </span>dev
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># This generates:</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="c1"># - yourname.crt (certificate - can be shared)</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="c1"># - yourname.key (private key - NEVER share)</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="c1"># - Updates ~/.kube/config automatically</span>
+</span></code></pre></div>
+<p><strong>This is the easiest option</strong> - everything is automated for you.</p>
+</div>
+<div class="tabbed-block">
+<ol>
+<li>Visit internal portal (e.g., <code>https://k8s-certs.company.com</code>)</li>
+<li>Log in with company credentials</li>
+<li>Request certificate for cluster "dev" or "prod"</li>
+<li>Download <code>yourname.crt</code> and <code>yourname.key</code></li>
+<li>Configure <code>kubectl</code>:</li>
+</ol>
+<div class="language-bash highlight"><span class="filename">Configure kubectl to use your certificate</span><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Add your certificate to kubectl config</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>yourname<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">  </span>--client-certificate<span class="o">=</span>yourname.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">  </span>--client-key<span class="o">=</span>yourname.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">  </span>--embed-certs<span class="o">=</span><span class="nb">true</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="c1"># Set the cluster and context (platform team provides these values)</span>
+</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-cluster<span class="w"> </span>my-cluster<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="w">  </span>--server<span class="o">=</span>https://k8s-api.company.com:6443<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="w">  </span>--certificate-authority<span class="o">=</span>ca.crt
+</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>
+</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>my-cluster<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="w">  </span>--cluster<span class="o">=</span>my-cluster<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a><span class="w">  </span>--user<span class="o">=</span>yourname<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-15"><a id="__codelineno-28-15" name="__codelineno-28-15" href="#__codelineno-28-15"></a><span class="w">  </span>--namespace<span class="o">=</span>default
+</span><span id="__span-28-16"><a id="__codelineno-28-16" name="__codelineno-28-16" href="#__codelineno-28-16"></a>
+</span><span id="__span-28-17"><a id="__codelineno-28-17" name="__codelineno-28-17" href="#__codelineno-28-17"></a>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>my-cluster
+</span></code></pre></div>
+<ol>
+<li><code>--embed-certs=true</code> encodes the certificate into the kubeconfig file instead of referencing the file path. Useful if you move the kubeconfig to another machine.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<p><strong>Certificate Signing Request (CSR)</strong> - Advanced setup where YOU generate the private key:</p>
+<div class="language-bash highlight"><span class="filename">Generate certificate with CSR (advanced)</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Generate your private key (keep this SECRET)</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>openssl<span class="w"> </span>genrsa<span class="w"> </span>-out<span class="w"> </span>yourname.key<span class="w"> </span><span class="m">2048</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># Generate a Certificate Signing Request</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span>-key<span class="w"> </span>yourname.key<span class="w"> </span>-out<span class="w"> </span>yourname.csr<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">  </span>-subj<span class="w"> </span><span class="s2">&quot;/CN=yourname@company.com/O=dev-team&quot;</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="c1"># Submit CSR to platform team (via portal or email)</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="c1"># They sign it and return yourname.crt</span>
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="c1"># Configure kubectl (same as Option 2)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>What just happened?</strong> (applies to all options)</p>
+<ul>
+<li>You now have a cryptographic identity tied to YOUR username</li>
+<li>Every <code>kubectl</code> command uses your certificate to prove who you are</li>
+<li>Kubernetes audit logs show your certificate's Common Name (your username)</li>
+<li>When certificate expires, you'll get "Unauthorized" errors and need to request a new one</li>
+</ul>
+<p><strong>Certificate renewal:</strong></p>
+<p>Certificates expire by design. When yours expires:</p>
+<ol>
+<li>You'll see errors like: <code>Unable to connect to the server: x509: certificate has expired</code></li>
+<li>Request a new certificate using the same process</li>
+<li>Update your kubeconfig with the new certificate</li>
+<li>Set a calendar reminder 1 week before expiration</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Protect Your Private Key</p>
+<ul>
+<li><code>yourname.key</code> is like a password - NEVER share it</li>
+<li>Don't commit it to git</li>
+<li>Don't email it or post it in Slack</li>
+<li>Store it securely with permissions: <code>chmod 600 yourname.key</code></li>
+<li>If compromised, report to your platform team immediately</li>
+</ul>
+</div>
+</div>
+<div class="tabbed-block">
+<p><strong>Why this matters (and why it's problematic):</strong> Shared credentials mean everyone appears as the same user in audit logs—no accountability. If one person leaves or is compromised, everyone's credentials must be regenerated. This was common in 2015, but modern alternatives (cloud IAM, OIDC) are vastly superior.</p>
+<p><strong>If your platform team sent you a kubeconfig file to copy</strong>, this is an older, less secure approach. It works, but understand the risks:</p>
+<div class="language-bash highlight"><span class="filename">Copy shared kubeconfig file (anti-pattern)</span><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Create kubectl config directory</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.kube
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># Copy the file you received</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>cp<span class="w"> </span>/path/to/received-config<span class="w"> </span>~/.kube/config
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="c1"># Secure it (important!)</span>
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.kube/config
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Why this is problematic</p>
+<ul>
+<li><strong>Shared identity</strong> = Everyone appears as the same user in audit logs</li>
+<li><strong>No accountability</strong> = Can't tell who did what</li>
+<li><strong>Revocation nightmare</strong> = One person leaves? Regenerate and redistribute to everyone</li>
+<li><strong>Credential sprawl</strong> = File gets copied to laptops, home directories, accidentally committed to git</li>
+<li><strong>No expiration</strong> = Static credentials don't rotate automatically</li>
+</ul>
+<p><strong>If your company uses this method</strong>, consider asking your platform team about migrating to cloud IAM or OIDC. It's worth the effort for security and operability.</p>
+</div>
+<p><strong>If you must use this method:</strong></p>
+<ul>
+<li>Treat the file like a password</li>
+<li>Never commit it to git (add <code>~/.kube/config</code> to <code>.gitignore</code>)</li>
+<li>Never share it in Slack or public forums</li>
+<li>Request access to the cluster with YOUR identity instead</li>
+</ul>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="credential-lifecycle-what-happens-over-time">Credential Lifecycle: What Happens Over Time?</h2>
+<p>Understanding when your credentials expire and what to do about it:</p>
+<div class="admonition tip">
+<p class="admonition-title">Quick Summary</p>
+<ul>
+<li><strong>Cloud providers (AWS/GCP/Azure):</strong> Auto-refresh every 15-60 minutes - you rarely notice</li>
+<li><strong>OIDC/SSO:</strong> Tokens last hours/days - you'll need to re-login occasionally</li>
+<li><strong>Certificates:</strong> Last weeks/months - set a calendar reminder to renew</li>
+<li><strong>Shared configs:</strong> Often permanent (but shouldn't be used!)</li>
+</ul>
+</div>
+<div class="credential-table">
+<table>
+<thead>
+<tr>
+<th>Auth Method</th>
+<th>Typical Lifespan</th>
+<th>What Happens When Expired</th>
+<th>How to Refresh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AWS EKS</strong></td>
+<td>15 minutes (token auto-refreshes)</td>
+<td>Transparent - <code>kubectl</code> automatically calls <code>aws</code> CLI to get a fresh token</td>
+<td>Usually automatic. If you get errors, re-login to AWS: <code>aws sso login</code> or <code>aws configure</code></td>
+</tr>
+<tr>
+<td><strong>GCP GKE</strong></td>
+<td>1 hour (token auto-refreshes)</td>
+<td>Transparent - <code>kubectl</code> automatically calls <code>gcloud</code> to get a fresh token</td>
+<td>Usually automatic. If you get errors, re-login: <code>gcloud auth login</code></td>
+</tr>
+<tr>
+<td><strong>Azure AKS</strong></td>
+<td>1 hour (token auto-refreshes)</td>
+<td>Transparent - <code>kubectl</code> automatically calls <code>az</code> CLI to get a fresh token</td>
+<td>Usually automatic. If you get errors, re-login: <code>az login</code></td>
+</tr>
+<tr>
+<td><strong>OIDC/SSO</strong></td>
+<td>1 hour - 24 hours (varies by company policy)</td>
+<td><code>kubectl</code> commands fail with "Unauthorized" error</td>
+<td>Re-run the login command (e.g., <code>tsh kube login</code>, browser login again)</td>
+</tr>
+<tr>
+<td><strong>Certificates</strong></td>
+<td>30-90 days (no auto-refresh)</td>
+<td><code>kubectl</code> commands fail with "certificate has expired" error</td>
+<td>Request new certificate from platform team or self-service portal</td>
+</tr>
+<tr>
+<td><strong>Shared config</strong></td>
+<td>Often permanent (security risk!)</td>
+<td>Usually doesn't expire unless manually rotated</td>
+<td>Platform team distributes new config file</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="info">
+<summary>What does 'Auto-Refresh' mean?</summary>
+<p>For <strong>cloud provider auth</strong> (AWS, GCP, Azure):</p>
+<ul>
+<li>Your kubeconfig contains a command like <code>aws eks get-token</code></li>
+<li>Every <code>kubectl</code> command runs this command to get a fresh token</li>
+<li>As long as your cloud CLI is logged in, <code>kubectl</code> works</li>
+<li><strong>You rarely think about expiration</strong> - it just works</li>
+</ul>
+<p>For <strong>OIDC/SSO</strong>:</p>
+<ul>
+<li>Token stored in <code>~/.kube/cache/</code> or similar</li>
+<li><code>kubectl</code> uses cached token until it expires</li>
+<li>When expired, you're prompted to login again (browser opens)</li>
+<li><strong>You'll know when it expires</strong> - you'll have to login again</li>
+</ul>
+<p>For <strong>certificates</strong>:</p>
+<ul>
+<li>Certificate file has an expiration date baked in</li>
+<li>No automatic refresh mechanism</li>
+<li><strong>Set a calendar reminder</strong> to request a new cert before expiration</li>
+<li>Some companies send email reminders</li>
+</ul>
+</details>
+<h3 id="common-scenarios">Common Scenarios</h3>
+<details class="question">
+<summary>I closed my laptop for the weekend - will <code>kubectl</code> still work?</summary>
+<p><strong>Cloud provider auth (AWS/GCP/Azure):</strong> Probably yes, as long as your cloud CLI session is still valid. Cloud sessions typically last days/weeks.</p>
+<p><strong>OIDC/SSO:</strong> Depends on your company's token lifetime. If tokens last 1 hour, no. If they last 12 hours, maybe. Just re-login when needed.</p>
+<p><strong>Certificates:</strong> Yes, until the certificate expiration date (weeks/months away).</p>
+</details>
+<details class="question">
+<summary>I got 'Unauthorized' or 'certificate has expired' errors</summary>
+<p><strong>First, check which auth method you're using:</strong>
+<div class="language-bash highlight"><span class="filename">Check your authentication method</span><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;user:|exec:|client-certificate&#39;</span>
+</span></code></pre></div></p>
+<p><strong>If you see <code>exec:</code> (cloud provider):</strong>
+- Check your cloud CLI login: <code>aws sts get-caller-identity</code>, <code>gcloud auth list</code>, or <code>az account show</code>
+- Re-login if needed: <code>aws sso login</code>, <code>gcloud auth login</code>, or <code>az login</code></p>
+<p><strong>If you see OIDC-related fields:</strong>
+- Re-run your company's login command or let <code>kubectl</code> prompt you to login</p>
+<p><strong>If you see <code>client-certificate:</code>:</strong>
+- Your certificate expired - request a new one from your platform team</p>
+</details>
+<details class="question">
+<summary>Do I need to re-run the setup command every day?</summary>
+<p><strong>No!</strong> Setup commands like <code>aws eks update-kubeconfig</code> are <strong>one-time</strong> (or very infrequent). They generate the kubeconfig file. After that:</p>
+<ul>
+<li><strong>Cloud provider:</strong> Just keep your cloud CLI logged in</li>
+<li><strong>OIDC:</strong> Re-login when tokens expire (hours/days)</li>
+<li><strong>Certificates:</strong> Only when certs expire (weeks/months)</li>
+</ul>
+<p>You DON'T re-run <code>aws eks update-kubeconfig</code> daily - that's only needed if the cluster configuration changes or you're setting up a new machine.</p>
+</details>
+<hr />
+<h2 id="understanding-contexts">Understanding Contexts</h2>
+<p>A <strong>context</strong> is a saved combination of:</p>
+<ul>
+<li><strong>Cluster</strong> - which Kubernetes cluster to talk to</li>
+<li><strong>User</strong> - which credentials to use</li>
+<li><strong>Namespace</strong> - your default workspace in that cluster</li>
+</ul>
+<p>Think of contexts as "saved profiles" - like browser profiles or AWS CLI profiles.</p>
+<h3 id="why-multiple-contexts">Why Multiple Contexts?</h3>
+<p>You'll accumulate contexts over time:</p>
+<ul>
+<li><strong>Multiple environments:</strong> dev, staging, prod clusters</li>
+<li><strong>Multiple teams:</strong> frontend-dev, backend-dev, data-platform</li>
+<li><strong>Multiple projects:</strong> project-a-dev, project-b-dev</li>
+<li><strong>Multiple companies:</strong> if you're a consultant working with several clients</li>
+</ul>
+<p><strong>Real-world example:</strong>
+<div class="language-bash highlight"><span class="filename">Example: Multiple contexts for different environments</span><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="c1"># CURRENT   NAME                    CLUSTER         AUTHINFO       NAMESPACE</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="c1"># *         company-dev             eks-us-west-2   aws-iam        my-team-dev</span>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="c1">#           company-staging         eks-us-west-2   aws-iam        my-team-staging</span>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="c1">#           company-prod            eks-us-east-1   aws-iam        my-team-prod</span>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="c1">#           side-project            gke-cluster     gcp-iam        default</span>
+</span></code></pre></div></p>
+<p>The <code>*</code> shows your <strong>current context</strong> - where <code>kubectl</code> commands will run.</p>
+<h3 id="switching-contexts">Switching Contexts</h3>
+<p><strong>View available contexts:</strong>
+<div class="language-bash highlight"><span class="filename">List all available contexts</span><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+</span></code></pre></div></p>
+<p><strong>Switch to a different context:</strong>
+<div class="language-bash highlight"><span class="filename">Switch to a different context</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>use-context<span class="w"> </span>company-staging
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="c1"># Switched to context &quot;company-staging&quot;</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="c1"># Verify you&#39;re in the right place</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="c1"># company-staging</span>
+</span></code></pre></div></p>
+<p><strong>Pro tip:</strong> Use <code>kubectx</code> tool for faster switching:
+<div class="language-bash highlight"><span class="filename">Install and use kubectx for easier context switching</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1"># Install kubectx</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>brew<span class="w"> </span>install<span class="w"> </span>kubectx<span class="w">  </span><span class="c1"># macOS</span>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="c1"># or download from https://github.com/ahmetb/kubectx</span>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a><span class="c1"># List contexts</span>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>kubectx
+</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>
+</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a><span class="c1"># Switch with shorter command</span>
+</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a>kubectx<span class="w"> </span>company-staging
+</span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>
+</span><span id="__span-35-11"><a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a><span class="c1"># Switch back to previous context</span>
+</span><span id="__span-35-12"><a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a>kubectx<span class="w"> </span>-
+</span></code></pre></div></p>
+<h3 id="contexts-vs-authentication">Contexts vs Authentication</h3>
+<p><strong>Context just stores the "what" and "who":</strong>
+<div class="language-yaml highlight"><span class="filename">Context configuration in kubeconfig</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="nt">contexts</span><span class="p">:</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">company-dev</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="w">  </span><span class="nt">context</span><span class="p">:</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eks-us-west-2</span><span class="w">    </span><span class="c1"># What cluster</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-iam</span><span class="w">              </span><span class="c1"># Which auth method/user</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-team-dev</span><span class="w">     </span><span class="c1"># Default namespace</span>
+</span></code></pre></div></p>
+<p><strong>The "user" references your auth method:</strong>
+<div class="language-yaml highlight"><span class="filename">User authentication configuration in kubeconfig</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="nt">users</span><span class="p">:</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-iam</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="w">  </span><span class="nt">user</span><span class="p">:</span>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="w">    </span><span class="nt">exec</span><span class="p">:</span><span class="w">                      </span><span class="c1"># Cloud provider auth</span>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws</span>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="w">      </span><span class="nt">args</span><span class="p">:</span>
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eks</span>
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get-token</span>
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--cluster-name</span>
+</span><span id="__span-37-10"><a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cluster</span>
+</span></code></pre></div></p>
+<p><strong>When you switch contexts</strong>, you're changing:</p>
+<ol>
+<li>Which cluster API server to connect to</li>
+<li>Which auth credentials to use (may be same user, different cluster)</li>
+<li>Which namespace is your default</li>
+</ol>
+<p><strong>You DON'T need to re-authenticate</strong> when switching contexts (unless auth has expired).</p>
+<h3 id="context-safety">Context Safety</h3>
+<details class="warning">
+<summary>Be VERY careful with prod contexts</summary>
+<p><strong>Accidents happen when you think you're in dev but you're actually in prod.</strong></p>
+<p><strong>Safety tips:</strong></p>
+<ol>
+<li>
+<p><strong>Check before destructive commands:</strong>
+   <div class="language-bash highlight"><span class="filename">Always verify your context before deleting</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>current-context<span class="w">  </span><span class="c1"># Always check first!</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>deployment<span class="w"> </span>my-app<span class="w">  </span><span class="c1"># Then run the command</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Name your contexts clearly:</strong></p>
+</li>
+<li>Good: <code>company-dev</code>, <code>company-PROD</code></li>
+<li>
+<p>Bad: <code>context1</code>, <code>k8s</code></p>
+</li>
+<li>
+<p><strong>Use namespace in context name:</strong></p>
+</li>
+<li>Good: <code>eks-dev-team-frontend</code>, <code>eks-prod-team-frontend</code></li>
+<li>
+<p>Makes it obvious at a glance</p>
+</li>
+<li>
+<p><strong>Set up shell prompt</strong> to show current context:
+   <div class="language-bash highlight"><span class="filename">Show Kubernetes context in shell prompt</span><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># Add to ~/.bashrc or ~/.zshrc</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1"># Shows context in your terminal prompt</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="c1"># Many tutorials available for &quot;kubernetes context in prompt&quot;</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Consider separate kubeconfig files for prod:</strong>
+   <div class="language-bash highlight"><span class="filename">Use separate kubeconfig files for prod safety (Linux/Mac)</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config-dev<span class="w">  </span><span class="c1"># Dev and staging</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config-prod<span class="w"> </span><span class="c1"># Prod only (separate terminal)</span>
+</span></code></pre></div></p>
+</li>
+</ol>
+<div class="language-powershell highlight"><span class="filename">Use separate kubeconfig files for prod safety (Windows PowerShell)</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="nv">$env:KUBECONFIG</span><span class="p">=</span><span class="s2">&quot;$env:USERPROFILE\.kube\config-dev&quot;</span>  <span class="c"># Dev and staging</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="nv">$env:KUBECONFIG</span><span class="p">=</span><span class="s2">&quot;$env:USERPROFILE\.kube\config-prod&quot;</span> <span class="c"># Prod only (separate window)</span>
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="verifying-your-connection">Verifying Your Connection</h2>
+<h3 id="step-1-check-cluster-connection">Step 1: Check cluster connection</h3>
+<div class="language-bash highlight"><span class="filename">Verify cluster connection</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>kubectl<span class="w"> </span>cluster-info
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="c1"># Should show: Kubernetes control plane is running at https://...</span>
+</span></code></pre></div>
+<h3 id="step-2-check-your-namespace">Step 2: Check your namespace</h3>
+<div class="language-bash highlight"><span class="filename">Check your assigned namespace</span><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>namespace<span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="c1"># Should show your assigned namespace</span>
+</span></code></pre></div>
+<ol>
+<li><code>grep namespace</code> filters the output to show only lines containing "namespace" - makes it easier to spot your assigned namespace in the config</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">What's <code>--minify</code>?</p>
+<p>The <code>--minify</code> flag shows only your <strong>current context's configuration</strong> (cluster, user, namespace). Without it, <code>kubectl config view</code> dumps your entire kubeconfig with all clusters and contexts, which can be overwhelming. Use <code>--minify</code> when troubleshooting to see just what's active right now.</p>
+</div>
+<p>If empty, your platform team should tell you what namespace to use.</p>
+<p><strong>Set your namespace:</strong></p>
+<div class="language-bash highlight"><span class="filename">Set your default namespace</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--namespace<span class="o">=</span>your-namespace-here
+</span></code></pre></div>
+<h3 id="step-3-try-listing-pods">Step 3: Try listing pods</h3>
+<div class="language-bash highlight"><span class="filename">Test namespace access</span><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a><span class="c1"># Might show &quot;No resources found&quot; - that&#39;s OK! It means you&#39;re connected.</span>
+</span></code></pre></div>
+<p>If you see an error like "Unauthorized" or "Forbidden", contact your platform team.</p>
+<hr />
+<h2 id="common-connection-problems">Common Connection Problems</h2>
+<details class="question">
+<summary>Error: The connection to the server was refused</summary>
+<p><strong>Problem:</strong> <code>kubectl</code> can't reach the cluster.</p>
+<p><strong>Possible causes:</strong>
+- VPN required but not connected
+- Wrong cluster address in kubeconfig
+- Firewall blocking connection</p>
+<p><strong>Try:</strong></p>
+<ol>
+<li>Connect to VPN if your company requires it</li>
+<li>Ask platform team if cluster is accessible from your network</li>
+<li>Verify cluster address: <code>kubectl config view</code></li>
+</ol>
+</details>
+<details class="question">
+<summary>Error: Forbidden / Unauthorized</summary>
+<p><strong>Problem:</strong> Authentication failed.</p>
+<p><strong>Possible causes:</strong>
+- Cloud CLI session expired (AWS, GCP, Azure)
+- OIDC token expired (need to re-login)
+- Access not granted yet to cluster or namespace
+- Certificate expired</p>
+<p><strong>Try:</strong></p>
+<ol>
+<li><strong>If using cloud provider auth:</strong><ul>
+<li>AWS: <code>aws sts get-caller-identity</code> (verify you're logged in)</li>
+<li>GCP: <code>gcloud auth list</code> (verify active account)</li>
+<li>Azure: <code>az account show</code> (verify subscription)</li>
+</ul>
+</li>
+<li><strong>If using OIDC:</strong> Re-run the login command (token likely expired)</li>
+<li><strong>Ask platform team</strong> if your access is active and which namespace you're assigned</li>
+<li><strong>Check config:</strong> <code>kubectl config view --minify</code> to see current user</li>
+</ol>
+</details>
+<details class="question">
+<summary>Error: No resources found in namespace</summary>
+<p><strong>Problem:</strong> Actually not a problem! This means you're connected but haven't deployed anything yet.</p>
+<p><strong>This is success.</strong> Move to the next article.</p>
+</details>
+<hr />
+<h2 id="understanding-your-access">Understanding Your Access</h2>
+<h3 id="what-you-can-do">What You Can Do</h3>
+<p>In YOUR namespace, you can typically:</p>
+<ul>
+<li>✅ Create pods, deployments, services</li>
+<li>✅ View logs</li>
+<li>✅ Delete resources you created</li>
+<li>✅ Scale deployments</li>
+</ul>
+<h3 id="what-you-cant-do">What You Can't Do</h3>
+<ul>
+<li>❌ Access other teams' namespaces</li>
+<li>❌ Modify cluster-wide resources</li>
+<li>❌ Access production (unless explicitly granted)</li>
+<li>❌ Create namespaces</li>
+</ul>
+<p><strong>This is good!</strong> It means you can experiment safely without breaking anything outside your namespace.</p>
+<hr />
+<h2 id="the-kubectl-cheat-sheet">The kubectl Cheat Sheet</h2>
+<p>Essential commands you'll use constantly:</p>
+<p><strong>✅ Safe (Read-Only) - Use these freely to explore:</strong></p>
+<div class="language-bash highlight"><span class="filename">View resources (safe to run)</span><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># See what&#39;s running</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployments
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>services
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>
+</span><span id="__span-46-6"><a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a><span class="c1"># Get detailed info about a resource</span>
+</span><span id="__span-46-7"><a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+</span><span id="__span-46-8"><a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>
+</span><span id="__span-46-9"><a id="__codelineno-46-9" name="__codelineno-46-9" href="#__codelineno-46-9"></a><span class="c1"># View application logs</span>
+</span><span id="__span-46-10"><a id="__codelineno-46-10" name="__codelineno-46-10" href="#__codelineno-46-10"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;
+</span><span id="__span-46-11"><a id="__codelineno-46-11" name="__codelineno-46-11" href="#__codelineno-46-11"></a>
+</span><span id="__span-46-12"><a id="__codelineno-46-12" name="__codelineno-46-12" href="#__codelineno-46-12"></a><span class="c1"># Check which context you&#39;re in</span>
+</span><span id="__span-46-13"><a id="__codelineno-46-13" name="__codelineno-46-13" href="#__codelineno-46-13"></a>kubectl<span class="w"> </span>config<span class="w"> </span>current-context
+</span></code></pre></div>
+<p><strong>⚠️ Caution (Modifies Resources) - Double-check before running:</strong></p>
+<div class="language-bash highlight"><span class="filename">Modify resources (check your context first!)</span><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="c1"># Apply configuration from a file</span>
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>my-app.yaml
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a><span class="c1"># Scale a deployment</span>
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>my-app<span class="w"> </span>--replicas<span class="o">=</span><span class="m">3</span>
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="c1"># Execute commands inside a pod</span>
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>/bin/bash
+</span></code></pre></div>
+<p><strong>🚨 DANGER (Destructive) - Always verify context and namespace:</strong></p>
+<div class="language-bash highlight"><span class="filename">Delete resources (DANGEROUS - cannot be undone)</span><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># Delete a specific resource</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="c1"># Delete everything matching a label</span>
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>deployment<span class="w"> </span>my-app
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="c1"># NEVER run these without explicit instruction:</span>
+</span><span id="__span-48-8"><a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a><span class="c1"># kubectl delete --all</span>
+</span><span id="__span-48-9"><a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a><span class="c1"># kubectl delete namespace &lt;name&gt;</span>
+</span></code></pre></div>
+<p>We'll cover all of these in detail in the next article about essential <code>kubectl</code> commands.</p>
+<hr />
+<h2 id="practice-exercise">Practice Exercise</h2>
+<details class="question">
+<summary>Exercise: Verify Your Setup</summary>
+<p>Complete these steps to verify you're ready:</p>
+<ol>
+<li>Install <code>kubectl</code> for your operating system (see tabs above)</li>
+<li>Follow the authentication method your company uses (Cloud Provider, OIDC, or Certificate tabs above)</li>
+<li>Run <code>kubectl cluster-info</code> successfully</li>
+<li>Run <code>kubectl get pods</code> (even if it says "No resources found")</li>
+<li>Check your current namespace</li>
+</ol>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">Verify your kubectl setup</span><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="c1"># 1. Check kubectl is installed</span>
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>kubectl<span class="w"> </span>version<span class="w"> </span>--client
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a><span class="c1"># 2. Verify kubeconfig exists</span>
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a>ls<span class="w"> </span>~/.kube/config<span class="w">  </span><span class="c1"># Linux/Mac</span>
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a><span class="c1"># Windows (PowerShell): Test-Path &quot;$env:USERPROFILE\.kube\config&quot;</span>
+</span><span id="__span-49-7"><a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a>
+</span><span id="__span-49-8"><a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a><span class="c1"># 3. Test cluster connection</span>
+</span><span id="__span-49-9"><a id="__codelineno-49-9" name="__codelineno-49-9" href="#__codelineno-49-9"></a>kubectl<span class="w"> </span>cluster-info
+</span><span id="__span-49-10"><a id="__codelineno-49-10" name="__codelineno-49-10" href="#__codelineno-49-10"></a>
+</span><span id="__span-49-11"><a id="__codelineno-49-11" name="__codelineno-49-11" href="#__codelineno-49-11"></a><span class="c1"># 4. Test namespace access</span>
+</span><span id="__span-49-12"><a id="__codelineno-49-12" name="__codelineno-49-12" href="#__codelineno-49-12"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-49-13"><a id="__codelineno-49-13" name="__codelineno-49-13" href="#__codelineno-49-13"></a>
+</span><span id="__span-49-14"><a id="__codelineno-49-14" name="__codelineno-49-14" href="#__codelineno-49-14"></a><span class="c1"># 5. See current context and namespace</span>
+</span><span id="__span-49-15"><a id="__codelineno-49-15" name="__codelineno-49-15" href="#__codelineno-49-15"></a>kubectl<span class="w"> </span>config<span class="w"> </span>get-contexts
+</span><span id="__span-49-16"><a id="__codelineno-49-16" name="__codelineno-49-16" href="#__codelineno-49-16"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>namespace
+</span></code></pre></div>
+<p><strong>Success looks like:</strong>
+- <code>kubectl cluster-info</code> shows cluster address
+- <code>kubectl get pods</code> returns (even if empty)
+- No "Unauthorized" or "Forbidden" errors</p>
+</details>
+</details>
+<hr />
+<h2 id="quick-recap">Quick Recap</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Install kubectl</strong></td>
+<td><code>brew install kubectl</code> (macOS)</td>
+</tr>
+<tr>
+<td><strong>Verify connection</strong></td>
+<td><code>kubectl cluster-info</code></td>
+</tr>
+<tr>
+<td><strong>List pods</strong></td>
+<td><code>kubectl get pods</code></td>
+</tr>
+<tr>
+<td><strong>Switch context</strong></td>
+<td><code>kubectl config use-context &lt;name&gt;</code></td>
+</tr>
+<tr>
+<td><strong>Set namespace</strong></td>
+<td><code>kubectl config set-context --current --namespace=&lt;ns&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="further-reading">Further Reading</h2>
+<h3 id="official-documentation">Official Documentation</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/tools/">Install kubectl</a> - Installation for all platforms</li>
+<li><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#verify-kubectl-configuration">Configure kubectl</a> - kubeconfig setup</li>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">kubectl Cheat Sheet</a> - Command reference</li>
+</ul>
+<h3 id="authentication-methods">Authentication Methods</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">Kubernetes Authentication</a> - Official authentication overview</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cluster-auth.html">AWS EKS Authentication</a> - IAM integration with EKS</li>
+<li><a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl">GKE <code>kubectl</code> Access</a> - Configuring <code>kubectl</code> for GKE clusters</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/aks/control-kubeconfig-access">AKS Authentication</a> - Azure AD integration</li>
+</ul>
+<h3 id="deep-dives">Deep Dives</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/">Understanding kubeconfig</a> - Configuration file format</li>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-context-and-configuration">kubectl Context and Configuration</a> - Managing contexts</li>
+</ul>
+<hr />
+<h2 id="whats-next">What's Next?</h2>
+<p>You're connected! <code>kubectl</code> is working, and you can access your namespace. Ready to deploy something?</p>
+<p><strong>Next:</strong> <a href="../first_deploy/">Your First Deployment</a> - Deploy a simple web application and see it run in Kubernetes.</p>
+<hr />
+<p><strong>Don't worry if <code>kubectl</code> feels foreign.</strong> After deploying a few applications, these commands will become second nature.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bradpenney" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/bradpenney" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "content.code.highlight", "content.tooltips", "content.code.mermaid"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

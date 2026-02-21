@@ -1,0 +1,2878 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Master essential kubectl commands for managing Pods, Deployments, and Services. Practical cheat sheet with examples for troubleshooting K8s applications.">
+      
+      
+        <meta name="author" content="Brad Penney">
+      
+      
+        <link rel="canonical" href="https://kubernetes.bradpenney.io/day_one/kubectl/commands/">
+      
+      
+        <link rel="prev" href="../first_deploy/">
+      
+      
+        <link rel="next" href="../understanding/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../images/exploring_kubernetes.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Essential kubectl Commands - A Developer's Cheat Sheet - Exploring Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1%207.775V2.75C1%201.784%201.784%201%202.75%201h5.025c.464%200%20.91.184%201.238.513l6.25%206.25a1.75%201.75%200%200%201%200%202.474l-5.026%205.026a1.75%201.75%200%200%201-2.474%200l-6.25-6.25A1.75%201.75%200%200%201%201%207.775m1.5%200c0%20.066.026.13.073.177l6.25%206.25a.25.25%200%200%200%20.354%200l5.025-5.025a.25.25%200%200%200%200-.354l-6.25-6.25a.25.25%200%200%200-.177-.073H2.75a.25.25%200%200%200-.25.25ZM6%205a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.5%201.75v11.5c0%20.138.112.25.25.25h3.17a.75.75%200%200%201%200%201.5H2.75A1.75%201.75%200%200%201%201%2013.25V1.75C1%20.784%201.784%200%202.75%200h8.5C12.216%200%2013%20.784%2013%201.75v7.736a.75.75%200%200%201-1.5%200V1.75a.25.25%200%200%200-.25-.25h-8.5a.25.25%200%200%200-.25.25m13.274%209.537zl-4.557%204.45a.75.75%200%200%201-1.055-.008l-1.943-1.95a.75.75%200%200%201%201.062-1.058l1.419%201.425%204.026-3.932a.75.75%200%201%201%201.048%201.074M4.75%204h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M4%207.75A.75.75%200%200%201%204.75%207h2a.75.75%200%200%201%200%201.5h-2A.75.75%200%200%201%204%207.75%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3.499.75a.75.75%200%200%201%201.5%200v.996C5.9%202.903%206.793%203.65%207.662%204.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873%2010.794-.045%2012.622.26%2014.408.558%2016%201.94%2016%204.25c0%201.278-.954%202.575-2.44%202.734l.146.508.065.22c.203.701.412%201.455.476%202.226.142%201.707-.4%203.03-1.487%203.898C11.714%2014.671%2010.27%2015%208.75%2015h-6a.75.75%200%200%201%200-1.5h1.376a4.5%204.5%200%200%201-.563-1.191%203.84%203.84%200%200%201-.05-2.063%204.65%204.65%200%200%201-2.025-.293.75.75%200%200%201%20.525-1.406c1.357.507%202.376-.006%202.698-.318l.009-.01a.747.747%200%200%201%201.06%200%20.75.75%200%200%201-.012%201.074c-.912.92-.992%201.835-.768%202.586.221.74.745%201.337%201.196%201.621H8.75c1.343%200%202.398-.296%203.074-.836.635-.507%201.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4%202.4%200%200%201-.507-.441%203.1%203.1%200%200%201-.633-1.248.75.75%200%200%201%201.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738%200%201.25-.615%201.25-1.25%200-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706%201.345-.46.92-.27%201.774.019%203.062l.042.19.01.05c.348.443.666.949.94%201.553a.75.75%200%201%201-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7%205.527c-.814-.68-1.75-1.462-2.692-2.619a3.7%203.7%200%200%200-1.023.88c-.406.495-.663%201.036-.722%201.508.116.122.306.21.591.239.388.038.797-.06%201.032-.19a.75.75%200%200%201%20.728%201.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75%205.677V5.5c0-.984.48-1.94%201.077-2.664.46-.559%201.05-1.055%201.673-1.353z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M13.78%204.22a.75.75%200%200%201%200%201.06l-7.25%207.25a.75.75%200%200%201-1.06%200L2.22%209.28a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018L6%2010.94l6.72-6.72a.75.75%200%200%201%201.06%200%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.92%206.085h.001a.749.749%200%201%201-1.342-.67c.169-.339.436-.701.849-.977C6.845%204.16%207.369%204%208%204a2.76%202.76%200%200%201%201.637.525c.503.377.863.965.863%201.725%200%20.448-.115.83-.329%201.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6%206%200%200%200-.26.16%201%201%200%200%200-.276.245.75.75%200%200%201-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1%201%200%200%200%20.277-.245C8.96%206.514%209%206.427%209%206.25a.61.61%200%200%200-.262-.525A1.27%201.27%200%200%200%208%205.5c-.369%200-.595.09-.74.187a1%201%200%200%200-.34.398M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.344%202.343za8%208%200%200%201%2011.314%2011.314A8.002%208.002%200%200%201%20.234%2010.089a8%208%200%200%201%202.11-7.746m1.06%2010.253a6.5%206.5%200%201%200%209.108-9.275%206.5%206.5%200%200%200-9.108%209.275M6.03%204.97%208%206.94l1.97-1.97a.749.749%200%200%201%201.275.326.75.75%200%200%201-.215.734L9.06%208l1.97%201.97a.749.749%200%200%201-.326%201.275.75.75%200%200%201-.734-.215L8%209.06l-1.97%201.97a.749.749%200%200%201-1.275-.326.75.75%200%200%201%20.215-.734L6.94%208%204.97%206.03a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.72.22a.75.75%200%200%201%201.06%200l1%20.999a3.5%203.5%200%200%201%202.441%200l.999-1a.748.748%200%200%201%201.265.332.75.75%200%200%201-.205.729l-.775.776c.616.63.995%201.493.995%202.444v.327q0%20.15-.025.292c.408.14.764.392%201.029.722l1.968-.787a.75.75%200%200%201%20.556%201.392L13%207.258V9h2.25a.75.75%200%200%201%200%201.5H13v.5q-.002.615-.141%201.186l2.17.868a.75.75%200%200%201-.557%201.392l-2.184-.873A5%205%200%200%201%208%2016a5%205%200%200%201-4.288-2.427l-2.183.873a.75.75%200%200%201-.558-1.392l2.17-.868A5%205%200%200%201%203%2011v-.5H.75a.75.75%200%200%201%200-1.5H3V7.258L.971%206.446a.75.75%200%200%201%20.558-1.392l1.967.787c.265-.33.62-.583%201.03-.722a1.7%201.7%200%200%201-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72%201.28a.75.75%200%200%201%200-1.06m.53%206.28a.75.75%200%200%200-.75.75V11a3.5%203.5%200%201%200%207%200V7.25a.75.75%200%200%200-.75-.75ZM6.173%205h3.654A.17.17%200%200%200%2010%204.827V4.5a2%202%200%201%200-4%200v.327c0%20.096.077.173.173.173%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-V01MJ4R3SQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-V01MJ4R3SQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-V01MJ4R3SQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Essential kubectl Commands - A Developer's Cheat Sheet - Exploring Kubernetes" />
+<meta property="og:description" content="Master essential kubectl commands for managing Pods, Deployments, and Services. Practical cheat sheet with examples for troubleshooting K8s applications." />
+<meta property="og:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/commands.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://kubernetes.bradpenney.io/day_one/kubectl/commands/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Essential kubectl Commands - A Developer's Cheat Sheet - Exploring Kubernetes" />
+<meta property="twitter:description" content="Master essential kubectl commands for managing Pods, Deployments, and Services. Practical cheat sheet with examples for troubleshooting K8s applications." />
+<meta property="twitter:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/commands.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#essential-kubectl-commands" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Exploring Kubernetes" class="md-header__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Exploring Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Essential kubectl Commands - A Developer's Cheat Sheet
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Exploring Kubernetes" class="md-nav__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    Exploring Kubernetes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day One - Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Day One - Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../what_is_kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Kubernetes?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Scratch (kubectl)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    From Scratch (kubectl)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-daily-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Daily Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Daily Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-viewing-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get (Viewing Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe-detailed-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Describe (Detailed Info)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-application-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs (Application Output)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explain-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explain (Documentation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply-createupdate-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply (Create/Update Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-remove-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete (Remove Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-adjust-replicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scale (Adjust Replicas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-forward-local-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Forward (Local Access)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exec-shell-into-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exec (Shell Into Pod)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollout-manage-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollout (Manage Deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#useful-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Useful Flags
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Useful Flags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Cheat Sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debugging-a-broken-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging a Broken Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-an-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying an Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-application-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Application Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-wrong-namespace-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Wrong Namespace Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-all-flag-danger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The --all Flag Danger
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-l-label-selector-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The -l Label Selector Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-kubectl-apply-isnt-always-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The kubectl apply Isn't Always Safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-forgotten-previous-flag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Forgotten --previous Flag
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../understanding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using Helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Helm Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Helm Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-daily-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Daily Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Daily Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-viewing-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get (Viewing Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#describe-detailed-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Describe (Detailed Info)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs-application-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs (Application Output)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explain-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explain (Documentation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply-createupdate-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply (Create/Update Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-remove-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete (Remove Resources)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scale-adjust-replicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scale (Adjust Replicas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-forward-local-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Forward (Local Access)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exec-shell-into-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exec (Shell Into Pod)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollout-manage-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollout (Manage Deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#useful-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Useful Flags
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Useful Flags">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-cheat-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Cheat Sheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Workflows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debugging-a-broken-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging a Broken Pod
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-an-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying an Update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-application-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Application Health
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-World Pitfalls
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Pitfalls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-wrong-namespace-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Wrong Namespace Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-all-flag-danger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The --all Flag Danger
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-l-label-selector-trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The -l Label Selector Trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-kubectl-apply-isnt-always-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The kubectl apply Isn't Always Safe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-forgotten-previous-flag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Forgotten --previous Flag
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="essential-kubectl-commands">Essential kubectl Commands</h1>
+<div class="admonition tip">
+<p class="admonition-title">Part of Day One: Getting Started</p>
+<p>This is the fourth article in <a href="../../overview/">Day One: Getting Started</a>. If you haven't deployed anything yet, do <a href="../first_deploy/">Your First Deployment</a> first.</p>
+</div>
+<p>You just deployed your first application to Kubernetes. It worked! But you also noticed something: you ran <code>kubectl apply</code>, then <code>kubectl get pods</code>, then <code>kubectl describe</code>, then <code>kubectl logs</code>... and you're starting to wonder: <strong>how many of these commands do I actually need to know?</strong></p>
+<p>Good news: despite hundreds of possible <code>kubectl</code> commands and flags, you'll use the same 10-15 commands about 90% of the time. Master these, and you'll be productive with Kubernetes.</p>
+<p>This guide organizes the essential commands by what you're trying to do, shows you exactly what output to expect, and gives you the confidence to explore safely.</p>
+<div class="admonition info">
+<p class="admonition-title">What You'll Learn</p>
+<p>By the end of this article, you'll know:</p>
+<ul>
+<li>The daily commands you'll run dozens of times (read-only and safe)</li>
+<li>The deployment commands that modify resources (use with awareness)</li>
+<li>The troubleshooting commands that save you when things break</li>
+<li>How to combine commands with useful flags</li>
+<li>Which commands are safe vs. destructive</li>
+</ul>
+</div>
+<h2 id="the-daily-commands">The Daily Commands</h2>
+<p><strong>Start with read-only commands.</strong> They're safe, informative, and help you understand what's actually running in your cluster before you make any changes.</p>
+<pre class="mermaid"><code>graph TD
+    Start[Read-Only Commands&lt;br/&gt;✅ Safe to explore] --&gt; Get[kubectl get&lt;br/&gt;List resources]
+    Start --&gt; Describe[kubectl describe&lt;br/&gt;Detailed info + events]
+    Start --&gt; Logs[kubectl logs&lt;br/&gt;Application output]
+    Start --&gt; Explain[kubectl explain&lt;br/&gt;Documentation]
+
+    style Start fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Get fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Describe fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Logs fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Explain fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<p>These are the commands you'll run dozens of times per day. They're all equally important—use whichever one fits your current need:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">kubectl get</label><label for="__tabbed_1_2">kubectl describe</label><label for="__tabbed_1_3">kubectl logs</label><label for="__tabbed_1_4">kubectl explain</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="get-viewing-resources">Get (Viewing Resources)</h3>
+<p>The <code>kubectl get</code> command lists resources. This is usually your first step when checking on deployments, debugging issues, or just seeing what's running.</p>
+<div class="language-bash highlight"><span class="filename">List Pods</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># NAME                        READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># my-app-7c5ddbdf54-2xkqn     1/1     Running   0          5m</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># my-app-7c5ddbdf54-8mz4p     1/1     Running   0          5m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">List Deployments</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployments
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deploy<span class="w">  </span><span class="c1"># Short form</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># NAME      READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># my-app    3/3     3            3           10m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">List Services</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>services
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w">  </span><span class="c1"># Short form</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># my-app-svc   ClusterIP   10.96.45.123    &lt;none&gt;        80/TCP    10m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">List Everything in Namespace</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>all
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># Shows pods, services, deployments, replicasets</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Get More Details</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-o<span class="w"> </span>wide
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># NAME                        READY   STATUS    RESTARTS   AGE   IP           NODE</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># my-app-7c5ddbdf54-2xkqn     1/1     Running   0          5m    10.244.1.5   worker-1</span>
+</span></code></pre></div>
+<p>✅ <strong>Safe:</strong> Read-only, can't break anything</p>
+</div>
+<div class="tabbed-block">
+<h3 id="describe-detailed-info">Describe (Detailed Info)</h3>
+<p>When <code>kubectl get</code> shows something's wrong, <code>kubectl describe</code> tells you <strong>why</strong>. It shows events, status details, and error messages—your primary debugging tool.</p>
+<div class="language-bash highlight"><span class="filename">Describe a Pod</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># Name:             my-app-7c5ddbdf54-2xkqn</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Namespace:        default</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Node:             worker-1/192.168.1.10</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Status:           Running</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># IP:               10.244.1.5</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Containers:</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1">#   my-app:</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1">#     Image:          nginx:1.21</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1">#     Port:           80/TCP</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1">#     State:          Running</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># Events:</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1">#   Type    Reason     Age   Message</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1">#   ----    ------     ----  -------</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="c1">#   Normal  Scheduled  5m    Successfully assigned pod to worker-1</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="c1">#   Normal  Pulled     5m    Container image pulled</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="c1">#   Normal  Created    5m    Created container</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="c1">#   Normal  Started    5m    Started container</span>
+</span></code></pre></div>
+<p><strong>Pro tip:</strong> Always check the Events section at the bottom—that's where error messages appear.</p>
+<p>✅ <strong>Safe:</strong> Read-only</p>
+</div>
+<div class="tabbed-block">
+<h3 id="logs-application-output">Logs (Application Output)</h3>
+<p>The <code>kubectl logs</code> command shows your application's stdout/stderr—exactly what you'd see if you ran the container locally with <code>docker logs</code>.</p>
+<div class="language-bash highlight"><span class="filename">View Pod Logs</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># 192.168.1.100 - - [12/Feb/2026:14:23:11 +0000] &quot;GET / HTTP/1.1&quot; 200</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># 192.168.1.101 - - [12/Feb/2026:14:23:15 +0000] &quot;GET /health HTTP/1.1&quot; 200</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Follow Logs in Real-Time</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># Like tail -f - keeps running and shows new log lines as they appear</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Press Ctrl+C to stop</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Last N Lines</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span><span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Shows only the last 50 lines</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Multi-Container Pod</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>-c<span class="w"> </span>nginx
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># When a pod has multiple containers, specify which one</span>
+</span></code></pre></div>
+<p>✅ <strong>Safe:</strong> Read-only</p>
+</div>
+<div class="tabbed-block">
+<h3 id="explain-documentation">Explain (Documentation)</h3>
+<p>The <code>kubectl explain</code> command is built-in documentation for every Kubernetes resource. No need to leave your terminal to look up YAML fields.</p>
+<div class="language-bash highlight"><span class="filename">Explain a Resource Type</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pods
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># KIND:     Pod</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># VERSION:  v1</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># DESCRIPTION:</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1">#      Pod is a collection of containers that can run on a host...</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Drill Down into Fields</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># Shows all fields under spec</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.containers
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># Shows container-specific fields</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pods.spec.containers.resources
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># Shows resource request/limit fields</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Explain Other Resources</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>deployments
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>services
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>configmaps
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Works for ANY Kubernetes resource</span>
+</span></code></pre></div>
+<p><strong>Pro tip:</strong> When writing YAML and you forget a field name, use <code>kubectl explain</code> instead of googling.</p>
+<p>✅ <strong>Safe:</strong> Just shows documentation—doesn't interact with the cluster</p>
+</div>
+</div>
+</div>
+<hr />
+<details class="tip">
+<summary>Pro Tips - Click to Expand</summary>
+<p><strong>Create shell aliases for commands you run constantly:</strong></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">bash/zsh (Linux/Mac)</label><label for="__tabbed_2_2">PowerShell (Windows)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">Add to ~/.bashrc or ~/.zshrc</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">k</span><span class="o">=</span>kubectl
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kgp</span><span class="o">=</span><span class="s1">&#39;kubectl get pods&#39;</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kgd</span><span class="o">=</span><span class="s1">&#39;kubectl get deployments&#39;</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kgs</span><span class="o">=</span><span class="s1">&#39;kubectl get svc&#39;</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kga</span><span class="o">=</span><span class="s1">&#39;kubectl get all&#39;</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kd</span><span class="o">=</span><span class="s1">&#39;kubectl describe&#39;</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kl</span><span class="o">=</span><span class="s1">&#39;kubectl logs&#39;</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kaf</span><span class="o">=</span><span class="s1">&#39;kubectl apply -f&#39;</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kdel</span><span class="o">=</span><span class="s1">&#39;kubectl delete&#39;</span>
+</span></code></pre></div>
+<p>After adding these, run <code>source ~/.bashrc</code> (or <code>source ~/.zshrc</code>), then you can use <code>k get pods</code> instead of <code>kubectl get pods</code>.</p>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><span class="filename">Add to your PowerShell profile</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c"># Find your profile location:</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c"># $PROFILE</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c"># Edit your profile (creates if missing):</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c"># notepad $PROFILE</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="c"># Add these functions:</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="k">function</span> <span class="n">k</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="k">function</span> <span class="n">kgp</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">pods</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="k">function</span> <span class="n">kgd</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">deployments</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="k">function</span> <span class="n">kgs</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">svc</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="k">function</span> <span class="n">kga</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">all</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="k">function</span> <span class="n">kd</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">describe</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="k">function</span> <span class="n">kl</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">logs</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="k">function</span> <span class="n">kaf</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">apply</span> <span class="o">-f</span> <span class="nv">$args</span> <span class="p">}</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="k">function</span> <span class="n">kdel</span> <span class="p">{</span> <span class="n">kubectl</span> <span class="n">delete</span> <span class="nv">$args</span> <span class="p">}</span>
+</span></code></pre></div>
+<p>After adding these, restart PowerShell, then you can use <code>k get pods</code> instead of <code>kubectl get pods</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Reload Without Restarting</p>
+<p>After editing your profile, reload it:
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">.</span> <span class="nv">$PROFILE</span>
+</span></code></pre></div></p>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Enable kubectl autocomplete</strong> for tab completion of commands and resource names:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">bash</label><label for="__tabbed_3_2">zsh</label><label for="__tabbed_3_3">PowerShell</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">Add to ~/.bashrc</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Enable kubectl autocompletion</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># If using alias &#39;k&#39;, add completion for it:</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nb">complete</span><span class="w"> </span>-o<span class="w"> </span>default<span class="w"> </span>-F<span class="w"> </span>__start_kubectl<span class="w"> </span>k
+</span></code></pre></div>
+<p>After adding, run <code>source ~/.bashrc</code> or restart your terminal.</p>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><span class="filename">Add to ~/.zshrc</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Enable kubectl autocompletion</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>zsh<span class="o">)</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># If using alias &#39;k&#39;, add completion for it:</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>compdef<span class="w"> </span>__start_kubectl<span class="w"> </span>k
+</span></code></pre></div>
+<p>After adding, run <code>source ~/.zshrc</code> or restart your terminal.</p>
+</div>
+<div class="tabbed-block">
+<div class="language-powershell highlight"><span class="filename">Add to your PowerShell profile</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c"># Enable kubectl autocompletion</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">kubectl</span> <span class="n">completion</span> <span class="n">powershell</span> <span class="p">|</span> <span class="nb">Out-String</span> <span class="p">|</span> <span class="nb">Invoke-Expression</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c"># Optional: Set alias &#39;k&#39; to kubectl</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">Set-Alias</span> <span class="n">-Name</span> <span class="n">k</span> <span class="n">-Value</span> <span class="n">kubectl</span>
+</span></code></pre></div>
+<p>After adding, restart PowerShell or run <code>. $PROFILE</code>.</p>
+</div>
+</div>
+</div>
+<p><strong>With autocomplete enabled:</strong> Press <code>Tab</code> while typing commands:</p>
+<ul>
+<li><code>kubectl get po</code> + <code>Tab</code> → <code>kubectl get pods</code></li>
+<li><code>kubectl describe pod my-app-</code> + <code>Tab</code> → shows matching pod names</li>
+<li><code>kubectl -n</code> + <code>Tab</code> → shows available namespaces</li>
+</ul>
+<p><strong>Set your default namespace</strong> so you don't need <code>-n namespace</code> every time:</p>
+<div class="language-bash highlight"><span class="filename">Set Default Namespace (Works in all shells)</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--namespace<span class="o">=</span>your-namespace
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># Now all commands use this namespace by default</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Need to switch between multiple contexts?</p>
+<p>If you work with multiple clusters (dev, staging, prod), you'll use <code>kubectl config use-context</code> to switch between them. See <strong><a href="../access/#switching-contexts">Getting kubectl Access: Switching Contexts</a></strong> for the full workflow.</p>
+</div>
+</details>
+<hr />
+<h2 id="deployment-commands">Deployment Commands</h2>
+<p>Now we move from read-only to commands that <strong>modify your cluster</strong>. These are still safe in your dev namespace, but use them with awareness.</p>
+<pre class="mermaid"><code>graph TD
+    Start[Need to change&lt;br/&gt;resources?] --&gt; Apply[kubectl apply&lt;br/&gt;Create/Update]
+    Apply --&gt; Check{Is it working?}
+
+    Check --&gt;|Yes| Scale[kubectl scale&lt;br/&gt;Adjust replicas]
+    Check --&gt;|No| Delete[kubectl delete&lt;br/&gt;Remove resources]
+
+    Scale --&gt; Done[Changes applied&lt;br/&gt;⚠️ Namespace modified]
+    Delete --&gt; Done
+
+    style Start fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Apply fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Check fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Scale fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Delete fill:#c53030,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Done fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">kubectl apply</label><label for="__tabbed_4_2">kubectl delete</label><label for="__tabbed_4_3">kubectl scale</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="apply-createupdate-resources">Apply (Create/Update Resources)</h3>
+<p>The <code>kubectl apply</code> command is how you deploy applications. It reads YAML files and creates or updates resources to match what's in the file.</p>
+<div class="language-bash highlight"><span class="filename">Apply a Single File</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deployment.yaml
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># deployment.apps/my-app created</span>
+</span></code></pre></div>
+<p><strong>Example YAML that <code>kubectl apply</code> reads:</strong></p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">deployment.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-21-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-21-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-21-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-21-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-21-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-21-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-21-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-21-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-21-10">10</a></span>
+<span class="normal"><a href="#__codelineno-21-11">11</a></span>
+<span class="normal"><a href="#__codelineno-21-12">12</a></span>
+<span class="normal"><a href="#__codelineno-21-13">13</a></span>
+<span class="normal"><a href="#__codelineno-21-14">14</a></span>
+<span class="normal"><a href="#__codelineno-21-15">15</a></span>
+<span class="normal"><a href="#__codelineno-21-16">16</a></span>
+<span class="normal"><a href="#__codelineno-21-17">17</a></span>
+<span class="normal"><a href="#__codelineno-21-18">18</a></span>
+<span class="normal"><a href="#__codelineno-21-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">  </span><span class="c1"># (4)!</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span><span class="w">  </span><span class="c1"># (5)!</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.21</span><span class="w">  </span><span class="c1"># (6)!</span>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>API version tells Kubernetes which resource schema to use</li>
+<li>Deployment manages ReplicaSets, which manage Pods</li>
+<li>Name must be unique within the namespace</li>
+<li>Kubernetes maintains exactly 3 running pods</li>
+<li>Labels connect Deployments → Pods → Services</li>
+<li><strong>Always pin versions</strong> - avoid <code>:latest</code> in production</li>
+</ol>
+<div class="language-bash highlight"><span class="filename">Apply All Files in Directory</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./configs/
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1"># deployment.apps/my-app created</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="c1"># service/my-app-svc created</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># configmap/my-app-config created</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Apply from URL</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://k8s.io/examples/application/deployment.yaml
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1"># Useful for examples and quick tests</span>
+</span></code></pre></div>
+<p><strong>How it works:</strong> <code>kubectl apply</code> is declarative—it figures out what needs to be created, updated, or left alone. Run it multiple times safely; it only makes necessary changes.</p>
+<p>⚠️ <strong>Caution:</strong> Creates or modifies resources in your namespace - can trigger Pod restarts if changing images or resource limits</p>
+</div>
+<div class="tabbed-block">
+<h3 id="delete-remove-resources">Delete (Remove Resources)</h3>
+<p>The <code>kubectl delete</code> command removes resources. Use carefully—there's no "Are you sure?" prompt.</p>
+<div class="language-bash highlight"><span class="filename">Delete by File</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>deployment.yaml
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># deployment.apps &quot;my-app&quot; deleted</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="c1"># Removes everything defined in that YAML file</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Delete by Resource Name</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1"># pod &quot;my-app-7c5ddbdf54-2xkqn&quot; deleted</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>deployment<span class="w"> </span>my-app
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="c1"># deployment.apps &quot;my-app&quot; deleted</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="c1"># Also deletes the ReplicaSet and all pods it manages</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Delete by Label</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>all<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>myapp
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="c1"># Deletes all resources with label app=myapp</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="c1"># CAREFUL: &#39;all&#39; means pods, services, deployments, etc.</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Namespace Awareness</p>
+<p><code>kubectl delete</code> only affects your current namespace. You can't accidentally delete production resources if you're in the dev namespace—but always check with <code>kubectl config view --minify | grep namespace</code> first.</p>
+</div>
+<p>🚨 <strong>DANGER:</strong> Permanently deletes resources—no confirmation prompt</p>
+</div>
+<div class="tabbed-block">
+<h3 id="scale-adjust-replicas">Scale (Adjust Replicas)</h3>
+<p>⚠️ <strong>Caution:</strong> The <code>kubectl scale</code> command changes how many copies (replicas) of your application are running <strong>immediately</strong>. Great for testing load handling or temporarily scaling down, but affects live traffic.</p>
+<div class="language-bash highlight"><span class="filename">Scale Up</span><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>my-app<span class="w"> </span>--replicas<span class="o">=</span><span class="m">5</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="c1"># deployment.apps/my-app scaled</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="c1"># Kubernetes creates 2 more pods (you had 3, now you&#39;ll have 5)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Scale Down</span><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>my-app<span class="w"> </span>--replicas<span class="o">=</span><span class="m">1</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="c1"># deployment.apps/my-app scaled</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="c1"># Kubernetes terminates 2 pods (keeping 1 running)</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="c1"># ⚠️ Active connections to terminated pods may be dropped</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Scale to Zero</span><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>my-app<span class="w"> </span>--replicas<span class="o">=</span><span class="m">0</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="c1"># Stops all pods but keeps the deployment</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="c1"># ⚠️ Application becomes completely unavailable</span>
+</span></code></pre></div>
+<p><strong>Note:</strong> Scaling changes take a few seconds. Use <code>kubectl get pods -w</code> to watch pods starting or terminating.</p>
+<p><strong>Production consideration:</strong> Scaling down can drop active connections. In production, prefer gradual scaling or use <code>kubectl rollout restart</code> for graceful pod replacement.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="troubleshooting-commands">Troubleshooting Commands</h2>
+<p>When things break (and they will), these commands help you investigate and fix problems.</p>
+<pre class="mermaid"><code>graph TD
+    Start[Something's broken?] --&gt; Port[kubectl port-forward&lt;br/&gt;Test locally]
+    Port --&gt; Works{Does it work&lt;br/&gt;locally?}
+
+    Works --&gt;|No| Exec[kubectl exec&lt;br/&gt;Shell into pod]
+    Works --&gt;|Yes| Rollout[kubectl rollout&lt;br/&gt;Check deployment]
+
+    Exec --&gt; Debug[Debug inside&lt;br/&gt;container]
+    Rollout --&gt; Fix{Need to&lt;br/&gt;rollback?}
+
+    Fix --&gt;|Yes| Undo[kubectl rollout undo&lt;br/&gt;Revert to previous]
+    Fix --&gt;|No| Restart[kubectl rollout restart&lt;br/&gt;Recreate pods]
+
+    Debug --&gt; Solved[Problem identified&lt;br/&gt;⚠️ Fix and redeploy]
+    Undo --&gt; Solved
+    Restart --&gt; Solved
+
+    style Start fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Port fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Works fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Exec fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Rollout fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Debug fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Fix fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Undo fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Restart fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Solved fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">kubectl port-forward</label><label for="__tabbed_5_2">kubectl exec</label><label for="__tabbed_5_3">kubectl rollout</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="port-forward-local-access">Port Forward (Local Access)</h3>
+<p>The <code>kubectl port-forward</code> command creates a tunnel from your laptop to a pod or service in the cluster. Perfect for testing before exposing services publicly.</p>
+<div class="language-bash highlight"><span class="filename">Forward Pod Port to localhost</span><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>pod/my-app-7c5ddbdf54-2xkqn<span class="w"> </span><span class="m">8080</span>:80
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="c1"># Forwarding from 127.0.0.1:8080 -&gt; 80</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="c1"># Now open http://localhost:8080 in your browser</span>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># Press Ctrl+C to stop forwarding</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Forward Service Port</span><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>service/my-app-svc<span class="w"> </span><span class="m">8080</span>:80
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="c1"># Forwards to one of the service&#39;s pods automatically</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="c1"># Better than pod forwarding (works even if pods restart)</span>
+</span></code></pre></div>
+<p><strong>When to use this:</strong></p>
+<ul>
+<li>Testing an application before creating an Ingress</li>
+<li>Accessing a database that's not publicly exposed</li>
+<li>Debugging connectivity issues</li>
+</ul>
+<p>✅ <strong>Safe:</strong> Only affects your local machine—doesn't change anything in the cluster</p>
+</div>
+<div class="tabbed-block">
+<h3 id="exec-shell-into-pod">Exec (Shell Into Pod)</h3>
+<p>The <code>kubectl exec</code> command runs commands inside a running container—like SSH but for containers. Incredibly useful for debugging when logs don't tell you enough.</p>
+<details class="danger">
+<summary>Major Security Risk - Click to Expand</summary>
+<p><strong>Many enterprise organizations disable <code>kubectl exec</code> entirely.</strong> Here's why:</p>
+<p><strong>You're inside the cluster network:</strong> Once you <code>exec</code> into a pod, you have network access to:</p>
+<ul>
+<li>Internal services (databases, APIs, message queues)</li>
+<li>Other pods in the same namespace</li>
+<li>Potentially other namespaces (depending on network policies)</li>
+<li>Secrets mounted as environment variables or files</li>
+</ul>
+<p><strong>An attacker with <code>exec</code> access can:</strong></p>
+<ul>
+<li>Exfiltrate sensitive data from databases</li>
+<li>Access internal APIs that should be isolated</li>
+<li>Pivot to other systems within the cluster</li>
+<li>Read mounted secrets and credentials</li>
+</ul>
+<p><strong>Enterprise reality:</strong> Many organizations restrict <code>exec</code> via RBAC policies or disable it completely in production. If you get "Forbidden" errors, this is intentional security policy—not a bug.</p>
+<p><strong>Alternatives to consider:</strong></p>
+<ul>
+<li>Use <code>kubectl logs</code> for application debugging (safer)</li>
+<li>Build better observability into your app (metrics, traces)</li>
+<li>Use ephemeral debug containers (Kubernetes 1.23+) with time limits</li>
+<li>Request temporary elevated access through formal security processes</li>
+</ul>
+</details>
+<div class="language-bash highlight"><span class="filename">Run a Single Command</span><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-la<span class="w"> </span>/app
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="c1"># total 12</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="c1"># drwxr-xr-x    2 root     root          4096 Feb 12 14:20 .</span>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="c1"># drwxr-xr-x    1 root     root          4096 Feb 12 14:20 ..</span>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="c1"># -rw-r--r--    1 root     root           612 Feb 12 14:20 index.html</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Interactive Shell</span><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--<span class="w"> </span>/bin/bash
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="c1"># Opens interactive shell inside the container</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="c1"># You&#39;re now &quot;inside&quot; the pod - explore, debug, test</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="c1"># If bash isn&#39;t available, try sh:</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--<span class="w"> </span>sh
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Multi-Container Pod</span><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>-c<span class="w"> </span>nginx<span class="w"> </span>--<span class="w"> </span>sh
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="c1"># Specify container name when pod has multiple containers</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">If Exec is Blocked</span><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--<span class="w"> </span>sh
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="c1"># Error from server (Forbidden): pods &quot;my-app-7c5ddbdf54-2xkqn&quot; is forbidden:</span>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="c1"># User &quot;your-username&quot; cannot create resource &quot;pods/exec&quot; in namespace &quot;dev&quot;</span>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a><span class="c1"># This is expected in many enterprise environments</span>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a><span class="c1"># Use kubectl logs instead, or request access through proper channels</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code>**Common debugging tasks (if you have `exec` access):**
+
+- Check if config files are mounted correctly
+- Test network connectivity (`curl`, `ping`)
+- Verify environment variables
+- Inspect file permissions
+
+🚨 **DANGER:**
+
+- You can modify the container&#39;s filesystem (changes lost when pod/container restarts)
+- You have network access to internal cluster services
+- Your actions are audited—use responsibly and only in dev/test environments
+- Never use `exec` in production unless explicitly authorized
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="rollout-manage-deployments">Rollout (Manage Deployments)</h3>
+<p>The <code>kubectl rollout</code> commands manage deployment updates, history, and rollbacks. Essential when deployments go wrong.</p>
+<div class="language-bash highlight"><span class="filename">Check Rollout Status</span><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/my-app
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="c1"># Waiting for deployment &quot;my-app&quot; rollout to finish: 1 out of 3 new replicas updated...</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="c1"># deployment &quot;my-app&quot; successfully rolled out</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">View Rollout History</span><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deployment/my-app
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="c1"># REVISION  CHANGE-CAUSE</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="c1"># 1         &lt;none&gt;</span>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="c1"># 2         kubectl apply --filename=deployment.yaml</span>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="c1"># 3         kubectl apply --filename=deployment.yaml</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Rollback to Previous Version</span><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/my-app
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="c1"># deployment.apps/my-app rolled back</span>
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1"># Reverts to the previous version immediately</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Rollback to Specific Revision</span><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/my-app<span class="w"> </span>--to-revision<span class="o">=</span><span class="m">2</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="c1"># deployment.apps/my-app rolled back</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Restart Deployment</span><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/my-app
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="c1"># deployment.apps/my-app restarted</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="c1"># Recreates all pods (useful when config changed but image didn&#39;t)</span>
+</span></code></pre></div>
+<p>⚠️ <strong>Caution:</strong> These commands affect your running application—use <code>rollout status</code> first to understand what's happening</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="useful-flags">Useful Flags</h2>
+<p>These flags work with most <code>kubectl</code> commands and dramatically increase their power.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:4"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><input id="__tabbed_6_4" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Namespace</label><label for="__tabbed_6_2">Output Formats</label><label for="__tabbed_6_3">Labels</label><label for="__tabbed_6_4">Watch</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="namespace">Namespace</h3>
+<p>By default, <code>kubectl</code> commands operate on your current namespace. Use these flags to work with other namespaces:</p>
+<div class="language-bash highlight"><span class="filename">Specific Namespace</span><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>other-namespace
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="c1"># Shows pods in &#39;other-namespace&#39; instead of current namespace</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">All Namespaces</span><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--all-namespaces
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A<span class="w">  </span><span class="c1"># Short form</span>
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="c1"># Shows pods from all namespaces (if you have permission)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="output-formats">Output Formats</h3>
+<p>Get resources in different formats for parsing, saving, or detailed inspection:</p>
+<div class="language-bash highlight"><span class="filename">YAML Output</span><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>-o<span class="w"> </span>yaml
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="c1"># Shows complete pod definition in YAML</span>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="c1"># Great for seeing every field and current values</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">JSON Output</span><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>-o<span class="w"> </span>json
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="c1"># Same as YAML but in JSON format</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="c1"># Useful for scripting with jq</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Custom Columns</span><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,STATUS:.status.phase,IP:.status.podIP
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a><span class="c1"># NAME                        STATUS    IP</span>
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a><span class="c1"># my-app-7c5ddbdf54-2xkqn     Running   10.244.1.5</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="labels">Labels</h3>
+<p>Labels are key/value pairs attached to resources—the fundamental way Kubernetes connects resources together.</p>
+<div class="language-bash highlight"><span class="filename">Filter by Label</span><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a><span class="c1"># Shows only pods with label app=nginx</span>
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx,environment<span class="o">=</span>prod
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a><span class="c1"># Multiple labels (AND condition)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Show Labels</span><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--show-labels
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="c1"># NAME                        READY   STATUS    LABELS</span>
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a><span class="c1"># my-app-7c5ddbdf54-2xkqn     1/1     Running   app=nginx,pod-template-hash=7c5ddbdf54</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Trace Label Matching (Troubleshooting)</span><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># 1. Check what label your Service is looking for</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>service<span class="w"> </span>my-app-svc<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.spec.selector}&#39;</span>
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a><span class="c1"># {&quot;app&quot;:&quot;nginx&quot;}</span>
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a>
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a><span class="c1"># 2. Check if your Pods have that label</span>
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="c1"># If empty, labels don&#39;t match!</span>
+</span><span id="__span-48-8"><a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a>
+</span><span id="__span-48-9"><a id="__codelineno-48-9" name="__codelineno-48-9" href="#__codelineno-48-9"></a><span class="c1"># 3. Check Service endpoints</span>
+</span><span id="__span-48-10"><a id="__codelineno-48-10" name="__codelineno-48-10" href="#__codelineno-48-10"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>my-app-svc
+</span><span id="__span-48-11"><a id="__codelineno-48-11" name="__codelineno-48-11" href="#__codelineno-48-11"></a><span class="c1"># Should show Pod IPs - if empty, labels don&#39;t match</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Understanding Labels</p>
+<p>Labels are how Services find Pods, how Deployments manage Pods, and how you filter resources. Without matching labels, Services can't route traffic—this is the #1 cause of "my service returns 503" problems.</p>
+<p><strong>Visual explanation:</strong> See the <a href="../first_deploy/#your-first-deployment">label matching diagram in Your First Deployment</a> showing how Deployment, Pods, and Service connect via labels.</p>
+<p><strong>Deep dive:</strong> For the complete explanation, see <strong><a href="../understanding/#labels-the-glue">Understanding What Happened: Labels - The Glue</a></strong></p>
+</div>
+</div>
+<div class="tabbed-block">
+<h3 id="watch">Watch</h3>
+<p>Watch resources in real-time as they change:</p>
+<div class="language-bash highlight"><span class="filename">Watch for Changes</span><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--watch
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w<span class="w">  </span><span class="c1"># Short form</span>
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a><span class="c1"># Shows initial list, then updates as pods start/stop/change</span>
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a><span class="c1"># Press Ctrl+C to stop watching</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p><strong>Combine flags:</strong> You can use multiple flags together, like <code>kubectl get pods -n dev -l app=nginx -o wide --watch</code></p>
+<hr />
+<h2 id="command-cheat-sheet">Command Cheat Sheet</h2>
+<p><strong>Quick reference for the 10 essential commands:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+<th>Safety</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>List pods</strong></td>
+<td><code>kubectl get pods</code></td>
+<td>✅ Safe</td>
+</tr>
+<tr>
+<td><strong>Pod details</strong></td>
+<td><code>kubectl describe pod &lt;name&gt;</code></td>
+<td>✅ Safe</td>
+</tr>
+<tr>
+<td><strong>Pod logs</strong></td>
+<td><code>kubectl logs &lt;name&gt;</code></td>
+<td>✅ Safe</td>
+</tr>
+<tr>
+<td><strong>Shell in pod</strong></td>
+<td><code>kubectl exec -it &lt;name&gt; -- sh</code></td>
+<td>⚠️ Caution</td>
+</tr>
+<tr>
+<td><strong>Create resources</strong></td>
+<td><code>kubectl apply -f file.yaml</code></td>
+<td>⚠️ Caution</td>
+</tr>
+<tr>
+<td><strong>Delete resources</strong></td>
+<td><code>kubectl delete -f file.yaml</code></td>
+<td>🚨 Danger</td>
+</tr>
+<tr>
+<td><strong>Scale deployment</strong></td>
+<td><code>kubectl scale deployment &lt;name&gt; --replicas=N</code></td>
+<td>⚠️ Caution</td>
+</tr>
+<tr>
+<td><strong>Port forward</strong></td>
+<td><code>kubectl port-forward pod/&lt;name&gt; 8080:80</code></td>
+<td>✅ Safe</td>
+</tr>
+<tr>
+<td><strong>Rollback</strong></td>
+<td><code>kubectl rollout undo deployment/&lt;name&gt;</code></td>
+<td>⚠️ Caution</td>
+</tr>
+<tr>
+<td><strong>Get docs</strong></td>
+<td><code>kubectl explain &lt;resource&gt;</code></td>
+<td>✅ Safe</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="real-world-workflows">Real-World Workflows</h2>
+<p>Real-world scenarios showing how to combine commands effectively.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:3"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><input id="__tabbed_7_3" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Debugging a Broken Pod</label><label for="__tabbed_7_2">Deploying an Update</label><label for="__tabbed_7_3">Checking Application Health</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="debugging-a-broken-pod">Debugging a Broken Pod</h3>
+<p>When you see a pod with status <code>CrashLoopBackOff</code>, <code>Error</code>, or <code>ImagePullBackOff</code>:</p>
+<div class="language-bash highlight"><span class="filename">1. Identify the Problem Pod</span><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="c1"># NAME                        READY   STATUS             RESTARTS   AGE</span>
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a><span class="c1"># my-app-7c5ddbdf54-2xkqn     0/1     CrashLoopBackOff   5          3m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Check Events</span><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a><span class="c1"># Look at the Events section at the bottom</span>
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a><span class="c1"># Common errors:</span>
+</span><span id="__span-51-4"><a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a><span class="c1"># - &quot;ImagePullBackOff&quot; → wrong image name</span>
+</span><span id="__span-51-5"><a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a><span class="c1"># - &quot;CrashLoopBackOff&quot; → container exits immediately</span>
+</span><span id="__span-51-6"><a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a><span class="c1"># - &quot;Pending&quot; with events → resource constraints</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Check Application Logs</span><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>my-app-7c5ddbdf54-2xkqn
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="c1"># See what the application printed before crashing</span>
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>
+</span><span id="__span-52-4"><a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="c1"># If it restarted multiple times, check previous logs:</span>
+</span><span id="__span-52-5"><a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--previous
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. Shell Into Pod (if it's running)</span><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>my-app-7c5ddbdf54-2xkqn<span class="w"> </span>--<span class="w"> </span>sh
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a><span class="c1"># Investigate filesystem, test connections, check config</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="deploying-an-update">Deploying an Update</h3>
+<p>The safe way to deploy a new version:</p>
+<div class="language-bash highlight"><span class="filename">1. Edit Your YAML</span><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="c1"># Update the image version in deployment.yaml</span>
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a><span class="c1"># image: nginx:1.21 → image: nginx:1.22</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Apply the Change</span><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deployment.yaml
+</span><span id="__span-55-2"><a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a><span class="c1"># deployment.apps/my-app configured</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Watch the Rollout</span><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/my-app
+</span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a><span class="c1"># Waiting for deployment &quot;my-app&quot; rollout to finish...</span>
+</span><span id="__span-56-3"><a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a><span class="c1"># deployment &quot;my-app&quot; successfully rolled out</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. Verify Pods are Running</span><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-57-2"><a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a><span class="c1"># All pods should show STATUS: Running and READY: 1/1</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">5. If Something Broke, Rollback</span><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/my-app
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a><span class="c1"># deployment.apps/my-app rolled back</span>
+</span><span id="__span-58-3"><a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a><span class="c1"># Instantly reverts to the previous working version</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="checking-application-health">Checking Application Health</h3>
+<p>Quick health check workflow:</p>
+<div class="language-bash highlight"><span class="filename">1. Check All Resources</span><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>all
+</span><span id="__span-59-2"><a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a><span class="c1"># See pods, services, deployments, replicasets at once</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Verify Pods are Running</span><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a><span class="c1"># All should be Running with correct READY count</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Check Service Exists</span><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a><span class="c1"># Verify your service has a ClusterIP</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. Test Connectivity</span><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>service/my-app-svc<span class="w"> </span><span class="m">8080</span>:80
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="c1"># Forwarding from 127.0.0.1:8080 -&gt; 80</span>
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="c1"># Open http://localhost:8080 in your browser</span>
+</span><span id="__span-62-5"><a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="c1"># If it works, your app is healthy</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="real-world-pitfalls">Real-World Pitfalls</h2>
+<p>Common pitfalls that trip up even experienced users:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:5"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><input id="__tabbed_8_3" name="__tabbed_8" type="radio" /><input id="__tabbed_8_4" name="__tabbed_8" type="radio" /><input id="__tabbed_8_5" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">Wrong Namespace</label><label for="__tabbed_8_2">--all Flag Danger</label><label for="__tabbed_8_3">Label Selectors</label><label for="__tabbed_8_4">kubectl apply Risks</label><label for="__tabbed_8_5">--previous Flag</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h3 id="the-wrong-namespace-trap">The Wrong Namespace Trap</h3>
+<p>The most common mistake: running commands in the wrong namespace.</p>
+<div class="language-bash highlight"><span class="filename">Always Check Your Current Namespace</span><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--minify<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>namespace
+</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="c1"># namespace: dev</span>
+</span><span id="__span-63-3"><a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a>
+</span><span id="__span-63-4"><a id="__codelineno-63-4" name="__codelineno-63-4" href="#__codelineno-63-4"></a><span class="c1"># Or check explicitly on each command:</span>
+</span><span id="__span-63-5"><a id="__codelineno-63-5" name="__codelineno-63-5" href="#__codelineno-63-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>production<span class="w">  </span><span class="c1"># ⚠️ Be VERY careful with production</span>
+</span></code></pre></div>
+<p><strong>You think you're in <code>dev</code>, but you're actually in <code>production</code>.</strong> This leads to:</p>
+<ul>
+<li>Deleting production pods by accident</li>
+<li>Deploying test code to production</li>
+<li>Scaling down production deployments</li>
+</ul>
+<p><strong>Protection:</strong> Set your namespace explicitly and verify before destructive operations.</p>
+</div>
+<div class="tabbed-block">
+<h3 id="the-all-flag-danger">The <code>--all</code> Flag Danger</h3>
+<p>Commands with <code>--all</code> or <code>-A</code> are powerful but dangerous:</p>
+<div class="language-bash highlight"><span class="filename">Dangerous: Affects ALL Namespaces</span><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pods<span class="w"> </span>--all<span class="w"> </span>-A
+</span><span id="__span-64-2"><a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a><span class="c1"># 🚨 DELETES EVERY POD IN EVERY NAMESPACE YOU HAVE ACCESS TO</span>
+</span><span id="__span-64-3"><a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a>
+</span><span id="__span-64-4"><a id="__codelineno-64-4" name="__codelineno-64-4" href="#__codelineno-64-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A
+</span><span id="__span-64-5"><a id="__codelineno-64-5" name="__codelineno-64-5" href="#__codelineno-64-5"></a><span class="c1"># ✅ Safe - just lists pods across all namespaces</span>
+</span></code></pre></div>
+<p><strong>Rule:</strong> <code>--all</code> with read-only commands (<code>get</code>, <code>describe</code>) is safe. <code>--all</code> with destructive commands (<code>delete</code>) is <strong>extremely dangerous</strong>.</p>
+</div>
+<div class="tabbed-block">
+<h3 id="the-l-label-selector-trap">The <code>-l</code> Label Selector Trap</h3>
+<p>Label selectors are powerful but can match more than you expect:</p>
+<div class="language-bash highlight"><span class="filename">What Will This Delete?</span><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>all<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>myapp
+</span><span id="__span-65-2"><a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="c1"># Deletes: pods, services, deployments, replicasets with label app=myapp</span>
+</span><span id="__span-65-3"><a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a><span class="c1"># Does NOT delete: configmaps, secrets, persistent volumes</span>
+</span><span id="__span-65-4"><a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a><span class="c1"># &quot;all&quot; doesn&#39;t mean &quot;everything&quot;</span>
+</span></code></pre></div>
+<p><strong>Always test with <code>get</code> first:</strong></p>
+<div class="language-bash highlight"><span class="filename">Safe Testing Pattern</span><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a><span class="c1"># 1. See what matches</span>
+</span><span id="__span-66-2"><a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>myapp
+</span><span id="__span-66-3"><a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a>
+</span><span id="__span-66-4"><a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a><span class="c1"># 2. If it looks right, then delete</span>
+</span><span id="__span-66-5"><a id="__codelineno-66-5" name="__codelineno-66-5" href="#__codelineno-66-5"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>all<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>myapp
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<h3 id="the-kubectl-apply-isnt-always-safe">The <code>kubectl apply</code> Isn't Always Safe</h3>
+<p>While <code>kubectl apply</code> is declarative and generally safe, it can still cause disruptions:</p>
+<ul>
+<li>Changing resource limits → pods restart</li>
+<li>Updating image tags → rolling restart</li>
+<li>Modifying service selectors → traffic disruption</li>
+</ul>
+<p><strong>Best practice:</strong> Always review changes with <code>kubectl diff</code> first (if available) or understand what will change before applying.</p>
+</div>
+<div class="tabbed-block">
+<h3 id="the-forgotten-previous-flag">The Forgotten <code>--previous</code> Flag</h3>
+<p>When debugging crashed pods:</p>
+<div class="language-bash highlight"><span class="filename">Wrong - Shows Current Logs (Empty)</span><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>crashing-pod-abc123
+</span><span id="__span-67-2"><a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a><span class="c1"># (empty output - pod just restarted)</span>
+</span><span id="__span-67-3"><a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a>
+</span><span id="__span-67-4"><a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>crashing-pod-abc123<span class="w"> </span>--previous
+</span><span id="__span-67-5"><a id="__codelineno-67-5" name="__codelineno-67-5" href="#__codelineno-67-5"></a><span class="c1"># Shows logs from BEFORE the crash - what you actually need</span>
+</span></code></pre></div>
+<p>If a pod is crash-looping, always use <code>--previous</code> to see what happened before the restart.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="practice-exercises">Practice Exercises</h2>
+<details class="question">
+<summary>Exercise 1: Explore Your Deployed Application</summary>
+<p>You deployed an application in the previous article. Use the commands you learned to investigate what's actually running.</p>
+<p><strong>Tasks:</strong></p>
+<ol>
+<li>List all pods in your namespace</li>
+<li>Get detailed information about one pod</li>
+<li>View the logs from that pod</li>
+<li>List all services</li>
+</ol>
+<p><strong>Goal:</strong> Get comfortable with read-only commands.</p>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">1. List All Pods</span><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-68-2"><a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a><span class="c1"># NAME                        READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-68-3"><a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a><span class="c1"># nginx-7c5ddbdf54-x8f9p     1/1     Running   0          10m</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Get Detailed Pod Info</span><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>nginx-7c5ddbdf54-x8f9p
+</span><span id="__span-69-2"><a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a><span class="c1"># Check the Events section at the bottom</span>
+</span><span id="__span-69-3"><a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a><span class="c1"># Look at Status, IP address, Node assignment</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. View Pod Logs</span><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>nginx-7c5ddbdf54-x8f9p
+</span><span id="__span-70-2"><a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a><span class="c1"># Should see nginx access logs (or your app&#39;s logs)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. List Services</span><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc
+</span><span id="__span-71-2"><a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a><span class="c1"># NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)</span>
+</span><span id="__span-71-3"><a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a><span class="c1"># nginx-svc    ClusterIP   10.96.45.123    &lt;none&gt;        80/TCP</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> These four commands (<code>get pods</code>, <code>describe pod</code>, <code>logs</code>, <code>get svc</code>) are your daily toolkit. They're all read-only and safe to run anytime.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 2: Scale Your Application</summary>
+<p>Practice scaling your deployment up and down.</p>
+<p><strong>Tasks:</strong></p>
+<ol>
+<li>Check current number of replicas</li>
+<li>Scale to 5 replicas</li>
+<li>Watch pods being created</li>
+<li>Scale back to 2 replicas</li>
+<li>Verify the change</li>
+</ol>
+<p><strong>Goal:</strong> Get comfortable modifying resources safely.</p>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">1. Check Current Replicas</span><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployment
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a><span class="c1"># NAME     READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-72-3"><a id="__codelineno-72-3" name="__codelineno-72-3" href="#__codelineno-72-3"></a><span class="c1"># nginx    3/3     3            3           15m</span>
+</span><span id="__span-72-4"><a id="__codelineno-72-4" name="__codelineno-72-4" href="#__codelineno-72-4"></a><span class="c1"># Currently has 3 replicas</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Scale to 5 Replicas</span><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>nginx<span class="w"> </span>--replicas<span class="o">=</span><span class="m">5</span>
+</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a><span class="c1"># deployment.apps/nginx scaled</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Watch Pods Being Created</span><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w
+</span><span id="__span-74-2"><a id="__codelineno-74-2" name="__codelineno-74-2" href="#__codelineno-74-2"></a><span class="c1"># Watch as new pods go from Pending → ContainerCreating → Running</span>
+</span><span id="__span-74-3"><a id="__codelineno-74-3" name="__codelineno-74-3" href="#__codelineno-74-3"></a><span class="c1"># Press Ctrl+C to stop watching</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. Scale Back to 2</span><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>nginx<span class="w"> </span>--replicas<span class="o">=</span><span class="m">2</span>
+</span><span id="__span-75-2"><a id="__codelineno-75-2" name="__codelineno-75-2" href="#__codelineno-75-2"></a><span class="c1"># deployment.apps/nginx scaled</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">5. Verify the Change</span><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-76-2"><a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a><span class="c1"># Should now see only 2 pods</span>
+</span><span id="__span-76-3"><a id="__codelineno-76-3" name="__codelineno-76-3" href="#__codelineno-76-3"></a><span class="c1"># Some pods will show &quot;Terminating&quot; status briefly</span>
+</span><span id="__span-76-4"><a id="__codelineno-76-4" name="__codelineno-76-4" href="#__codelineno-76-4"></a>
+</span><span id="__span-76-5"><a id="__codelineno-76-5" name="__codelineno-76-5" href="#__codelineno-76-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployment
+</span><span id="__span-76-6"><a id="__codelineno-76-6" name="__codelineno-76-6" href="#__codelineno-76-6"></a><span class="c1"># NAME     READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-76-7"><a id="__codelineno-76-7" name="__codelineno-76-7" href="#__codelineno-76-7"></a><span class="c1"># nginx    2/2     2            2           20m</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> Scaling is instant and safe. Kubernetes handles starting/stopping pods automatically. In production, you'd set replica counts in your YAML, but <code>kubectl scale</code> is useful for testing.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 3: Test Connectivity with Port Forwarding</summary>
+<p>Access your application locally without exposing it publicly.</p>
+<p><strong>Tasks:</strong></p>
+<ol>
+<li>Forward your service's port 80 to localhost:8080</li>
+<li>Test it in your browser</li>
+<li>Try forwarding directly to a pod</li>
+</ol>
+<p><strong>Goal:</strong> Learn how to test applications before exposing them.</p>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">1. Forward Service Port</span><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>service/nginx-svc<span class="w"> </span><span class="m">8080</span>:80
+</span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a><span class="c1"># Forwarding from 127.0.0.1:8080 -&gt; 80</span>
+</span><span id="__span-77-3"><a id="__codelineno-77-3" name="__codelineno-77-3" href="#__codelineno-77-3"></a><span class="c1"># Forwarding from [::1]:8080 -&gt; 80</span>
+</span><span id="__span-77-4"><a id="__codelineno-77-4" name="__codelineno-77-4" href="#__codelineno-77-4"></a><span class="c1"># (Keeps running - don&#39;t close the terminal yet)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Test in Browser</span><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a><span class="c1"># Open a new terminal (don&#39;t stop port-forward)</span>
+</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a><span class="c1"># Visit http://localhost:8080</span>
+</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a>
+</span><span id="__span-78-4"><a id="__codelineno-78-4" name="__codelineno-78-4" href="#__codelineno-78-4"></a><span class="c1"># Or use curl:</span>
+</span><span id="__span-78-5"><a id="__codelineno-78-5" name="__codelineno-78-5" href="#__codelineno-78-5"></a>curl<span class="w"> </span>http://localhost:8080
+</span><span id="__span-78-6"><a id="__codelineno-78-6" name="__codelineno-78-6" href="#__codelineno-78-6"></a><span class="c1"># Should see HTML response from nginx</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Forward to a Specific Pod</span><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a><span class="c1"># Stop the previous port-forward (Ctrl+C)</span>
+</span><span id="__span-79-2"><a id="__codelineno-79-2" name="__codelineno-79-2" href="#__codelineno-79-2"></a>
+</span><span id="__span-79-3"><a id="__codelineno-79-3" name="__codelineno-79-3" href="#__codelineno-79-3"></a><span class="c1"># Get a pod name:</span>
+</span><span id="__span-79-4"><a id="__codelineno-79-4" name="__codelineno-79-4" href="#__codelineno-79-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-79-5"><a id="__codelineno-79-5" name="__codelineno-79-5" href="#__codelineno-79-5"></a><span class="c1"># NAME                     READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-79-6"><a id="__codelineno-79-6" name="__codelineno-79-6" href="#__codelineno-79-6"></a><span class="c1"># nginx-7c5ddbdf54-x8f9p   1/1     Running   0          25m</span>
+</span><span id="__span-79-7"><a id="__codelineno-79-7" name="__codelineno-79-7" href="#__codelineno-79-7"></a>
+</span><span id="__span-79-8"><a id="__codelineno-79-8" name="__codelineno-79-8" href="#__codelineno-79-8"></a><span class="c1"># Forward to that specific pod:</span>
+</span><span id="__span-79-9"><a id="__codelineno-79-9" name="__codelineno-79-9" href="#__codelineno-79-9"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>pod/nginx-7c5ddbdf54-x8f9p<span class="w"> </span><span class="m">8080</span>:80
+</span><span id="__span-79-10"><a id="__codelineno-79-10" name="__codelineno-79-10" href="#__codelineno-79-10"></a><span class="c1"># Works the same way</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> Port forwarding is perfect for testing. Service forwarding is usually better than pod forwarding because pods can restart (changing their name), but the service stays consistent.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 4: Investigate a Resource Type</summary>
+<p>Use <code>kubectl explain</code> to learn about Kubernetes resources without leaving your terminal.</p>
+<p><strong>Tasks:</strong></p>
+<ol>
+<li>Get documentation for pods</li>
+<li>Drill down into pod.spec</li>
+<li>Find out what fields are available under containers</li>
+</ol>
+<p><strong>Goal:</strong> Get comfortable with built-in documentation.</p>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">1. Explain Pods</span><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pods
+</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a><span class="c1"># KIND:     Pod</span>
+</span><span id="__span-80-3"><a id="__codelineno-80-3" name="__codelineno-80-3" href="#__codelineno-80-3"></a><span class="c1"># VERSION:  v1</span>
+</span><span id="__span-80-4"><a id="__codelineno-80-4" name="__codelineno-80-4" href="#__codelineno-80-4"></a><span class="c1"># DESCRIPTION:</span>
+</span><span id="__span-80-5"><a id="__codelineno-80-5" name="__codelineno-80-5" href="#__codelineno-80-5"></a><span class="c1">#      Pod is a collection of containers...</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Drill Into pod.spec</span><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pod.spec
+</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a><span class="c1"># RESOURCE: spec &lt;Object&gt;</span>
+</span><span id="__span-81-3"><a id="__codelineno-81-3" name="__codelineno-81-3" href="#__codelineno-81-3"></a><span class="c1"># DESCRIPTION:</span>
+</span><span id="__span-81-4"><a id="__codelineno-81-4" name="__codelineno-81-4" href="#__codelineno-81-4"></a><span class="c1">#      Specification of the desired behavior of the pod...</span>
+</span><span id="__span-81-5"><a id="__codelineno-81-5" name="__codelineno-81-5" href="#__codelineno-81-5"></a><span class="c1"># FIELDS:</span>
+</span><span id="__span-81-6"><a id="__codelineno-81-6" name="__codelineno-81-6" href="#__codelineno-81-6"></a><span class="c1">#    containers  &lt;[]Object&gt; -required-</span>
+</span><span id="__span-81-7"><a id="__codelineno-81-7" name="__codelineno-81-7" href="#__codelineno-81-7"></a><span class="c1">#    volumes     &lt;[]Object&gt;</span>
+</span><span id="__span-81-8"><a id="__codelineno-81-8" name="__codelineno-81-8" href="#__codelineno-81-8"></a><span class="c1">#    ... (many more fields)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Explore Containers</span><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pod.spec.containers
+</span><span id="__span-82-2"><a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a><span class="c1"># RESOURCE: containers &lt;[]Object&gt;</span>
+</span><span id="__span-82-3"><a id="__codelineno-82-3" name="__codelineno-82-3" href="#__codelineno-82-3"></a><span class="c1"># FIELDS:</span>
+</span><span id="__span-82-4"><a id="__codelineno-82-4" name="__codelineno-82-4" href="#__codelineno-82-4"></a><span class="c1">#    image  &lt;string&gt; -required-</span>
+</span><span id="__span-82-5"><a id="__codelineno-82-5" name="__codelineno-82-5" href="#__codelineno-82-5"></a><span class="c1">#    name   &lt;string&gt; -required-</span>
+</span><span id="__span-82-6"><a id="__codelineno-82-6" name="__codelineno-82-6" href="#__codelineno-82-6"></a><span class="c1">#    ports  &lt;[]Object&gt;</span>
+</span><span id="__span-82-7"><a id="__codelineno-82-7" name="__codelineno-82-7" href="#__codelineno-82-7"></a><span class="c1">#    env    &lt;[]Object&gt;</span>
+</span><span id="__span-82-8"><a id="__codelineno-82-8" name="__codelineno-82-8" href="#__codelineno-82-8"></a><span class="c1">#    resources  &lt;Object&gt;</span>
+</span><span id="__span-82-9"><a id="__codelineno-82-9" name="__codelineno-82-9" href="#__codelineno-82-9"></a><span class="c1">#    ... (many more fields)</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Bonus: Check Resources Field</span><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a>kubectl<span class="w"> </span>explain<span class="w"> </span>pod.spec.containers.resources
+</span><span id="__span-83-2"><a id="__codelineno-83-2" name="__codelineno-83-2" href="#__codelineno-83-2"></a><span class="c1"># Shows how to set CPU/memory requests and limits</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> <code>kubectl explain</code> is like having Kubernetes documentation built into your terminal. Use it when writing YAML to find field names and understand what's required.</p>
+</details>
+</details>
+<details class="question">
+<summary>Challenge: Deploy, Break, and Fix</summary>
+<p><strong>Advanced exercise:</strong> Deploy an application, intentionally break it, then debug and fix it.</p>
+<p><strong>Scenario:</strong> You're deploying a new image version, but you typo the image name. Debug and fix it using only <code>kubectl</code> commands.</p>
+<p><strong>Tasks:</strong></p>
+<ol>
+<li>Create a deployment with an intentionally wrong image name (<code>nginx:nonexistent-tag</code>)</li>
+<li>Observe the failure</li>
+<li>Diagnose the problem using <code>kubectl describe</code> and <code>kubectl logs</code></li>
+<li>Fix it by updating the deployment</li>
+<li>Verify it's now working</li>
+</ol>
+<details class="tip">
+<summary>Solution</summary>
+<div class="language-bash highlight"><span class="filename">1. Create Broken Deployment</span><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a><span class="c1"># Create a file called broken-deployment.yaml:</span>
+</span><span id="__span-84-2"><a id="__codelineno-84-2" name="__codelineno-84-2" href="#__codelineno-84-2"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>broken-deployment.yaml<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+</span><span id="__span-84-3"><a id="__codelineno-84-3" name="__codelineno-84-3" href="#__codelineno-84-3"></a><span class="s">apiVersion: apps/v1</span>
+</span><span id="__span-84-4"><a id="__codelineno-84-4" name="__codelineno-84-4" href="#__codelineno-84-4"></a><span class="s">kind: Deployment</span>
+</span><span id="__span-84-5"><a id="__codelineno-84-5" name="__codelineno-84-5" href="#__codelineno-84-5"></a><span class="s">metadata:</span>
+</span><span id="__span-84-6"><a id="__codelineno-84-6" name="__codelineno-84-6" href="#__codelineno-84-6"></a><span class="s">  name: broken-app</span>
+</span><span id="__span-84-7"><a id="__codelineno-84-7" name="__codelineno-84-7" href="#__codelineno-84-7"></a><span class="s">spec:</span>
+</span><span id="__span-84-8"><a id="__codelineno-84-8" name="__codelineno-84-8" href="#__codelineno-84-8"></a><span class="s">  replicas: 2</span>
+</span><span id="__span-84-9"><a id="__codelineno-84-9" name="__codelineno-84-9" href="#__codelineno-84-9"></a><span class="s">  selector:</span>
+</span><span id="__span-84-10"><a id="__codelineno-84-10" name="__codelineno-84-10" href="#__codelineno-84-10"></a><span class="s">    matchLabels:</span>
+</span><span id="__span-84-11"><a id="__codelineno-84-11" name="__codelineno-84-11" href="#__codelineno-84-11"></a><span class="s">      app: broken-app</span>
+</span><span id="__span-84-12"><a id="__codelineno-84-12" name="__codelineno-84-12" href="#__codelineno-84-12"></a><span class="s">  template:</span>
+</span><span id="__span-84-13"><a id="__codelineno-84-13" name="__codelineno-84-13" href="#__codelineno-84-13"></a><span class="s">    metadata:</span>
+</span><span id="__span-84-14"><a id="__codelineno-84-14" name="__codelineno-84-14" href="#__codelineno-84-14"></a><span class="s">      labels:</span>
+</span><span id="__span-84-15"><a id="__codelineno-84-15" name="__codelineno-84-15" href="#__codelineno-84-15"></a><span class="s">        app: broken-app</span>
+</span><span id="__span-84-16"><a id="__codelineno-84-16" name="__codelineno-84-16" href="#__codelineno-84-16"></a><span class="s">    spec:</span>
+</span><span id="__span-84-17"><a id="__codelineno-84-17" name="__codelineno-84-17" href="#__codelineno-84-17"></a><span class="s">      containers:</span>
+</span><span id="__span-84-18"><a id="__codelineno-84-18" name="__codelineno-84-18" href="#__codelineno-84-18"></a><span class="s">      - name: nginx</span>
+</span><span id="__span-84-19"><a id="__codelineno-84-19" name="__codelineno-84-19" href="#__codelineno-84-19"></a><span class="s">        image: nginx:nonexistent-tag</span>
+</span><span id="__span-84-20"><a id="__codelineno-84-20" name="__codelineno-84-20" href="#__codelineno-84-20"></a><span class="s">        ports:</span>
+</span><span id="__span-84-21"><a id="__codelineno-84-21" name="__codelineno-84-21" href="#__codelineno-84-21"></a><span class="s">        - containerPort: 80</span>
+</span><span id="__span-84-22"><a id="__codelineno-84-22" name="__codelineno-84-22" href="#__codelineno-84-22"></a><span class="s">EOF</span>
+</span><span id="__span-84-23"><a id="__codelineno-84-23" name="__codelineno-84-23" href="#__codelineno-84-23"></a>
+</span><span id="__span-84-24"><a id="__codelineno-84-24" name="__codelineno-84-24" href="#__codelineno-84-24"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>broken-deployment.yaml
+</span><span id="__span-84-25"><a id="__codelineno-84-25" name="__codelineno-84-25" href="#__codelineno-84-25"></a><span class="c1"># deployment.apps/broken-app created</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">2. Observe the Failure</span><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-85-2"><a id="__codelineno-85-2" name="__codelineno-85-2" href="#__codelineno-85-2"></a><span class="c1"># NAME                          READY   STATUS             RESTARTS   AGE</span>
+</span><span id="__span-85-3"><a id="__codelineno-85-3" name="__codelineno-85-3" href="#__codelineno-85-3"></a><span class="c1"># broken-app-7c5ddbdf54-2xkqn   0/1     ImagePullBackOff   0          30s</span>
+</span><span id="__span-85-4"><a id="__codelineno-85-4" name="__codelineno-85-4" href="#__codelineno-85-4"></a><span class="c1"># STATUS shows ImagePullBackOff - image can&#39;t be pulled</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">3. Diagnose with describe</span><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>broken-app-7c5ddbdf54-2xkqn
+</span><span id="__span-86-2"><a id="__codelineno-86-2" name="__codelineno-86-2" href="#__codelineno-86-2"></a><span class="c1"># Events:</span>
+</span><span id="__span-86-3"><a id="__codelineno-86-3" name="__codelineno-86-3" href="#__codelineno-86-3"></a><span class="c1">#   Type     Reason     Age   Message</span>
+</span><span id="__span-86-4"><a id="__codelineno-86-4" name="__codelineno-86-4" href="#__codelineno-86-4"></a><span class="c1">#   ----     ------     ----  -------</span>
+</span><span id="__span-86-5"><a id="__codelineno-86-5" name="__codelineno-86-5" href="#__codelineno-86-5"></a><span class="c1">#   Warning  Failed     10s   Failed to pull image &quot;nginx:nonexistent-tag&quot;</span>
+</span><span id="__span-86-6"><a id="__codelineno-86-6" name="__codelineno-86-6" href="#__codelineno-86-6"></a><span class="c1">#   Warning  Failed     10s   Error: ErrImagePull</span>
+</span><span id="__span-86-7"><a id="__codelineno-86-7" name="__codelineno-86-7" href="#__codelineno-86-7"></a><span class="c1"># Clear error message: image doesn&#39;t exist</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">4. Fix the Deployment</span><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a><span class="c1"># Edit broken-deployment.yaml and change:</span>
+</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a><span class="c1">#   image: nginx:nonexistent-tag</span>
+</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="c1"># to:</span>
+</span><span id="__span-87-4"><a id="__codelineno-87-4" name="__codelineno-87-4" href="#__codelineno-87-4"></a><span class="c1">#   image: nginx:1.21</span>
+</span><span id="__span-87-5"><a id="__codelineno-87-5" name="__codelineno-87-5" href="#__codelineno-87-5"></a><span class="c1"># Save the file, then reapply:</span>
+</span><span id="__span-87-6"><a id="__codelineno-87-6" name="__codelineno-87-6" href="#__codelineno-87-6"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>broken-deployment.yaml
+</span><span id="__span-87-7"><a id="__codelineno-87-7" name="__codelineno-87-7" href="#__codelineno-87-7"></a><span class="c1"># deployment.apps/broken-app configured</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">5. Verify It's Fixed</span><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-88-2"><a id="__codelineno-88-2" name="__codelineno-88-2" href="#__codelineno-88-2"></a><span class="c1"># NAME                          READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-88-3"><a id="__codelineno-88-3" name="__codelineno-88-3" href="#__codelineno-88-3"></a><span class="c1"># broken-app-7c5ddbdf54-abc123  1/1     Running   0          20s</span>
+</span><span id="__span-88-4"><a id="__codelineno-88-4" name="__codelineno-88-4" href="#__codelineno-88-4"></a><span class="c1"># broken-app-7c5ddbdf54-def456  1/1     Running   0          18s</span>
+</span><span id="__span-88-5"><a id="__codelineno-88-5" name="__codelineno-88-5" href="#__codelineno-88-5"></a>
+</span><span id="__span-88-6"><a id="__codelineno-88-6" name="__codelineno-88-6" href="#__codelineno-88-6"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>deployment<span class="w"> </span>broken-app
+</span><span id="__span-88-7"><a id="__codelineno-88-7" name="__codelineno-88-7" href="#__codelineno-88-7"></a><span class="c1"># Should show 2/2 replicas available</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> This is real-world debugging. <code>ImagePullBackOff</code> is a common error. The Events section in <code>kubectl describe</code> always tells you what went wrong. Fixing is as simple as correcting the YAML and running <code>kubectl apply</code> again.</p>
+</details>
+</details>
+<hr />
+<h2 id="quick-recap">Quick Recap</h2>
+<p><strong>Top 10 commands you'll use daily:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Read-Only</strong></td>
+<td><code>kubectl get pods</code></td>
+<td>List all pods</td>
+</tr>
+<tr>
+<td><strong>Read-Only</strong></td>
+<td><code>kubectl describe pod &lt;name&gt;</code></td>
+<td>Detailed pod info and events</td>
+</tr>
+<tr>
+<td><strong>Read-Only</strong></td>
+<td><code>kubectl logs &lt;name&gt;</code></td>
+<td>Application output</td>
+</tr>
+<tr>
+<td><strong>Read-Only</strong></td>
+<td><code>kubectl explain &lt;resource&gt;</code></td>
+<td>Built-in documentation</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td><code>kubectl apply -f &lt;file&gt;</code></td>
+<td>Create or update resources</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td><code>kubectl scale deployment &lt;name&gt; --replicas=N</code></td>
+<td>Adjust replica count</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td><code>kubectl delete &lt;resource&gt; &lt;name&gt;</code></td>
+<td>Remove resources</td>
+</tr>
+<tr>
+<td><strong>Troubleshooting</strong></td>
+<td><code>kubectl exec -it &lt;name&gt; -- sh</code></td>
+<td>Shell into container</td>
+</tr>
+<tr>
+<td><strong>Troubleshooting</strong></td>
+<td><code>kubectl port-forward service/&lt;name&gt; 8080:80</code></td>
+<td>Test locally</td>
+</tr>
+<tr>
+<td><strong>Troubleshooting</strong></td>
+<td><code>kubectl rollout undo deployment/&lt;name&gt;</code></td>
+<td>Rollback deployment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Remember:</strong> Start with read-only commands (<code>get</code>, <code>describe</code>, <code>logs</code>) to understand the state, then use deployment commands to make changes.</p>
+<hr />
+<h2 id="further-reading">Further Reading</h2>
+<h3 id="official-documentation">Official Documentation</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">kubectl Cheat Sheet</a> - Official quick reference</li>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/">kubectl Command Reference</a> - Complete command documentation</li>
+<li><a href="https://kubernetes.io/docs/reference/kubectl/conventions/">kubectl Usage Conventions</a> - Best practices and patterns</li>
+</ul>
+<h3 id="interactive-learning">Interactive Learning</h3>
+<ul>
+<li><a href="https://kubectl.docs.kubernetes.io/">kubectl Book</a> - Comprehensive guide to kubectl usage</li>
+<li><a href="https://kubebyexample.com/">Kube by Example</a> - Hands-on learning paths from Red Hat</li>
+<li><a href="https://kubernetes.io/docs/tutorials/">Kubernetes Tutorials</a> - Official interactive tutorials</li>
+<li><a href="https://github.com/kubernetes/examples">Kubernetes Examples on GitHub</a> - Real-world YAML examples</li>
+</ul>
+<h3 id="related-articles">Related Articles</h3>
+<ul>
+<li><a href="../first_deploy/">Your First Deployment</a> - How you got here</li>
+<li><a href="../understanding/">Understanding What Happened</a> - What's next: understand the architecture</li>
+</ul>
+<hr />
+<h2 id="whats-next">What's Next?</h2>
+<p>You've mastered the essential commands. Now understand what actually happens when you deploy:</p>
+<p><strong><a href="../understanding/">Understanding What Happened</a></strong> - Learn about the Kubernetes architecture, how controllers work, and what all those resources (<code>Deployment</code>, <code>ReplicaSet</code>, <code>Pod</code>, <code>Service</code>) actually do behind the scenes.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bradpenney" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/bradpenney" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "content.code.highlight", "content.tooltips", "content.code.mermaid"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

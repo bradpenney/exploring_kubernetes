@@ -1,0 +1,1893 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Deep dive into Kubernetes architecture. Learn how Deployments, ReplicaSets, and Pods work together when you deploy applications to K8s clusters.">
+      
+      
+        <meta name="author" content="Brad Penney">
+      
+      
+        <link rel="canonical" href="https://kubernetes.bradpenney.io/day_one/kubectl/understanding/">
+      
+      
+        <link rel="prev" href="../commands/">
+      
+      
+        <link rel="next" href="../../helm/access/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../images/exploring_kubernetes.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Understanding Kubernetes Objects - Pods and Deployments - Exploring Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1%207.775V2.75C1%201.784%201.784%201%202.75%201h5.025c.464%200%20.91.184%201.238.513l6.25%206.25a1.75%201.75%200%200%201%200%202.474l-5.026%205.026a1.75%201.75%200%200%201-2.474%200l-6.25-6.25A1.75%201.75%200%200%201%201%207.775m1.5%200c0%20.066.026.13.073.177l6.25%206.25a.25.25%200%200%200%20.354%200l5.025-5.025a.25.25%200%200%200%200-.354l-6.25-6.25a.25.25%200%200%200-.177-.073H2.75a.25.25%200%200%200-.25.25ZM6%205a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.5%201.75v11.5c0%20.138.112.25.25.25h3.17a.75.75%200%200%201%200%201.5H2.75A1.75%201.75%200%200%201%201%2013.25V1.75C1%20.784%201.784%200%202.75%200h8.5C12.216%200%2013%20.784%2013%201.75v7.736a.75.75%200%200%201-1.5%200V1.75a.25.25%200%200%200-.25-.25h-8.5a.25.25%200%200%200-.25.25m13.274%209.537zl-4.557%204.45a.75.75%200%200%201-1.055-.008l-1.943-1.95a.75.75%200%200%201%201.062-1.058l1.419%201.425%204.026-3.932a.75.75%200%201%201%201.048%201.074M4.75%204h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M4%207.75A.75.75%200%200%201%204.75%207h2a.75.75%200%200%201%200%201.5h-2A.75.75%200%200%201%204%207.75%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M3.499.75a.75.75%200%200%201%201.5%200v.996C5.9%202.903%206.793%203.65%207.662%204.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873%2010.794-.045%2012.622.26%2014.408.558%2016%201.94%2016%204.25c0%201.278-.954%202.575-2.44%202.734l.146.508.065.22c.203.701.412%201.455.476%202.226.142%201.707-.4%203.03-1.487%203.898C11.714%2014.671%2010.27%2015%208.75%2015h-6a.75.75%200%200%201%200-1.5h1.376a4.5%204.5%200%200%201-.563-1.191%203.84%203.84%200%200%201-.05-2.063%204.65%204.65%200%200%201-2.025-.293.75.75%200%200%201%20.525-1.406c1.357.507%202.376-.006%202.698-.318l.009-.01a.747.747%200%200%201%201.06%200%20.75.75%200%200%201-.012%201.074c-.912.92-.992%201.835-.768%202.586.221.74.745%201.337%201.196%201.621H8.75c1.343%200%202.398-.296%203.074-.836.635-.507%201.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4%202.4%200%200%201-.507-.441%203.1%203.1%200%200%201-.633-1.248.75.75%200%200%201%201.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738%200%201.25-.615%201.25-1.25%200-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706%201.345-.46.92-.27%201.774.019%203.062l.042.19.01.05c.348.443.666.949.94%201.553a.75.75%200%201%201-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7%205.527c-.814-.68-1.75-1.462-2.692-2.619a3.7%203.7%200%200%200-1.023.88c-.406.495-.663%201.036-.722%201.508.116.122.306.21.591.239.388.038.797-.06%201.032-.19a.75.75%200%200%201%20.728%201.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75%205.677V5.5c0-.984.48-1.94%201.077-2.664.46-.559%201.05-1.055%201.673-1.353z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M13.78%204.22a.75.75%200%200%201%200%201.06l-7.25%207.25a.75.75%200%200%201-1.06%200L2.22%209.28a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018L6%2010.94l6.72-6.72a.75.75%200%200%201%201.06%200%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.92%206.085h.001a.749.749%200%201%201-1.342-.67c.169-.339.436-.701.849-.977C6.845%204.16%207.369%204%208%204a2.76%202.76%200%200%201%201.637.525c.503.377.863.965.863%201.725%200%20.448-.115.83-.329%201.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6%206%200%200%200-.26.16%201%201%200%200%200-.276.245.75.75%200%200%201-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1%201%200%200%200%20.277-.245C8.96%206.514%209%206.427%209%206.25a.61.61%200%200%200-.262-.525A1.27%201.27%200%200%200%208%205.5c-.369%200-.595.09-.74.187a1%201%200%200%200-.34.398M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2.344%202.343za8%208%200%200%201%2011.314%2011.314A8.002%208.002%200%200%201%20.234%2010.089a8%208%200%200%201%202.11-7.746m1.06%2010.253a6.5%206.5%200%201%200%209.108-9.275%206.5%206.5%200%200%200-9.108%209.275M6.03%204.97%208%206.94l1.97-1.97a.749.749%200%200%201%201.275.326.75.75%200%200%201-.215.734L9.06%208l1.97%201.97a.749.749%200%200%201-.326%201.275.75.75%200%200%201-.734-.215L8%209.06l-1.97%201.97a.749.749%200%200%201-1.275-.326.75.75%200%200%201%20.215-.734L6.94%208%204.97%206.03a.75.75%200%200%201%20.018-1.042.75.75%200%200%201%201.042-.018%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.72.22a.75.75%200%200%201%201.06%200l1%20.999a3.5%203.5%200%200%201%202.441%200l.999-1a.748.748%200%200%201%201.265.332.75.75%200%200%201-.205.729l-.775.776c.616.63.995%201.493.995%202.444v.327q0%20.15-.025.292c.408.14.764.392%201.029.722l1.968-.787a.75.75%200%200%201%20.556%201.392L13%207.258V9h2.25a.75.75%200%200%201%200%201.5H13v.5q-.002.615-.141%201.186l2.17.868a.75.75%200%200%201-.557%201.392l-2.184-.873A5%205%200%200%201%208%2016a5%205%200%200%201-4.288-2.427l-2.183.873a.75.75%200%200%201-.558-1.392l2.17-.868A5%205%200%200%201%203%2011v-.5H.75a.75.75%200%200%201%200-1.5H3V7.258L.971%206.446a.75.75%200%200%201%20.558-1.392l1.967.787c.265-.33.62-.583%201.03-.722a1.7%201.7%200%200%201-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72%201.28a.75.75%200%200%201%200-1.06m.53%206.28a.75.75%200%200%200-.75.75V11a3.5%203.5%200%201%200%207%200V7.25a.75.75%200%200%200-.75-.75ZM6.173%205h3.654A.17.17%200%200%200%2010%204.827V4.5a2%202%200%201%200-4%200v.327c0%20.096.077.173.173.173%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-V01MJ4R3SQ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-V01MJ4R3SQ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-V01MJ4R3SQ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Understanding Kubernetes Objects - Pods and Deployments - Exploring Kubernetes" />
+<meta property="og:description" content="Deep dive into Kubernetes architecture. Learn how Deployments, ReplicaSets, and Pods work together when you deploy applications to K8s clusters." />
+<meta property="og:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/understanding.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://kubernetes.bradpenney.io/day_one/kubectl/understanding/" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Understanding Kubernetes Objects - Pods and Deployments - Exploring Kubernetes" />
+<meta property="twitter:description" content="Deep dive into Kubernetes architecture. Learn how Deployments, ReplicaSets, and Pods work together when you deploy applications to K8s clusters." />
+<meta property="twitter:image" content="https://kubernetes.bradpenney.io/assets/images/social/day_one/kubectl/understanding.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#understanding-what-happened" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Exploring Kubernetes" class="md-header__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Exploring Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Understanding Kubernetes Objects - Pods and Deployments
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Exploring Kubernetes" class="md-nav__button md-logo" aria-label="Exploring Kubernetes" data-md-component="logo">
+      
+  <img src="../../../images/exploring_kubernetes.png" alt="logo">
+
+    </a>
+    Exploring Kubernetes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Day One - Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Day One - Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../what_is_kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What Is Kubernetes?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Scratch (kubectl)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    From Scratch (kubectl)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting kubectl Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Essential kubectl Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understanding What Happened
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-resource-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Resource Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-kubernetes-resources-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Kubernetes Resources Explained
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigating-with-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Investigating with kubectl
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-they-work-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How They Work Together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens When...
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels-the-glue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels: The Glue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#youve-completed-day-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        You've Completed Day One
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-dives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Dives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Helm
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using Helm
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Helm Access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../helm/first_deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Helm Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-resource-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Resource Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-kubernetes-resources-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Kubernetes Resources Explained
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#investigating-with-kubectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Investigating with kubectl
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-they-work-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How They Work Together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens When...
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labels-the-glue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labels: The Glue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#practice-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Practice Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-recap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Recap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#youve-completed-day-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        You've Completed Day One
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Further Reading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-dives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Dives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-articles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Articles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="understanding-what-happened">Understanding What Happened</h1>
+<div class="admonition tip">
+<p class="admonition-title">Part of Day One: Getting Started</p>
+<p>This is the final article in <a href="../../overview/">Day One: Getting Started</a>. You should have completed <a href="../first_deploy/">Your First Deployment</a> and learned the <a href="../commands/">Essential kubectl Commands</a> before reading this.</p>
+</div>
+<p>You ran <code>kubectl apply -f deployment.yaml</code> and your app deployed. You checked with <code>kubectl get pods</code> and saw your application running. It feels like magic.</p>
+<p><strong>But what actually happened?</strong> When you told Kubernetes "I want this app running," it created multiple resources working together behind the scenes. Understanding these resources transforms you from someone who copies commands to someone who truly understands Kubernetes.</p>
+<p>This article reveals what Kubernetes created when you deployed your application—and why each piece matters.</p>
+<div class="admonition info">
+<p class="admonition-title">What You'll Learn</p>
+<p>By the end of this article, you'll understand:</p>
+<ul>
+<li><strong>What Kubernetes created</strong> when you ran <code>kubectl apply</code> - the full resource hierarchy</li>
+<li><strong>Deployments, ReplicaSets, and Pods</strong> - what each resource does and why all three exist</li>
+<li><strong>How they work together</strong> - the flow from your YAML file to running containers</li>
+<li><strong>Labels and selectors</strong> - how Services find Pods and Deployments manage Pods</li>
+<li><strong>Self-healing behavior</strong> - how Kubernetes automatically replaces crashed Pods</li>
+<li><strong>The cluster architecture</strong> - control plane, worker nodes, and how they interact</li>
+</ul>
+</div>
+<h2 id="the-resource-hierarchy">The Resource Hierarchy</h2>
+<p>When you deployed your application in <a href="../first_deploy/">Your First Deployment</a>, Kubernetes didn't just start containers. It created multiple resources working together in a specific hierarchy. Here's what got created and how they relate:</p>
+<pre class="mermaid"><code>graph TD
+    Y1[You: kubectl apply&lt;br/&gt;deployment.yaml]
+
+    Y1 --&gt; Dep[Deployment&lt;br/&gt;manages desired state]
+    Dep --&gt; RS[ReplicaSet&lt;br/&gt;maintains pod count]
+    RS --&gt; P1[Pod 1&lt;br/&gt;app: nginx]
+    RS --&gt; P2[Pod 2&lt;br/&gt;app: nginx]
+    RS --&gt; P3[Pod 3&lt;br/&gt;app: nginx]
+
+    P1 &lt;-.-&gt;|Routes traffic| Svc[Service&lt;br/&gt;selector: app=nginx&lt;br/&gt;separate YAML]
+    P2 &lt;-.-&gt;|Routes traffic| Svc
+    P3 &lt;-.-&gt;|Routes traffic| Svc
+
+    Svc &lt;--&gt;|Requests &amp; Responses| External[Other Apps&lt;br/&gt;Other Services&lt;br/&gt;External Traffic]
+
+    Svc -.- Y2[You: kubectl apply&lt;br/&gt;service.yaml]
+
+    style Y1 fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Y2 fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Dep fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style RS fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style P1 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style P2 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style P3 fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Svc fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style External fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff</code></pre>
+<p><strong>Pods are the center - two flows connect to them:</strong></p>
+<ul>
+<li><strong>From ABOVE (deployment.yaml):</strong> You create a Deployment → It creates a ReplicaSet → ReplicaSet creates Pods</li>
+<li><strong>From BELOW (service.yaml):</strong> You create a Service separately → It receives external traffic → Routes traffic UP to Pods by matching labels</li>
+</ul>
+<p><strong>How the Service works:</strong></p>
+<ul>
+<li><strong>Stable gateway to Pods</strong> - Provides a permanent entry point while Pods come and go</li>
+<li><strong>Receives all traffic</strong> - Other applications, services, or external sources send requests to the Service</li>
+<li><strong>Routes to ephemeral Pods</strong> - Finds and distributes traffic to Pods by matching labels (<code>selector: app=nginx</code>)</li>
+<li><strong>Independent of Deployments</strong> - Can route to ANY Pods with matching labels, even from different Deployments</li>
+<li><strong>Survives Pod restarts</strong> - Pods die and get recreated constantly; the Service IP and DNS name stay stable</li>
+</ul>
+<p><strong>Key insight:</strong> Pods don't know about the Service. The Service finds Pods using labels and routes traffic to them. The Deployment creates Pods from above, the Service routes to them from below.</p>
+<h2 id="the-kubernetes-resources-explained">The Kubernetes Resources Explained</h2>
+<p><strong>Building on the basics:</strong> Remember the Factory Manager analogy from <a href="../first_deploy/#understanding-what-happened">Your First Deployment</a>? Now we're diving deep into how that factory actually operates—each resource's role and technical details.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h8.08a7 7 0 0 1-.08-1 7 7 0 0 1 7-7 7 7 0 0 1 3 .69V8a2 2 0 0 0-2-2h-8l-2-2zm14 10a.26.26 0 0 0-.26.21l-.19 1.32c-.3.13-.59.29-.85.47l-1.24-.5c-.11 0-.24 0-.31.13l-1 1.73c-.06.11-.04.24.06.32l1.06.82a4.2 4.2 0 0 0 0 1l-1.06.82a.26.26 0 0 0-.06.32l1 1.73c.06.13.19.13.31.13l1.24-.5c.26.18.54.35.85.47l.19 1.32c.02.12.12.21.26.21h2c.11 0 .22-.09.24-.21l.19-1.32c.3-.13.57-.29.84-.47l1.23.5c.13 0 .26 0 .33-.13l1-1.73a.26.26 0 0 0-.06-.32l-1.07-.82c.02-.17.04-.33.04-.5s-.01-.33-.04-.5l1.06-.82a.26.26 0 0 0 .06-.32l-1-1.73c-.06-.13-.19-.13-.32-.13l-1.23.5c-.27-.18-.54-.35-.85-.47l-.19-1.32A.236.236 0 0 0 20 14zm1 3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5c-.84 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5"/></svg></span> <strong>Deployment: The Manager</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> The Deployment is what you interact with. It maintains your desired state—if you want 3 replicas, the Deployment ensures 3 replicas exist.</p>
+<div class="language-bash highlight"><span class="filename">See Your Deployment</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployments
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># nginx-deployment   3/3     3            3           5m</span>
+</span></code></pre></div>
+<p><strong>What to notice:</strong></p>
+<ul>
+<li><code>READY</code>: How many Pods are running vs. desired (3/3 means all good)</li>
+<li><code>UP-TO-DATE</code>: Pods running the latest configuration</li>
+<li><code>AVAILABLE</code>: Pods ready to serve traffic</li>
+</ul>
+<p>The Deployment handles updates, rollbacks, and scaling. When you run <code>kubectl scale</code> or <code>kubectl rollout</code>, you're talking to the Deployment.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2h12a2 2 0 0 1 2 2zm-6 4v2H4a2 2 0 0 1-2-2V7h2v13zm-3-6 7-7-1.41-1.41L13 11.17 9.91 8.09 8.5 9.5z"/></svg></span> <strong>ReplicaSet: The Supervisor</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> The ReplicaSet is the Deployment's worker. Its job: ensure exactly the right number of Pods exist. If a Pod crashes, the ReplicaSet creates a replacement.</p>
+<div class="language-bash highlight"><span class="filename">See Your ReplicaSet</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>replicasets
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># NAME                         DESIRED   CURRENT   READY   AGE</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54  3         3         3       5m</span>
+</span></code></pre></div>
+<p><strong>What to notice:</strong></p>
+<ul>
+<li>The name includes a hash (<code>7c5ddbdf54</code>) - this is the Pod template version</li>
+<li><code>DESIRED</code>: What the Deployment wants (3)</li>
+<li><code>CURRENT</code>: How many Pods exist right now (3)</li>
+<li><code>READY</code>: How many Pods passed health checks (3)</li>
+</ul>
+<p><strong>You rarely interact with ReplicaSets directly.</strong> The Deployment manages them. But understanding they exist helps you troubleshoot—if you see old ReplicaSets with 0 Pods, those are from previous deployments (kept for rollback).</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"/></svg></span> <strong>Pods: The Workers</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Pods are where your containers actually run. Everything else exists to manage these. When you check logs, exec into a shell, or debug networking—you're interacting with Pods.</p>
+<div class="language-bash highlight"><span class="filename">See Your Pods</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># NAME                               READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54-8kp2m  1/1     Running   0          5m</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># nginx-deployment-7c5ddbdf54-j9xvq  1/1     Running   0          5m</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># nginx-deployment-7c5ddbdf54-wnr4k  1/1     Running   0          5m</span>
+</span></code></pre></div>
+<p><strong>What to notice:</strong></p>
+<ul>
+<li>Each Pod has the ReplicaSet name + a unique suffix</li>
+<li><code>READY</code>: How many containers are running in the Pod (1/1 means 1 of 1 is ready)</li>
+<li><code>STATUS</code>: <code>Running</code> is good; <code>Pending</code>, <code>CrashLoopBackOff</code>, or <code>Error</code> need investigation</li>
+<li><code>RESTARTS</code>: How many times the container has restarted (0 is ideal)</li>
+</ul>
+<p><strong>Key insight:</strong> Pods are ephemeral. They can be deleted and recreated at any time. Never rely on a specific Pod existing—that's why you use Deployments and Services.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v2h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg></span> <strong>Service: The Router (Separate YAML!)</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Pods have changing IP addresses. Services provide a stable endpoint that routes traffic to your Pods, no matter which specific Pods are running.</p>
+<p><strong>Critical:</strong> The Service is NOT created by the Deployment. It's a separate YAML file you apply separately. The Service finds Pods using label selectors—if the labels match, the Service routes to them.</p>
+<div class="language-bash highlight"><span class="filename">See Your Service (if created)</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>services
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># nginx-service   ClusterIP   10.96.145.22    &lt;none&gt;        80/TCP    5m</span>
+</span></code></pre></div>
+<p><strong>What to notice:</strong></p>
+<ul>
+<li><code>TYPE</code>: How the Service is exposed (ClusterIP = internal only)</li>
+<li><code>CLUSTER-IP</code>: The stable internal IP for this Service</li>
+<li><code>PORT(S)</code>: What port the Service listens on</li>
+</ul>
+<p><strong>When you need it:</strong> If your app needs to receive network traffic (web server, API, database), you need a Service. If it just runs a job and exits, you might not.</p>
+</li>
+</ul>
+</div>
+<h2 id="investigating-with-kubectl">Investigating with kubectl</h2>
+<p>Let's use <code>kubectl describe</code> to see the full story. This command shows you everything about a resource, including events (what happened).</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Describe Your Deployment</label><label for="__tabbed_1_2">Describe a Pod</label><label for="__tabbed_1_3">Describe a Service</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Get Detailed Deployment Info</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>deployment<span class="w"> </span>nginx-deployment
+</span></code></pre></div>
+<p><strong>What you'll see:</strong></p>
+<ul>
+<li><strong>Selector:</strong> How the Deployment finds its Pods (labels)</li>
+<li><strong>Replicas:</strong> Desired vs. actual count</li>
+<li><strong>Pod Template:</strong> The blueprint for Pods (container image, ports, env vars)</li>
+<li><strong>Events:</strong> Actions Kubernetes took (scaled, created ReplicaSet, etc.)</li>
+</ul>
+<p><strong>Why it matters:</strong> The events section shows you the deployment timeline. If something failed, you'll see error messages here.</p>
+</div>
+<div class="tabbed-block">
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Get Detailed Pod Info</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>nginx-deployment-7c5ddbdf54-8kp2m
+</span></code></pre></div>
+<p><strong>What you'll see:</strong></p>
+<ul>
+<li><strong>Node:</strong> Which cluster node is running this Pod</li>
+<li><strong>Status:</strong> Current state and why</li>
+<li><strong>IP:</strong> The Pod's internal IP address</li>
+<li><strong>Containers:</strong> What's running inside (image, ports, resource limits)</li>
+<li><strong>Events:</strong> Pod lifecycle (scheduled, pulled image, started container)</li>
+</ul>
+<p><strong>Why it matters:</strong> If a Pod won't start, the events section tells you why—image pull failure, insufficient resources, crash loops, etc.</p>
+</div>
+<div class="tabbed-block">
+<p>✅ <strong>Safe (Read-Only):</strong></p>
+<div class="language-bash highlight"><span class="filename">Get Detailed Service Info</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>service<span class="w"> </span>nginx-service
+</span></code></pre></div>
+<p><strong>What you'll see:</strong></p>
+<ul>
+<li><strong>Selector:</strong> How the Service finds Pods to route to (labels)</li>
+<li><strong>Type:</strong> ClusterIP, NodePort, or LoadBalancer</li>
+<li><strong>Endpoints:</strong> The actual Pod IPs the Service routes to</li>
+<li><strong>Events:</strong> Any Service configuration changes</li>
+</ul>
+<p><strong>Why it matters:</strong> The endpoints list shows which Pods are receiving traffic. If it's empty, your Service selector doesn't match your Pod labels.</p>
+</div>
+</div>
+</div>
+<h2 id="how-they-work-together">How They Work Together</h2>
+<p>Here's what happens when you deploy an application:</p>
+<details class="info">
+<summary>Step 1: You create a Deployment</summary>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">deployment.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span>
+<span class="normal"><a href="#__codelineno-7-15">15</a></span>
+<span class="normal"><a href="#__codelineno-7-16">16</a></span>
+<span class="normal"><a href="#__codelineno-7-17">17</a></span>
+<span class="normal"><a href="#__codelineno-7-18">18</a></span>
+<span class="normal"><a href="#__codelineno-7-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.21</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>"I want 3 copies running"</li>
+<li>"Find Pods with this label"</li>
+<li>"Give created Pods this label"</li>
+</ol>
+<p><strong>What you're telling Kubernetes:</strong> "I want 3 replicas of nginx running. Label them with <code>app: nginx</code> so other resources can find them."</p>
+</details>
+<details class="info">
+<summary>Step 2: The Deployment creates a ReplicaSet</summary>
+<p>The Deployment says: "Create a ReplicaSet with this Pod template and maintain 3 replicas."</p>
+<p>The ReplicaSet gets a name based on the Deployment name + a hash of the Pod template. If you update the Deployment (change the image, for example), a new ReplicaSet gets created.</p>
+<p><strong>Why a hash?</strong> The hash represents the Pod template version. Different templates = different hashes = different ReplicaSets. This is how Kubernetes manages rolling updates and rollbacks.</p>
+</details>
+<details class="info">
+<summary>Step 3: The ReplicaSet creates Pods</summary>
+<p>The ReplicaSet says: "I need 3 Pods matching this template. Let me create them."</p>
+<p>It creates 3 Pods, each with a unique name (ReplicaSet name + random suffix). The Pods get the labels defined in the template.</p>
+<p><strong>What you'll see:</strong> <code>nginx-deployment-7c5ddbdf54-abc12</code> (Deployment name + ReplicaSet hash + unique Pod suffix)</p>
+</details>
+<details class="info">
+<summary>Step 4: Kubernetes schedules the Pods</summary>
+<p>The Kubernetes scheduler picks which nodes (servers) should run each Pod. It considers resources available, node selectors, affinity rules, etc.</p>
+<p><strong>Behind the scenes:</strong> The scheduler looks at CPU/memory requests, node capacity, and placement rules to decide "Pod 1 goes to node-a, Pod 2 goes to node-b, Pod 3 goes to node-c."</p>
+</details>
+<details class="info">
+<summary>Step 5: Container runtime starts the containers</summary>
+<p>On each node, the container runtime (Docker, containerd, CRI-O) pulls the image and starts the container(s).</p>
+<p><strong>The actual work:</strong> This is where <code>docker pull nginx:1.21</code> happens and your application container actually starts running.</p>
+</details>
+<details class="info">
+<summary>Step 6: The Service routes traffic (separate YAML you created)</summary>
+<p>Remember when you created the Service with <code>kubectl apply -f nginx-service.yaml</code>? That Service watches for Pods with matching labels and adds their IPs to its endpoint list. Now traffic to the Service gets distributed across your Pods.</p>
+<p><strong>Key insight:</strong> The Service is NOT created by the Deployment. You created it separately—two YAMLs, two <code>kubectl apply</code> commands. The Service and Deployment are independent resources that connect only through labels (<code>app: nginx</code>).</p>
+</details>
+<h2 id="what-happens-when">What Happens When...</h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 0 0-8 8 8 8 0 0 0 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18a6 6 0 0 1-6-6 6 6 0 0 1 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4z"/></svg></span> <strong>You scale the Deployment</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> You can increase or decrease capacity instantly.</p>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-bash highlight"><span class="filename">Scale to 5 Replicas</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>nginx-deployment<span class="w"> </span>--replicas<span class="o">=</span><span class="m">5</span>
+</span></code></pre></div>
+<p><strong>The flow:</strong></p>
+<ol>
+<li>Deployment updates: <code>replicas: 5</code></li>
+<li>ReplicaSet sees it needs 5 Pods but only has 3</li>
+<li>ReplicaSet creates 2 more Pods</li>
+<li>Scheduler places them on nodes</li>
+<li>Containers start</li>
+<li>Service automatically adds new Pod IPs to endpoints</li>
+</ol>
+<p><strong>Result:</strong> You go from 3 running Pods to 5, seamlessly.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg></span> <strong>A Pod crashes</strong></p>
+<hr />
+<p><strong>The flow:</strong></p>
+<ol>
+<li>Pod container exits unexpectedly (bug, out of memory, etc.)</li>
+<li>ReplicaSet sees it now has 2 healthy Pods instead of 3</li>
+<li>ReplicaSet creates a replacement Pod</li>
+<li>Scheduler places it on a node</li>
+<li>Container starts</li>
+<li>Service removes the crashed Pod's IP and adds the new one</li>
+</ol>
+<p><strong>Result:</strong> Your desired 3 replicas are maintained automatically. This is Kubernetes' self-healing.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1a6.887 6.887 0 0 0 0 9.8c2.73 2.7 7.15 2.7 9.88 0 1.36-1.35 2.04-2.92 2.04-4.9h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58a8.987 8.987 0 0 1 12.65 0L21 3zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8z"/></svg></span> <strong>You update the image</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> This is how you deploy new versions of your code.</p>
+<p>⚠️ <strong>Caution (Modifies Resources):</strong></p>
+<div class="language-yaml highlight"><span class="filename">deployment.yaml — update image tag, then apply</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Change the image tag in your YAML file:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1">#   image: nginx:1.21  →  image: nginx:1.22</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Then apply the change:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># kubectl apply -f deployment.yaml</span>
+</span></code></pre></div>
+<p><strong>The flow:</strong></p>
+<ol>
+<li>Deployment updates the Pod template (new image)</li>
+<li>Deployment creates a NEW ReplicaSet (with updated template)</li>
+<li>Deployment scales new ReplicaSet up, old ReplicaSet down (rolling update)</li>
+<li>Old Pods terminate, new Pods start with new image</li>
+<li>Service seamlessly routes to both old and new Pods during transition</li>
+</ol>
+<p><strong>Result:</strong> Zero-downtime update. The old ReplicaSet remains (scaled to 0) for easy rollback.</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v1H4v2h1v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1V4h-5V3zm0 5h2v9H9zm4 0h2v9h-2z"/></svg></span> <strong>You delete the Deployment</strong></p>
+<hr />
+<p><strong>Why it matters:</strong> Clean up resources when they're no longer needed.</p>
+<p>🚨 <strong>DANGER (Destructive):</strong></p>
+<div class="language-bash highlight"><span class="filename">Delete Everything</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>deployment<span class="w"> </span>nginx-deployment
+</span></code></pre></div>
+<p><strong>The flow:</strong></p>
+<ol>
+<li>Deployment gets deleted</li>
+<li>Deployment tells its ReplicaSet(s) to scale to 0</li>
+<li>ReplicaSet deletes all Pods</li>
+<li>ReplicaSet gets deleted</li>
+<li>Service remains (it's independent) but has no endpoints</li>
+</ol>
+<p><strong>Result:</strong> Everything created by the Deployment is cleaned up. Services are separate—you need to delete them explicitly.</p>
+</li>
+</ul>
+</div>
+<h2 id="labels-the-glue">Labels: The Glue</h2>
+<p>Everything connects through <strong>labels</strong>. Labels are key-value pairs you attach to resources.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">How Labels Connect Resources</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span>
+<span class="normal"><a href="#__codelineno-11-13">13</a></span>
+<span class="normal"><a href="#__codelineno-11-14">14</a></span>
+<span class="normal"><a href="#__codelineno-11-15">15</a></span>
+<span class="normal"><a href="#__codelineno-11-16">16</a></span>
+<span class="normal"><a href="#__codelineno-11-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="c1"># Deployment creates Pods with this label:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># (1)!</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="c1"># Service finds Pods with this label:</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># (2)!</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12"></a>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="c1"># ReplicaSet manages Pods with this label:</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># (3)!</span>
+</span></code></pre></div></td></tr></table></div>
+<ol>
+<li>Every Pod created by this Deployment gets <code>app: nginx</code></li>
+<li>The Service routes to any Pod with <code>app: nginx</code></li>
+<li>The ReplicaSet maintains the count of Pods with <code>app: nginx</code></li>
+</ol>
+<p><strong>Without matching labels, nothing connects.</strong> If your Service selector doesn't match your Pod labels, traffic won't route. If your Deployment selector doesn't match your template labels, the ReplicaSet won't manage the Pods.</p>
+<div class="admonition warning">
+<p class="admonition-title">Label Mismatches Are a Common Issue</p>
+<p>If your Service has no endpoints, check that the Service selector matches your Pod labels exactly. Use <code>kubectl describe service &lt;name&gt;</code> to see the selector and <code>kubectl get pods --show-labels</code> to see Pod labels.</p>
+</div>
+<h2 id="practice-exercises">Practice Exercises</h2>
+<details class="question">
+<summary>Exercise 1: Trace Your Deployment</summary>
+<p>Deploy an application and trace the full resource hierarchy from Deployment to Pods.</p>
+<p><strong>Goal:</strong> Understand the relationship between all resources created.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Deploy nginx using a Deployment</li>
+<li>List all Deployments, ReplicaSets, and Pods</li>
+<li>Identify which ReplicaSet belongs to your Deployment</li>
+<li>Identify which Pods belong to your ReplicaSet</li>
+</ol>
+<details class="tip">
+<summary>Solution</summary>
+<p>Create and apply a Deployment:</p>
+<div class="language-yaml highlight"><span class="filename">nginx-deployment.yaml</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.21</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Apply the Deployment</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>nginx-deployment.yaml
+</span></code></pre></div>
+<p>Now trace the hierarchy:</p>
+<div class="language-bash highlight"><span class="filename">See the Full Chain</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># 1. See your Deployment</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>deployments
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># nginx-deployment   3/3     3            3           1m</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="c1"># 2. See the ReplicaSet it created</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>kubectl<span class="w"> </span>get<span class="w"> </span>replicasets
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1"># NAME                          DESIRED   CURRENT   READY   AGE</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># nginx-deployment-7c5ddbdf54   3         3         3       1m</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="c1"># Notice the name: deployment-name + hash</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="c1"># 3. See the Pods the ReplicaSet created</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="c1"># NAME                                READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="c1"># nginx-deployment-7c5ddbdf54-abc12   1/1     Running   0          1m</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="c1"># nginx-deployment-7c5ddbdf54-def34   1/1     Running   0          1m</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="c1"># nginx-deployment-7c5ddbdf54-ghi56   1/1     Running   0          1m</span>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="c1"># Notice: Each Pod name starts with the ReplicaSet name</span>
+</span></code></pre></div>
+<p><strong>What you learned:</strong> The naming convention makes the hierarchy visible. Every resource name includes its parent's name.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 2: Watch Self-Healing in Action</summary>
+<p>Delete a Pod and watch Kubernetes automatically replace it.</p>
+<p><strong>Goal:</strong> See ReplicaSet's self-healing behavior.</p>
+<p><strong>Hint:</strong> Delete a Pod, then immediately run <code>kubectl get pods --watch</code></p>
+<details class="tip">
+<summary>Solution</summary>
+<p>First, get your Pod names:</p>
+<div class="language-bash highlight"><span class="filename">List Pods</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="c1"># NAME                                READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54-abc12   1/1     Running   0          5m</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># nginx-deployment-7c5ddbdf54-def34   1/1     Running   0          5m</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1"># nginx-deployment-7c5ddbdf54-ghi56   1/1     Running   0          5m</span>
+</span></code></pre></div>
+<p>Pick one Pod and delete it:</p>
+<div class="language-bash highlight"><span class="filename">Delete One Pod</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>nginx-deployment-7c5ddbdf54-abc12
+</span></code></pre></div>
+<p>Watch what happens:</p>
+<div class="language-bash highlight"><span class="filename">Watch Replacement Creation</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--watch
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c1"># NAME                                READY   STATUS    RESTARTS   AGE</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54-abc12   1/1     Terminating   0      5m</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># nginx-deployment-7c5ddbdf54-xyz99   0/1     Pending       0      0s</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># nginx-deployment-7c5ddbdf54-xyz99   0/1     ContainerCreating   0   1s</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1"># nginx-deployment-7c5ddbdf54-xyz99   1/1     Running             0   3s</span>
+</span></code></pre></div>
+<p><strong>What you see:</strong></p>
+<ol>
+<li>The Pod you deleted enters <code>Terminating</code> state</li>
+<li>A new Pod immediately gets created (<code>Pending</code>)</li>
+<li>The new Pod starts (<code>ContainerCreating</code>)</li>
+<li>The new Pod becomes <code>Running</code></li>
+<li>You still have 3 replicas total</li>
+</ol>
+<p><strong>What you learned:</strong> The ReplicaSet constantly monitors the desired vs. actual state. When a Pod disappears, it immediately creates a replacement.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 3: Understand ReplicaSet Versioning</summary>
+<p>Update your Deployment's image and observe how Kubernetes creates a new ReplicaSet while keeping the old one for rollback.</p>
+<p><strong>Goal:</strong> See how Deployments manage updates using multiple ReplicaSets.</p>
+<p><strong>Hint:</strong> Use <code>kubectl set image</code> to update, then check ReplicaSets.</p>
+<details class="tip">
+<summary>Solution</summary>
+<p>Check current ReplicaSets:</p>
+<div class="language-bash highlight"><span class="filename">Before Update</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>replicasets
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># NAME                          DESIRED   CURRENT   READY   AGE</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54   3         3         3       10m</span>
+</span></code></pre></div>
+<p>Update the image by editing <code>nginx-deployment.yaml</code> — change <code>nginx:1.21</code> to <code>nginx:1.22</code>, save, then apply:</p>
+<div class="language-bash highlight"><span class="filename">Apply the Updated Image Tag</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>nginx-deployment.yaml
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># deployment.apps/nginx-deployment configured</span>
+</span></code></pre></div>
+<p>Watch the rollout:</p>
+<div class="language-bash highlight"><span class="filename">Watch the Update</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/nginx-deployment
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 out of 3 new replicas have been updated...</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c1"># Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 2 out of 3 new replicas have been updated...</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># deployment &quot;nginx-deployment&quot; successfully rolled out</span>
+</span></code></pre></div>
+<p>Now check ReplicaSets again:</p>
+<div class="language-bash highlight"><span class="filename">After Update</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>replicasets
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># NAME                          DESIRED   CURRENT   READY   AGE</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54   0         0         0       15m</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># nginx-deployment-556d429bd4   3         3         3       2m</span>
+</span></code></pre></div>
+<p><strong>What you see:</strong></p>
+<ul>
+<li><strong>Old ReplicaSet</strong> (<code>7c5ddbdf54</code>): Scaled to 0, but still exists</li>
+<li><strong>New ReplicaSet</strong> (<code>556d429bd4</code>): Running all 3 Pods with new image</li>
+<li>Different hashes = different Pod templates</li>
+</ul>
+<p><strong>Why it matters:</strong> The old ReplicaSet enables instant rollback. If the new version has a bug, Kubernetes can scale the old ReplicaSet back up and the new one back down.</p>
+<p>Try rolling back:</p>
+<div class="language-bash highlight"><span class="filename">Rollback to Previous Version</span><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/nginx-deployment
+</span></code></pre></div>
+<p>Check ReplicaSets again—you'll see the old one scaled back up!</p>
+<p><strong>What you learned:</strong> Deployments manage multiple ReplicaSets (one per version). This is how rolling updates and rollbacks work.</p>
+</details>
+</details>
+<details class="question">
+<summary>Exercise 4: Investigate Label Connections</summary>
+<p>Create a Service and verify it finds your Pods using labels.</p>
+<p><strong>Goal:</strong> Understand how labels connect Services to Pods.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li>Verify your Deployment's Pods have labels</li>
+<li>Create a Service with a matching selector</li>
+<li>Check that the Service found your Pods (endpoints)</li>
+</ol>
+<details class="tip">
+<summary>Solution</summary>
+<p>First, check your Pod labels (assuming you still have the nginx-deployment from Exercise 1):</p>
+<div class="language-bash highlight"><span class="filename">Show Pod Labels</span><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--show-labels
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1"># NAME                                READY   STATUS    RESTARTS   AGE   LABELS</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="c1"># nginx-deployment-7c5ddbdf54-abc12   1/1     Running   0          10m   app=nginx,pod-template-hash=7c5ddbdf54</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># nginx-deployment-7c5ddbdf54-def34   1/1     Running   0          10m   app=nginx,pod-template-hash=7c5ddbdf54</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1"># nginx-deployment-7c5ddbdf54-ghi56   1/1     Running   0          10m   app=nginx,pod-template-hash=7c5ddbdf54</span>
+</span></code></pre></div>
+<p><strong>Notice:</strong> All Pods have <code>app=nginx</code> label.</p>
+<p>Create a Service that selects <code>app=nginx</code>:</p>
+<div class="language-yaml highlight"><span class="filename">nginx-service.yaml</span><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-service</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w">  </span><span class="c1"># This must match Pod labels!</span>
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-24-10"><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-24-11"><a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><span class="filename">Apply the Service</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>nginx-service.yaml
+</span></code></pre></div>
+<p>Now check if the Service found your Pods:</p>
+<div class="language-bash highlight"><span class="filename">Describe the Service</span><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>service<span class="w"> </span>nginx-service
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="c1"># Name:              nginx-service</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="c1"># Namespace:         default</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># Labels:            &lt;none&gt;</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="c1"># Annotations:       &lt;none&gt;</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="c1"># Selector:          app=nginx</span>
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="c1"># Type:              ClusterIP</span>
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="c1"># IP Family Policy:  SingleStack</span>
+</span><span id="__span-26-9"><a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="c1"># IP Families:       IPv4</span>
+</span><span id="__span-26-10"><a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a><span class="c1"># IP:                10.96.145.22</span>
+</span><span id="__span-26-11"><a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a><span class="c1"># Port:              &lt;unset&gt;  80/TCP</span>
+</span><span id="__span-26-12"><a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a><span class="c1"># TargetPort:        80/TCP</span>
+</span><span id="__span-26-13"><a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a><span class="c1"># Endpoints:         10.244.1.5:80,10.244.1.6:80,10.244.1.7:80</span>
+</span><span id="__span-26-14"><a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="c1"># Session Affinity:  None</span>
+</span><span id="__span-26-15"><a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a><span class="c1"># Events:            &lt;none&gt;</span>
+</span></code></pre></div>
+<p><strong>What to notice:</strong></p>
+<ul>
+<li><strong>Selector:</strong> <code>app=nginx</code> (matches your Pod labels)</li>
+<li><strong>Endpoints:</strong> List of Pod IPs (should show 3 IPs)</li>
+</ul>
+<p>If endpoints are empty, your selector doesn't match your Pod labels!</p>
+<p><strong>What you learned:</strong> Services find Pods using label selectors. The Service doesn't "know about" the Deployment—it just looks for any Pod with matching labels.</p>
+</details>
+</details>
+<h2 id="quick-recap">Quick Recap</h2>
+<p><strong>The Resource Hierarchy:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Job</th>
+<th>You Interact With It?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>Maintains desired state (replicas, version)</td>
+<td>✅ Yes - for scaling, updates, rollbacks</td>
+</tr>
+<tr>
+<td><strong>ReplicaSet</strong></td>
+<td>Ensures exact number of Pods exist</td>
+<td>⚠️ Rarely - Deployment manages it</td>
+</tr>
+<tr>
+<td><strong>Pod</strong></td>
+<td>Runs your container(s)</td>
+<td>✅ Yes - for logs, debugging, troubleshooting</td>
+</tr>
+<tr>
+<td><strong>Service</strong></td>
+<td>Routes traffic to Pods</td>
+<td>✅ Yes - for exposing applications</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Insights:</strong></p>
+<ul>
+<li>When you deploy, Kubernetes creates a chain: Deployment → ReplicaSet → Pods</li>
+<li>ReplicaSets provide self-healing (replace crashed Pods automatically)</li>
+<li>Multiple ReplicaSets enable rolling updates and rollbacks</li>
+<li>Services provide stable networking (Pod IPs change, Service IPs don't)</li>
+<li>Labels connect everything—Services find Pods, Deployments manage Pods, all through labels</li>
+<li>Use <code>kubectl describe</code> to investigate what actually happened</li>
+</ul>
+<hr />
+<h2 id="youve-completed-day-one">You've Completed Day One</h2>
+<p>Remember where you started? You had <code>kubectl</code> access to a cluster. Maybe you were intimidated by the command line. Maybe someone said "we're using Kubernetes now" and you weren't sure where to begin.</p>
+<p><strong>Look at what you've accomplished:</strong></p>
+<p>You deployed your first application. You watched Kubernetes create Pods, maintain them, and scale them automatically. You exposed your application with a Service and verified traffic could reach it. You learned the essential <code>kubectl</code> commands—the ones you'll use every single day. And now you understand what actually happens behind the scenes: how Deployments manage ReplicaSets, how ReplicaSets maintain Pods, how Services route traffic using labels.</p>
+<p><strong>You're not just running commands anymore—you understand the system.</strong></p>
+<p>You know that when a Pod crashes, the ReplicaSet notices and creates a replacement. You know that when you update an image, Kubernetes creates a new ReplicaSet and gradually shifts traffic. You know that labels are the glue connecting everything. This isn't magic anymore—it's architecture you can reason about.</p>
+<p><strong>This foundation is powerful.</strong> With what you've learned in Day One, you can:</p>
+<ul>
+<li>Deploy applications to your dev cluster with confidence</li>
+<li>Understand why Pods crash or Services fail to route traffic</li>
+<li>Scale applications to handle load</li>
+<li>Roll back when deployments go wrong</li>
+<li>Communicate with your platform team using the right terminology</li>
+</ul>
+<p>The <code>kubectl</code> commands aren't scary anymore. The YAML makes sense. The cluster is a tool you can wield, not a black box you're afraid to touch.</p>
+<p><strong>Day One is complete. You're ready for production work.</strong></p>
+<div class="admonition tip">
+<p class="admonition-title">Note for Experienced Developers</p>
+<p>We intentionally skipped one topic: <strong>resource requests and limits</strong> (how much CPU/memory your Pods need). That's a Level 2 topic for when you're deploying real applications and need to tune performance. Day One focused on getting things running—optimizing resource allocation comes after you understand the basics.</p>
+</div>
+<p>The deeper dive into Kubernetes continues with Level 1, where you'll master each primitive in detail—but honestly? With what you know right now, you can already ship code to Kubernetes. Many developers work productively for months with just Day One knowledge.</p>
+<p>The difference between you when you started Day One and you right now is confidence. You've deployed. You've investigated. You've understood. That's what Day One was for.</p>
+<h2 id="whats-next">What's Next</h2>
+<p>Congratulations! You've completed the Day One journey. You've gone from "What is Kubernetes?" to understanding the full resource hierarchy of a deployment.</p>
+<p>When you're ready to move beyond the basics and master the individual building blocks of Kubernetes, continue to:</p>
+<ul>
+<li><strong>Level 1: Core Primitives</strong> - (coming soon) Deep dive into Pods, Services, ConfigMaps, and Namespaces</li>
+<li><strong><a href="../commands/">Essential kubectl Commands</a></strong> - Review the commands for investigating resources</li>
+<li><strong><a href="../first_deploy/">Your First Deployment</a></strong> - Revisit the deployment process with your new understanding</li>
+</ul>
+<p><strong>Practice makes perfect:</strong> Deploy your real application to solidify what you've learned. The best way to master Kubernetes is to use it with actual projects.</p>
+<h2 id="further-reading">Further Reading</h2>
+<h3 id="official-documentation">Official Documentation</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/">Kubernetes Concepts: Workloads</a> - Official overview of Pods, Controllers, and Workloads</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployments</a> - Deep dive into Deployment controller</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/">ReplicaSets</a> - Understanding ReplicaSets and when you'd use them directly</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a> - The atomic unit of Kubernetes</li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/">Services, Load Balancing, and Networking</a> - How networking works in Kubernetes</li>
+</ul>
+<h3 id="deep-dives">Deep Dives</h3>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/">Understanding Kubernetes Objects</a> - How Kubernetes represents resources (spec, status, metadata)</li>
+<li><a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">Labels and Selectors</a> - How resources find each other</li>
+<li><a href="https://kubernetes.io/docs/concepts/overview/components/">Kubernetes Components</a> - Control plane and node components explained</li>
+</ul>
+<h3 id="related-articles">Related Articles</h3>
+<ul>
+<li><a href="../../what_is_kubernetes/">What Is Kubernetes?</a> - Review the fundamentals and the problem Kubernetes solves</li>
+<li><a href="../first_deploy/">Your First Deployment</a> - Revisit the deployment process with your new understanding</li>
+<li><a href="../commands/">Essential kubectl Commands</a> - Commands for investigating resource relationships</li>
+<li><a href="../../overview/">Day One Overview</a> - See your complete Day One journey</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bradpenney" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/bradpenney" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "content.code.highlight", "content.tooltips", "content.code.mermaid"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
