@@ -330,18 +330,18 @@ Not sure which path to choose? Use these criteria to decide:
 
 === "Helm Path (Package Manager)"
 
-    !!! info "Helm Path Now Available"
-        The first Helm article is now published! The remaining articles are in development. Both paths teach the same foundational Kubernetes concepts.
+    !!! info "Helm Path Expanding"
+        The first two articles in the `Helm` path are now published! Both paths teach the same foundational Kubernetes concepts, but the `Helm` path focuses on using a package manager rather than writing raw YAML.
 
     <div class="grid cards" markdown>
 
     - :material-connection: **[Getting Helm Access](helm/access.md)**
 
-      Install Helm CLI and connect to your cluster using existing kubectl credentials.
+      Install the `helm` CLI and connect to your cluster using existing `kubectl` credentials.
 
-    - :material-dharmachakra: **Your First Helm Deployment** *(coming soon)*
+    - :material-dharmachakra: **[Your First Helm Deployment](helm/first_deploy.md)**
 
-      Deploy your first chart from CI/CD pipeline or vendor repository.
+      Deploy your first chart from a CI/CD pipeline or vendor repository.
 
     - :material-console: **Essential Helm Commands** *(coming soon)*
 
@@ -349,14 +349,14 @@ Not sure which path to choose? Use these criteria to decide:
 
     - :material-lightbulb: **Understanding What Helm Created** *(coming soon)*
 
-      See how Helm translates values into Kubernetes resources under the hood.
+      See how `Helm` translates values into Kubernetes resources under the hood.
 
     </div>
 
 !!! success "Day One Paths Available"
     **kubectl Path:** Complete! All four articles published.
 
-    **Helm Path:** First article now available ([Getting Helm Access](helm/access.md)). Additional articles coming soon.
+    **Helm Path:** Getting Started and First Deployment articles are now available. Additional articles coming soon.
 
     Start with **[What Is Kubernetes?](what_is_kubernetes.md)** then choose your path!
 

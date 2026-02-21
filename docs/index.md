@@ -59,7 +59,7 @@ It emphasizes real-world scenarios, production safety, and the "why" behind ever
     **Articles:**
 
     - [Getting Helm Access](day_one/helm/access.md)
-    - Your First Helm Deployment *(coming soon)*
+    - [Your First Helm Deployment](day_one/helm/first_deploy.md)
     - Essential Helm Commands *(coming soon)*
     - Understanding What Helm Created *(coming soon)*
 

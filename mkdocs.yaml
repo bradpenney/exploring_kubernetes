@@ -60,7 +60,6 @@ plugins:
         - "level_4/*"
         - "level_5/*"
         - "level_6/*"
-        - "day_one/helm/first_deploy.md"
         - "day_one/helm/commands.md"
         - "day_one/helm/understanding.md"
   - social:
@@ -120,8 +119,8 @@ nav:
 
       - Using Helm:
           - Getting Helm Access: day_one/helm/access.md
+          - Your First Helm Deployment: day_one/helm/first_deploy.md
           # Additional Helm articles pending review:
-          #     - Your First Helm Deployment: day_one/helm/first_deploy.md
           #     - Essential Helm Commands: day_one/helm/commands.md
           #     - Understanding What Helm Created: day_one/helm/understanding.md
 
