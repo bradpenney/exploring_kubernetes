@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kubernetes.bradpenney.io/sitemap.xml
+Sitemap: https://k8s.bradpenney.io/sitemap.xml

@@ -4,7 +4,7 @@
 
 A progressive learning site for Kubernetes—from application developer deploying your first app to platform engineer running production clusters. Built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
 
-🌐 **Live site:** [kubernetes.bradpenney.io](https://kubernetes.bradpenney.io)
+🌐 **Live site:** [k8s.bradpenney.io](https://k8s.bradpenney.io)
 
 ---
 
@@ -197,7 +197,7 @@ exploring_kubernetes/
 ## Connect
 
 - **Main site:** [bradpenney.io](https://bradpenney.io)
-- **Live documentation:** [kubernetes.bradpenney.io](https://kubernetes.bradpenney.io)
+- **Live documentation:** [k8s.bradpenney.io](https://k8s.bradpenney.io)
 - **Source code:** [github.com/bradpenney/exploring_kubernetes](https://github.com/bradpenney/exploring_kubernetes)
 
 ---

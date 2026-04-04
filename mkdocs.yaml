@@ -1,5 +1,5 @@
 site_name: "Exploring Kubernetes"
-site_url: https://kubernetes.bradpenney.io
+site_url: https://k8s.bradpenney.io
 site_description: A progressive journey through Kubernetes, from your first deployment to production operations.
 site_author: Brad Penney
 
