@@ -1,0 +1,71 @@
+/* Increase logo size in the header */
+.md-header__button.md-logo img {
+  height: 100px !important; /* try 48px, 64px, or larger */
+  padding: 0;
+  margin: 0;
+}
+
+/* Responsive image alignment: right on large, center on small */
+.img-responsive-right {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;
+}
+
+/* On tablet and larger: float right */
+@media screen and (min-width: 768px) {
+  .img-responsive-right {
+    float: right;
+    margin: 0 0 1em 1em;
+  }
+}
+
+/* Video embeds - responsive with max-width cap */
+.video-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 1.5rem 0;
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 8px;
+}
+
+/* Center Mermaid diagrams */
+.mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* Force card grids to single column */
+.grid.cards {
+  grid-template-columns: 1fr !important;
+}
+
+/* Center all tables */
+.md-typeset table {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+
+.md-typeset .md-typeset__scrollwrap,
+.md-typeset .md-typeset__table {
+  display: flex;
+  justify-content: center;
+}
+
+/* Center table headers, left-align content */
+.md-typeset table th {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.md-typeset table td {
+  text-align: left !important;
+  vertical-align: middle !important;
+}
