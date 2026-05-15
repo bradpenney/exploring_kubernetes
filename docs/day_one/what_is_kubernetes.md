@@ -130,7 +130,7 @@ Think of it like an operating system for a data center:
 
     Here's what checking on your app looks like:
 
-    ```bash
+    ```bash title="Check running pods"
     kubectl get pods
     # NAME                       READY   STATUS    RESTARTS   AGE
     # my-app-7c5ddbdf54-abc123   1/1     Running   0          2m
@@ -211,7 +211,7 @@ The name "Kubernetes" means "helmsman" (ship pilot) in Greek. The logo is a ship
 
     **Traditional approach:** Imperative scripts
 
-    ```bash
+    ```bash title="Imperative (fragile)"
     # Run these commands in this exact order...
     docker run container-a
     sleep 5
@@ -221,7 +221,7 @@ The name "Kubernetes" means "helmsman" (ship pilot) in Greek. The logo is a ship
 
     **Kubernetes approach:** Declarative YAML
 
-    ```yaml
+    ```yaml title="Declarative (Kubernetes way)"
     # Describe desired state, Kubernetes figures out how
     spec:
       replicas: 3  # I want 3 running
@@ -383,6 +383,7 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
     **Kubernetes Features:** Self-healing, Load balancing, Service discovery, Scaling, Rolling updates, Health checks
 
     ??? tip "Answers"
+
         1. **Self-healing** - Kubernetes restarts crashed containers automatically
         2. **Load balancing** - Services distribute traffic evenly across pods
         3. **Service discovery** - Kubernetes DNS lets services find each other by name
@@ -436,6 +437,10 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 - [The Illustrated Children's Guide to Kubernetes](https://www.cncf.io/phippy/the-childrens-illustrated-guide-to-kubernetes/) - Visual story explaining K8s concepts
 - [The Kubernetes Origin Story](https://cloud.google.com/blog/products/containers-kubernetes/from-google-to-the-world-the-kubernetes-origin-story) - How Google's Borg became Kubernetes
 - [Borg: The Predecessor to Kubernetes](https://kubernetes.io/blog/2015/04/borg-predecessor-to-kubernetes/) - Official Kubernetes blog on Borg history
+
+### Related Learning
+
+- [Finite State Machines](https://cs.bradpenney.io/efficiency/finite_state_machines/) - The CS concept behind Kubernetes' reconciliation loop: constantly comparing desired state to actual state and acting to close the gap
 
 ### Related Articles
 - [Day One: Getting Started](overview.md) - Complete learning path overview

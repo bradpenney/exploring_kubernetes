@@ -17,11 +17,7 @@ This is the moment it becomes real.
 
     By the end of this article, you'll know how to:
 
-
-
     - **Write a Deployment YAML** - Define what you want running
-
-
     - **Apply it to your cluster** - Use `kubectl apply` to deploy
     - **Expose it with a Service** - Make your app accessible
     - **Test and verify** - Confirm everything works
@@ -166,7 +162,7 @@ spec:
 
     !!! warning "Namespace Context"
         These commands operate in your current namespace. Check with:
-        ```bash
+        ```bash title="Check current namespace"
         kubectl config view --minify | grep namespace
         ```
         To specify a namespace: `kubectl get pods -n dev`
@@ -423,13 +419,13 @@ Things don't always go smoothly. Here are the issues you're most likely to encou
     **Common cause:** Label mismatch between Service selector and Pod labels.
 
     **Your Service says:**
-    ```yaml
+    ```yaml title="Service selector"
     selector:
       app: nginx  # Looking for pods with this label
     ```
 
     **Your Pods must have:**
-    ```yaml
+    ```yaml title="Pod labels"
     metadata:
       labels:
         app: nginx  # Must match!
@@ -486,20 +482,22 @@ kubectl exec my-first-app-7c5ddbdf54-2xkqn -- nginx -v
 
 !!! tip "Pro Tip: Follow Logs"
     Use `-f` to follow logs in real-time:
-    ```bash
+    ```bash title="Follow logs"
     kubectl logs -f my-first-app-7c5ddbdf54-2xkqn
     ```
     Press `Ctrl+C` to stop.
 
 ### Scaling Up
 
-Want more copies? Change replicas:
+The right way to scale is to update the `replicas:` field in your YAML and apply it — keeping your file as the source of truth.
 
 ⚠️ **Caution (Modifies Resources):**
 
-```bash title="Scale Deployment to 5 Replicas"
-kubectl scale deployment my-first-app --replicas=5
-# deployment.apps/my-first-app scaled
+Edit `nginx-deployment.yaml` and change `replicas: 3` to `replicas: 5`, then:
+
+```bash title="Apply the Updated Deployment"
+kubectl apply -f nginx-deployment.yaml
+# deployment.apps/my-first-app configured
 ```
 
 ✅ **Safe (Read-Only):**
@@ -514,7 +512,7 @@ kubectl get pods
 # my-first-app-7c5ddbdf54-w4r7t   1/1     Running   0          10s
 ```
 
-**Now you have 5 pods!** Kubernetes automatically created 3 more to match your desired state.
+**Now you have 5 pods!** Kubernetes created 2 more to match the desired state in your YAML.
 
 ### Cleaning Up
 
@@ -588,7 +586,7 @@ kubectl delete -f nginx-service.yaml
 
         **Step 2: Apply Deployment**
 
-        ```bash
+        ```bash title="Apply deployment"
         kubectl apply -f my-deployment.yaml
         # deployment.apps/practice-app created
 
@@ -617,7 +615,7 @@ kubectl delete -f nginx-service.yaml
 
         **Step 4: Apply Service**
 
-        ```bash
+        ```bash title="Apply service"
         kubectl apply -f my-service.yaml
         # service/practice-svc created
 
@@ -627,7 +625,7 @@ kubectl delete -f nginx-service.yaml
 
         **Step 5: Access with Port Forward**
 
-        ```bash
+        ```bash title="Port-forward to test locally"
         kubectl port-forward service/practice-svc 8080:80
         # Forwarding from 127.0.0.1:8080 -> 80
         ```
@@ -640,9 +638,11 @@ kubectl delete -f nginx-service.yaml
 
         **Step 6: Scale to 5 Replicas**
 
-        ```bash
-        kubectl scale deployment practice-app --replicas=5
-        # deployment.apps/practice-app scaled
+        Edit `my-deployment.yaml` and change `replicas: 3` to `replicas: 5`, then:
+
+        ```bash title="Apply updated replica count"
+        kubectl apply -f my-deployment.yaml
+        # deployment.apps/practice-app configured
 
         kubectl get pods
         # Should show 5 pods now
@@ -650,7 +650,7 @@ kubectl delete -f nginx-service.yaml
 
         **Step 7: Clean Up**
 
-        ```bash
+        ```bash title="Delete resources"
         kubectl delete -f my-deployment.yaml
         kubectl delete -f my-service.yaml
         # Or:
@@ -677,7 +677,7 @@ kubectl delete -f nginx-service.yaml
 | **Checked Pods** | `kubectl get pods` |
 | **Created Service** | `kubectl apply -f service.yaml` |
 | **Accessed App** | `kubectl port-forward` |
-| **Scaled** | `kubectl scale deployment` |
+| **Scaled** | Edit `replicas:` in YAML → `kubectl apply` |
 | **Cleaned Up** | `kubectl delete` |
 
 ---
@@ -695,6 +695,10 @@ kubectl delete -f nginx-service.yaml
 
 - [Understanding Kubernetes Objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/) - How Kubernetes represents resources
 - [Kubernetes API Concepts](https://kubernetes.io/docs/reference/using-api/api-concepts/) - Understanding `apiVersion`, `kind`, and `metadata`
+
+### Related Learning
+
+- [YAML](https://python.bradpenney.io/essentials/yaml/) - The syntax you're writing in every manifest — indentation rules, scalars, mappings, and lists explained in depth
 
 ### Related Articles
 

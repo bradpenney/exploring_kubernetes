@@ -225,7 +225,7 @@ These are the commands you'll run dozens of times per day. They're all equally i
 
         !!! tip "Reload Without Restarting"
             After editing your profile, reload it:
-            ```powershell
+            ```powershell title="Reload profile"
             . $PROFILE
             ```
 
@@ -398,34 +398,33 @@ graph TD
 
     🚨 **DANGER:** Permanently deletes resources—no confirmation prompt
 
-=== "kubectl scale"
+=== "Scaling"
 
-    ### Scale (Adjust Replicas)
+    ### Scaling (Adjust Replicas)
 
-    ⚠️ **Caution:** The `kubectl scale` command changes how many copies (replicas) of your application are running **immediately**. Great for testing load handling or temporarily scaling down, but affects live traffic.
+    ⚠️ **Caution:** Scaling modifies running resources — always verify your namespace first.
 
-    ```bash title="Scale Up"
-    kubectl scale deployment my-app --replicas=5
-    # deployment.apps/my-app scaled
-    # Kubernetes creates 2 more pods (you had 3, now you'll have 5)
+    The correct way to scale is to update `replicas:` in your YAML file and apply it. Your YAML stays as the source of truth.
+
+    Edit `deployment.yaml` to change `replicas: 3` to `replicas: 5`, then:
+
+    ```bash title="Apply Updated Replicas"
+    kubectl apply -f deployment.yaml
+    # deployment.apps/my-app configured
     ```
 
-    ```bash title="Scale Down"
-    kubectl scale deployment my-app --replicas=1
-    # deployment.apps/my-app scaled
-    # Kubernetes terminates 2 pods (keeping 1 running)
-    # ⚠️ Active connections to terminated pods may be dropped
+    ```bash title="Watch Pods Start"
+    kubectl get pods --watch
+    # NAME                     READY   STATUS    RESTARTS   AGE
+    # my-app-7c5ddbdf54-2xkqn  1/1     Running   0          5m
+    # my-app-7c5ddbdf54-8mz4p  1/1     Running   0          5m
+    # my-app-7c5ddbdf54-kx9qw  1/1     Running   0          5m
+    # my-app-7c5ddbdf54-p2mzn  0/1     Pending   0          1s   ← new
+    # my-app-7c5ddbdf54-w4r7t  0/1     Pending   0          1s   ← new
     ```
 
-    ```bash title="Scale to Zero"
-    kubectl scale deployment my-app --replicas=0
-    # Stops all pods but keeps the deployment
-    # ⚠️ Application becomes completely unavailable
-    ```
-
-    **Note:** Scaling changes take a few seconds. Use `kubectl get pods -w` to watch pods starting or terminating.
-
-    **Production consideration:** Scaling down can drop active connections. In production, prefer gradual scaling or use `kubectl rollout restart` for graceful pod replacement.
+    !!! tip "Break-glass only: `kubectl scale`"
+        `kubectl scale deployment my-app --replicas=5` achieves the same result immediately but bypasses your YAML — next time someone runs `kubectl apply`, the replica count resets to whatever the file says. Use it only in emergencies; always follow up by updating the YAML.
 
 ---
 
@@ -990,8 +989,9 @@ Common pitfalls that trip up even experienced users:
         ```
 
         ```bash title="2. Scale to 5 Replicas"
-        kubectl scale deployment nginx --replicas=5
-        # deployment.apps/nginx scaled
+        # Edit deployment.yaml: change replicas: 3 to replicas: 5, then:
+        kubectl apply -f deployment.yaml
+        # deployment.apps/nginx configured
         ```
 
         ```bash title="3. Watch Pods Being Created"
@@ -1001,8 +1001,9 @@ Common pitfalls that trip up even experienced users:
         ```
 
         ```bash title="4. Scale Back to 2"
-        kubectl scale deployment nginx --replicas=2
-        # deployment.apps/nginx scaled
+        # Edit deployment.yaml: change replicas: 5 to replicas: 2, then:
+        kubectl apply -f deployment.yaml
+        # deployment.apps/nginx configured
         ```
 
         ```bash title="5. Verify the Change"
@@ -1015,7 +1016,7 @@ Common pitfalls that trip up even experienced users:
         # nginx    2/2     2            2           20m
         ```
 
-        **What you learned:** Scaling is instant and safe. Kubernetes handles starting/stopping pods automatically. In production, you'd set replica counts in your YAML, but `kubectl scale` is useful for testing.
+        **What you learned:** Scaling is instant. Kubernetes handles starting/stopping pods automatically. Always update your YAML to keep it as the source of truth — if someone re-applies the old file, your imperative change disappears.
 
 ??? question "Exercise 3: Test Connectivity with Port Forwarding"
     Access your application locally without exposing it publicly.
@@ -1126,27 +1127,27 @@ Common pitfalls that trip up even experienced users:
     ??? tip "Solution"
         ```bash title="1. Create Broken Deployment"
         # Create a file called broken-deployment.yaml:
-        cat > broken-deployment.yaml <<EOF
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-          name: broken-app
-        spec:
-          replicas: 2
-          selector:
-            matchLabels:
-              app: broken-app
-          template:
-            metadata:
-              labels:
-                app: broken-app
-            spec:
-              containers:
-              - name: nginx
-                image: nginx:nonexistent-tag
-                ports:
-                - containerPort: 80
-        EOF
+        cat > broken-deployment.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: broken-app
+  template:
+    metadata:
+      labels:
+        app: broken-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:nonexistent-tag
+        ports:
+        - containerPort: 80
+EOF
 
         kubectl apply -f broken-deployment.yaml
         # deployment.apps/broken-app created
@@ -1228,6 +1229,12 @@ Common pitfalls that trip up even experienced users:
 - [Kube by Example](https://kubebyexample.com/) - Hands-on learning paths from Red Hat
 - [Kubernetes Tutorials](https://kubernetes.io/docs/tutorials/) - Official interactive tutorials
 - [Kubernetes Examples on GitHub](https://github.com/kubernetes/examples) - Real-world YAML examples
+
+### Related Learning
+
+- [Pipes and Redirection](https://linux.bradpenney.io/essentials/pipes_and_redirection/) - The `|` operator used throughout `kubectl` troubleshooting (`kubectl get pods | grep CrashLoop`) — same concept, same syntax
+- [grep](https://linux.bradpenney.io/essentials/grep/) - Filtering `kubectl` output by pattern; essential for finding specific pods or events in busy namespaces
+- [Reading Logs](https://linux.bradpenney.io/day_one/reading_logs/) - The mental model behind `kubectl logs` — find the process, read its output, locate the error
 
 ### Related Articles
 

@@ -64,7 +64,7 @@ description: Compelling description for search results (150-160 chars ideal)
 - Search indexing
 - Navigation (even if accidentally uncommented)
 
-**Current exclude configuration** (as of 2026-02-16):
+**Current exclude configuration** (as of 2026-05-14):
 
 ```yaml
 plugins:
@@ -76,13 +76,14 @@ plugins:
         - "workloads/*"
         - "networking/*"
         - "storage/*"
-        - "level_1/*"
+        - "level_1/config_and_secrets.md"
+        - "level_1/namespaces.md"
+        - "level_1/labels_selectors.md"
         - "level_2/*"
         - "level_3/*"
         - "level_4/*"
         - "level_5/*"
         - "level_6/*"
-        - "day_one/helm/*"
   # ... other plugins
 ```
 

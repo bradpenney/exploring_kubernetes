@@ -254,7 +254,7 @@ Why are you really here? Probably one of these situations (examples show both pa
 
         **What you need to learn:**
 
-        - `kubectl scale deployment/yourapp --replicas=10` - simple scaling
+        - Edit `replicas:` in your YAML and `kubectl apply` — scaling declaratively
         - How to verify all replicas are running
         - How to scale back down when done
 
@@ -330,8 +330,7 @@ Not sure which path to choose? Use these criteria to decide:
 
 === "Helm Path (Package Manager)"
 
-    !!! info "Helm Path Expanding"
-        The first two articles in the `Helm` path are now published! Both paths teach the same foundational Kubernetes concepts, but the `Helm` path focuses on using a package manager rather than writing raw YAML.
+    The Helm path focuses on using a package manager rather than writing raw YAML. It's the standard for teams that use CI/CD pipelines or vendor-provided software.
 
     <div class="grid cards" markdown>
 
@@ -343,20 +342,20 @@ Not sure which path to choose? Use these criteria to decide:
 
       Deploy your first chart from a CI/CD pipeline or vendor repository.
 
-    - :material-console: **Essential Helm Commands** *(coming soon)*
+    - :material-console: **[Essential Helm Commands](helm/commands.md)**
 
-      Master `helm install`, `helm upgrade`, `helm rollback`, and release management.
+      Master `helm list`, `helm history`, `helm upgrade`, `helm rollback`, and release management.
 
-    - :material-lightbulb: **Understanding What Helm Created** *(coming soon)*
+    - :material-lightbulb: **[Understanding What Helm Created](helm/understanding.md)**
 
-      See how `Helm` translates values into Kubernetes resources under the hood.
+      See how Helm translates values into Kubernetes resources under the hood.
 
     </div>
 
 !!! success "Day One Paths Available"
     **kubectl Path:** Complete! All four articles published.
 
-    **Helm Path:** Getting Started and First Deployment articles are now available. Additional articles coming soon.
+    **Helm Path:** Complete! All four articles published.
 
     Start with **[What Is Kubernetes?](what_is_kubernetes.md)** then choose your path!
 
@@ -379,9 +378,8 @@ Throughout Day One, we emphasize **safety and confidence**. You're working on a 
 
     These commands modify or delete resources—use with namespace awareness:
 
-    - `kubectl delete` - Removes resources (yours, hopefully!)
     - `kubectl apply` - Creates/updates resources (stay in your namespace!)
-    - `kubectl edit` - Modifies running resources
+    - `kubectl delete` - Removes resources (yours, hopefully!)
 
     **We'll clearly label which is which** throughout the articles.
 

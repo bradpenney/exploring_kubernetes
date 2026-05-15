@@ -53,7 +53,7 @@ Before we start, identify which situation matches your task today:
 !!! warning "Check Your Namespace First"
     `helm install` deploys into your **current namespace**. Before running any install command, confirm you're in the right place:
 
-    ```bash
+    ```bash title="Check current namespace"
     kubectl config view --minify | grep namespace
     # namespace: dev-user
     ```
@@ -273,7 +273,7 @@ helm uninstall my-app
     6. Uninstall the release.
 
     ??? tip "Solution"
-        ```bash
+        ```bash title="Deploy with custom values"
         # Export and edit values (set replicaCount: 3 in the file)
         helm show values bitnami/nginx > practice-values.yaml
 
@@ -282,10 +282,10 @@ helm uninstall my-app
 
         # Verify
         kubectl get pods
-        # NAME                            READY   STATUS    RESTARTS   AGE
-        # practice-web-7c5ddbdf54-2xkqn   1/1     Running   0          20s
-        # practice-web-7c5ddbdf54-8mz4p   1/1     Running   0          20s
-        # practice-web-7c5ddbdf54-kx9qw   1/1     Running   0          20s
+        # NAME                                  READY   STATUS    RESTARTS   AGE
+        # practice-web-nginx-7c5ddbdf54-2xkqn   1/1     Running   0          20s
+        # practice-web-nginx-7c5ddbdf54-8mz4p   1/1     Running   0          20s
+        # practice-web-nginx-7c5ddbdf54-kx9qw   1/1     Running   0          20s
 
         # Cleanup
         helm uninstall practice-web
@@ -329,6 +329,6 @@ helm uninstall my-app
 
 You've deployed your first application using `Helm`! You've seen how `values.yaml` controls the deployment and how `Helm` manages the lifecycle.
 
-**Next:** **Essential Helm Commands** - Master the lifecycle management commands for investigating, updating, and fixing your releases (coming soon).
+**Next:** **[Essential Helm Commands](commands.md)** - Master the lifecycle management commands for investigating, updating, and fixing your releases.
 
 **Also worth exploring:** If you haven't worked through the `kubectl` path, [Essential kubectl Commands](../kubectl/commands.md) is useful reading—`Helm` creates the same Kubernetes resources, and you'll use `kubectl` daily for debugging regardless of how you deploy.

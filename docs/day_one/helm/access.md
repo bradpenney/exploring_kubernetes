@@ -231,6 +231,11 @@ helm list
 
 `Helm` finds software in **repositories**. Think of these like the "sources" in `apt` or "taps" in `brew`.
 
+!!! info "Repositories are local — releases are not"
+    `helm repo add` writes to a cache on **your laptop or workstation** (`~/.config/helm/repositories.yaml`). Nothing is added to the Kubernetes cluster, and repos are not tied to namespaces. Every developer on your team manages their own local repo list — there's no shared cluster-level registry.
+
+    Once you run `helm install`, the picture changes. The resulting **release** lives in the cluster, stored as a Kubernetes Secret in the target namespace. Teammates can see and manage that release with `helm list`, `helm upgrade`, and `helm rollback` — but if they ever need to re-deploy or upgrade from scratch, they'll need to have the same repo added locally first.
+
 ### Common Repositories
 Most developers start by adding a few standard repositories for common software (web servers, monitoring tools, ingress controllers).
 
@@ -277,7 +282,7 @@ Even though you're using `Helm`, namespace security works exactly the same as `k
     Run `helm version` and identify your client version. Then, verify that `helm list` runs without errors.
 
     ??? tip "Solution"
-        ```bash
+        ```bash title="Verify Helm"
         helm version
         helm list
         ```
@@ -287,7 +292,7 @@ Even though you're using `Helm`, namespace security works exactly the same as `k
     Add the Bitnami repository and search for "redis".
 
     ??? tip "Solution"
-        ```bash
+        ```bash title="Add Bitnami and search"
         helm repo add bitnami https://charts.bitnami.com/bitnami
         helm repo update
         helm search repo redis
@@ -325,71 +330,6 @@ Even though you're using `Helm`, namespace security works exactly the same as `k
 ### Related Articles
 
 - [Getting kubectl Access](../kubectl/access.md) - **Required** before `Helm` will work
-- [What Is Kubernetes?](../what_is_kubernetes.md) - Core concepts
-
----
-
-## What's Next?
-
-You have the tools, and you have the access. Now let's actually put something on the cluster.
-
-**Next:** **[Your First Helm Deployment](first_deploy.md)** - Deploy your first chart, whether it's a third-party tool or your own application from a CI/CD pipeline.
----
-
-## Practice Exercises
-
-??? question "Exercise 1: Verify Installation"
-    Run `helm version` and identify your client version. Then, verify that `helm list` runs without errors.
-
-    ??? tip "Solution"
-        ```bash
-        helm version
-        helm list
-        ```
-        If `helm list` returns a header but no data, you are successful! It means the CLI is talking to the Kubernetes API correctly.
-
-??? question "Exercise 2: Add a Repository"
-    Add the Bitnami repository and search for "redis".
-
-    ??? tip "Solution"
-        ```bash
-        helm repo add bitnami https://charts.bitnami.com/bitnami
-        helm repo update
-        helm search repo redis
-        ```
-        You should see several options, including `bitnami/redis` (a popular caching layer for Kubernetes).
-
----
-
-## Quick Recap
-
-| Goal | Command |
-|------|---------|
-| **Install Helm** | `brew install helm` (macOS) |
-| **Check Connection** | `helm list` |
-| **Add Repo** | `helm repo add <name> <url>` |
-| **Find Software** | `helm search repo <keyword>` |
-| **Update Repos** | `helm repo update` |
-
----
-
-## Further Reading
-
-### Official Documentation
-
-- [Installing Helm](https://helm.sh/docs/intro/install/) - Official installation guide for all platforms
-- [Helm Quickstart Guide](https://helm.sh/docs/intro/quickstart/) - Get started with Helm in 5 minutes
-- [Using Helm](https://helm.sh/docs/intro/using_helm/) - Core Helm concepts and workflows
-- [Helm Repositories](https://helm.sh/docs/topics/chart_repository/) - How chart repositories work
-
-### Deep Dives
-
-- [What is a Helm Chart? Tutorial for Beginners](https://www.freecodecamp.org/news/what-is-a-helm-chart-tutorial-for-kubernetes-beginners/) - Comprehensive beginner-friendly guide
-- [Helm GitHub Repository](https://github.com/helm/helm) - Source code, issues, and community discussions
-
-### Related Articles
-
-- [Getting kubectl Access](../kubectl/access.md) - **Required** before Helm will work
 - [What Is Kubernetes?](../what_is_kubernetes.md) - Core concepts
 
 ---

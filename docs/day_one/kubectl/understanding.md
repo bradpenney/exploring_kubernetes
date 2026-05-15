@@ -295,8 +295,11 @@ Here's what happens when you deploy an application:
 
     ⚠️ **Caution (Modifies Resources):**
 
+    Edit your `deployment.yaml` to change `replicas: 3` to `replicas: 5`, then apply:
+
     ```bash title="Scale to 5 Replicas"
-    kubectl scale deployment nginx-deployment --replicas=5
+    kubectl apply -f deployment.yaml
+    # deployment.apps/nginx-deployment configured
     ```
 
     **The flow:**
@@ -378,29 +381,32 @@ Here's what happens when you deploy an application:
 
 Everything connects through **labels**. Labels are key-value pairs you attach to resources.
 
-```yaml title="How Labels Connect Resources" linenums="1"
-# Deployment creates Pods with this label:
+```yaml title="deployment.yaml — Pods get this label" linenums="1"
 spec:
   template:
     metadata:
       labels:
         app: nginx  # (1)!
+```
 
-# Service finds Pods with this label:
+1. Every Pod created by this Deployment gets the label `app: nginx`
+
+```yaml title="service.yaml — routes to Pods with this label"
 spec:
   selector:
-    app: nginx  # (2)!
+    app: nginx  # (1)!
+```
 
-# ReplicaSet manages Pods with this label:
+1. The Service routes traffic to any running Pod with `app: nginx`
+
+```yaml title="replicaset.yaml — manages Pods with this label"
 spec:
   selector:
     matchLabels:
-      app: nginx  # (3)!
+      app: nginx  # (1)!
 ```
 
-1. Every Pod created by this Deployment gets `app: nginx`
-2. The Service routes to any Pod with `app: nginx`
-3. The ReplicaSet maintains the count of Pods with `app: nginx`
+1. The ReplicaSet maintains the exact count of Pods with `app: nginx`
 
 **Without matching labels, nothing connects.** If your Service selector doesn't match your Pod labels, traffic won't route. If your Deployment selector doesn't match your template labels, the ReplicaSet won't manage the Pods.
 
@@ -530,7 +536,7 @@ spec:
 
     **Goal:** See how Deployments manage updates using multiple ReplicaSets.
 
-    **Hint:** Use `kubectl set image` to update, then check ReplicaSets.
+    **Hint:** Edit `nginx-deployment.yaml` to change the image tag from `nginx:1.21` to `nginx:1.22`, then run `kubectl apply -f nginx-deployment.yaml`.
 
     ??? tip "Solution"
 
@@ -719,7 +725,7 @@ Congratulations! You've completed the Day One journey. You've gone from "What is
 
 When you're ready to move beyond the basics and master the individual building blocks of Kubernetes, continue to:
 
-- **Level 1: Core Primitives** - (coming soon) Deep dive into Pods, Services, ConfigMaps, and Namespaces
+- **[Level 1: Core Primitives](../level_1/overview.md)** — Deep dive into Pods and Services. Start with **[Pods: The Atomic Unit](../level_1/pods.md)**
 - **[Essential kubectl Commands](commands.md)** - Review the commands for investigating resources
 - **[Your First Deployment](first_deploy.md)** - Revisit the deployment process with your new understanding
 
@@ -740,6 +746,10 @@ When you're ready to move beyond the basics and master the individual building b
 - [Understanding Kubernetes Objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/) - How Kubernetes represents resources (spec, status, metadata)
 - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) - How resources find each other
 - [Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/) - Control plane and node components explained
+
+### Related Learning
+
+- [Finite State Machines](https://cs.bradpenney.io/efficiency/finite_state_machines/) - The formal CS model behind the Kubernetes reconciliation loop — controllers as state machines watching for drift between desired and actual state
 
 ### Related Articles
 

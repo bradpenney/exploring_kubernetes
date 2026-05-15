@@ -54,14 +54,14 @@ plugins:
         - "workloads/*"
         - "networking/*"
         - "storage/*"
-        - "level_1/*"
+        - "level_1/config_and_secrets.md"
+        - "level_1/namespaces.md"
+        - "level_1/labels_selectors.md"
         - "level_2/*"
         - "level_3/*"
         - "level_4/*"
         - "level_5/*"
         - "level_6/*"
-        - "day_one/helm/commands.md"
-        - "day_one/helm/understanding.md"
   - social:
       cards: true
       cards_layout_options:
@@ -120,23 +120,23 @@ nav:
       - Using Helm:
           - Getting Helm Access: day_one/helm/access.md
           - Your First Helm Deployment: day_one/helm/first_deploy.md
-          # Additional Helm articles pending review:
-          #     - Essential Helm Commands: day_one/helm/commands.md
-          #     - Understanding What Helm Created: day_one/helm/understanding.md
+          - Essential Helm Commands: day_one/helm/commands.md
+          - Understanding What Helm Created: day_one/helm/understanding.md
+
+  - Level 1 - Core Primitives:
+      - Overview: level_1/overview.md
+      - Pods Deep Dive: level_1/pods.md
+      - Services - Stable Networking for Pods: level_1/services.md
+      # Coming soon:
+      # - ConfigMaps and Secrets: level_1/config_and_secrets.md
+      # - Namespaces: level_1/namespaces.md
+      # - Labels and Selectors: level_1/labels_selectors.md
 
   # EDITORIAL NOTE: Content below is commented out pending quality review
   # Goal: Implement progressive learning journey (Day One → Level 6)
   # Following Exploring Linux editorial standards established 2026-02-06
   # Uncomment articles ONE AT A TIME after thorough editorial vetting
   # See CLAUDE.md for quality standards and vetting checklist
-
-  # - Level 1 - Core Primitives:
-  #     - Overview: level_1/overview.md
-  #     - Pods Deep Dive: level_1/pods.md
-  #     - Services - Connecting to Pods: level_1/services.md
-  #     - ConfigMaps and Secrets: level_1/config_and_secrets.md
-  #     - Namespaces: level_1/namespaces.md
-  #     - Labels and Selectors: level_1/labels_selectors.md
 
   # - Level 2 - Workload Management:
   #     - Overview: level_2/overview.md

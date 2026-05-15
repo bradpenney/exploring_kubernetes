@@ -1,3 +1,7 @@
+---
+title: "Level 1: Core Primitives — Kubernetes Building Blocks"
+description: "Master the fundamental Kubernetes resources: Pods, Services, ConfigMaps, Namespaces, and Labels. Build on Day One with deeper understanding of how Kubernetes works."
+---
 # Level 1: Core Primitives
 
 !!! tip "Building on Day One"
@@ -5,47 +9,37 @@
 
 ## What You'll Master
 
-Level 1 teaches the **core Kubernetes resources** you'll use in every deployment:
-
-- **Pods** - The smallest deployable units, how containers actually run
-- **Services** - Making pods accessible, service discovery, networking basics
-- **ConfigMaps and Secrets** - Externalizing configuration, managing sensitive data
-- **Namespaces** - Logical separation, resource organization
-- **Labels and Selectors** - Organizing and targeting resources
-
-These are the primitives everything else builds on. Master these, and everything else makes sense.
+Level 1 covers the **core Kubernetes resources** you'll use in every deployment — the primitives everything else builds on. Master these, and the rest makes sense.
 
 ---
 
-## The Articles
-
 <div class="grid cards" markdown>
 
--   :material-cube: **[Pods Deep Dive](pods.md)** *(coming soon)*
+-   :material-cube: **[Pods Deep Dive](pods.md)**
 
     ---
 
-    **The Foundation** — Multi-container pods, init containers, sidecar patterns, pod lifecycle
+    **The Foundation** — What a Pod is, multi-container sidecars, init containers, Pod lifecycle, and essential `kubectl` debugging commands
 
--   :material-lan: **[Services: Connecting to Pods](services.md)** *(coming soon)*
+-   :material-lan: **[Services: Stable Networking for Pods](services.md)**
 
     ---
 
-    **Networking Basics** — ClusterIP, NodePort, LoadBalancer, service discovery, DNS
+    **Networking Basics** — ClusterIP, NodePort, LoadBalancer, DNS service discovery, and port-forwarding for local testing
 
--   :material-cog: **[ConfigMaps and Secrets](config_and_secrets.md)** *(coming soon)*
+-   :material-cog: **ConfigMaps and Secrets** *(coming soon)*
 
     ---
 
     **Configuration Management** — Environment variables, mounted files, sensitive data handling
 
--   :material-folder: **[Namespaces](namespaces.md)** *(coming soon)*
+-   :material-folder: **Namespaces** *(coming soon)*
 
     ---
 
     **Logical Separation** — Multi-tenancy, resource quotas, working across namespaces
 
--   :material-tag: **[Labels and Selectors](labels_selectors.md)** *(coming soon)*
+-   :material-tag: **Labels and Selectors** *(coming soon)*
 
     ---
 
@@ -58,12 +52,14 @@ These are the primitives everything else builds on. Master these, and everything
 ## Who This Is For
 
 **You are:**
+
 - An application developer getting comfortable with Kubernetes
 - Confident deploying applications (thanks to Day One!)
 - Ready to understand HOW Kubernetes works under the hood
 - Building more complex applications that need configuration, networking, and organization
 
 **You'll learn:**
+
 - How to structure multi-container applications
 - How to make services talk to each other
 - How to manage configuration separately from code
@@ -80,16 +76,19 @@ Throughout Level 1, keep these safety principles in mind:
 
 !!! tip "Safe Learning Environment"
     **You can't break production:**
+
     - Production is in a completely different cluster (or at minimum, a different namespace you don't have access to)
     - Your experiments stay in your namespace—isolated from other teams
     - Worst case: you delete your pods and redeploy (annoying, not catastrophic)
 
     **Exploring is encouraged:**
+
     - Read-only commands (`get`, `describe`, `logs`) are always safe
     - Creating and deleting resources in YOUR namespace is fine
     - Practice makes perfect—deploy, break, fix, learn
 
     **Double-check your namespace:**
+
     - Always verify which namespace you're working in (`kubectl config view --minify`)
     - Use namespace-aware commands (`kubectl get pods -n yournamespace`)
     - Set your default namespace once and forget it (covered in Namespaces article)
@@ -100,6 +99,6 @@ Throughout Level 1, keep these safety principles in mind:
 
 ## What's Next?
 
-After Level 1, you'll move to **Level 2: Workload Management**, where you'll learn about Deployments, StatefulSets, DaemonSets, and how to manage applications at scale with rolling updates, rollbacks, and replica management.
+Start with the foundation of everything in Kubernetes.
 
-But first, let's master these core primitives. Everything builds on these foundations.
+**Next:** **[Pods Deep Dive](pods.md)** — What a Pod is, how containers share a network and storage, the Pod lifecycle, and the debugging commands you'll use every day.
