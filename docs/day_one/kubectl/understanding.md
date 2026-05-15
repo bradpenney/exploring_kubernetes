@@ -725,7 +725,7 @@ Congratulations! You've completed the Day One journey. You've gone from "What is
 
 When you're ready to move beyond the basics and master the individual building blocks of Kubernetes, continue to:
 
-- **[Level 1: Core Primitives](../level_1/overview.md)** — Deep dive into Pods and Services. Start with **[Pods: The Atomic Unit](../level_1/pods.md)**
+- **[Level 1: Core Primitives](../../level_1/overview.md)** — Deep dive into Pods and Services. Start with **[Pods: The Atomic Unit](../../level_1/pods.md)**
 - **[Essential kubectl Commands](commands.md)** - Review the commands for investigating resources
 - **[Your First Deployment](first_deploy.md)** - Revisit the deployment process with your new understanding
 
