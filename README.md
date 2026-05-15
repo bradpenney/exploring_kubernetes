@@ -56,16 +56,16 @@ Application Developer                           Platform Engineer
 
 **Articles:**
 - What Is Kubernetes? ✅
-- Getting kubectl Access *(coming soon)*
-- Your First Deployment *(coming soon)*
-- Essential kubectl Commands *(coming soon)*
-- Understanding What Happened *(coming soon)*
+- Getting kubectl Access ✅
+- Your First Deployment ✅
+- Essential kubectl Commands ✅
+- Understanding What Happened ✅
 
-### Level 1 - Core Primitives *(Coming Soon)*
+### Level 1 - Core Primitives
 
 **For:** App developers getting comfortable
 
-**Topics:** Pods, Services, ConfigMaps, Secrets, Namespaces, Labels & Selectors
+**Topics:** Pods ✅, Services ✅, ConfigMaps *(coming soon)*, Secrets *(coming soon)*, Namespaces *(coming soon)*, Labels & Selectors *(coming soon)*
 
 ### Level 2 - Workload Management *(Coming Soon)*
 
