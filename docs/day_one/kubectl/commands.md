@@ -364,6 +364,9 @@ graph TD
 
     **How it works:** `kubectl apply` is declarative—it figures out what needs to be created, updated, or left alone. Run it multiple times safely; it only makes necessary changes.
 
+    !!! tip "GitOps environments"
+        In many production clusters, `kubectl apply` is handled automatically by a GitOps controller — you commit to Git and the controller applies your changes. See [What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/) to understand this pattern.
+
     ⚠️ **Caution:** Creates or modifies resources in your namespace - can trigger Pod restarts if changing images or resource limits
 
 === "kubectl delete"

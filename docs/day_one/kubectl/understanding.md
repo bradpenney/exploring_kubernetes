@@ -750,6 +750,7 @@ When you're ready to move beyond the basics and master the individual building b
 ### Related Learning
 
 - [Finite State Machines](https://cs.bradpenney.io/efficiency/finite_state_machines/) - The formal CS model behind the Kubernetes reconciliation loop — controllers as state machines watching for drift between desired and actual state
+- [What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/) - In production you rarely run `kubectl apply` by hand — a controller reconciles the cluster to match Git. The same desired-state model you just learned, automated end-to-end
 
 ### Related Articles
 

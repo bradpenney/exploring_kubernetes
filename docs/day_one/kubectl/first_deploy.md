@@ -714,6 +714,7 @@ You've deployed your first application! Next up in the Day One series:
 
 - **[Essential kubectl Commands](commands.md)** - Master the 10 commands you'll use every day
 - **[Understanding What Happened](understanding.md)** - Deep dive into Deployments, ReplicaSets, and Pods
+- **[What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/)** - In production, the `kubectl apply` you just ran is often replaced by a Git commit — see how that works
 
 Check the [Day One Overview](../overview.md) for the complete learning path.
 

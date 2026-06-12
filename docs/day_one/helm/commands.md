@@ -150,6 +150,9 @@ kubectl config view --minify | grep namespace
     !!! warning "Never use --set"
         `--set` flags exist only in the command that ran them — there's no file, no commit, no record. If the release needs to be rebuilt, rolled back by a teammate, or audited, the configuration is gone. Always commit changes to `values.yaml` before running `helm upgrade`.
 
+    !!! tip "GitOps environments"
+        In many production clusters you won't run `helm upgrade` yourself. A GitOps controller like FluxCD watches your committed values and runs the upgrade for you through a [`HelmRelease`](https://gitops.bradpenney.io/day_one/flux_resources/) resource — you change `values.yaml`, open a pull request, and the merge drives the deploy. See [What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/) for the paradigm behind it.
+
 === "helm rollback"
 
     ### Rollback (Undo a Bad Deploy)
