@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: "Services: Stable Networking for Kubernetes Pods"
 description: "Learn how Kubernetes Services give ephemeral Pods a stable address. Covers ClusterIP, NodePort, LoadBalancer, labels and selectors, and port-forwarding for local development."
 ---

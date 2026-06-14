@@ -1,4 +1,5 @@
 ---
+date: "2025-07-13 07:55"
 title: Exploring Kubernetes - Developer to Platform Engineer Guide
 description: A practical journey through Kubernetes for developers and platform engineers. Learn core concepts, kubectl, and Helm through real-world scenarios.
 ---

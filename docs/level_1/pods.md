@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: "Pods: The Atomic Unit of Kubernetes"
 description: "Understand Kubernetes Pods — the smallest deployable unit. Learn pod lifecycle, multi-container sidecar patterns, init containers, and essential kubectl debugging commands."
 ---

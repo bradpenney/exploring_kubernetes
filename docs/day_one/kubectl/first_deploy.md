@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: Your First Kubernetes Deployment - Using kubectl
 description: Deploy your first containerized application to Kubernetes with kubectl. Step-by-step guide covering Pods, Services, and troubleshooting common issues.
 ---

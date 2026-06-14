@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: Getting kubectl Access - Configuring Your Environment
 description: Install kubectl and configure Kubernetes cluster access using kubeconfig files. Complete setup guide for AWS, Azure, GCP, and on-premises clusters.
 ---

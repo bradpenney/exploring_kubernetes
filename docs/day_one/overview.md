@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: Getting Started with Kubernetes - Day One Guide
 description: Developer-focused introduction to Kubernetes. Learn what K8s is, deploy your first application, and master essential kubectl commands with confidence.
 ---

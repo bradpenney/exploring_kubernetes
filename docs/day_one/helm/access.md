@@ -1,4 +1,5 @@
 ---
+date: "2026-02-15 14:43"
 title: Install Helm - Kubernetes Package Manager Setup Guide
 description: Install Helm, the Kubernetes package manager, and connect it to your cluster. Step-by-step guide for macOS, Linux, and Windows with troubleshooting tips.
 ---

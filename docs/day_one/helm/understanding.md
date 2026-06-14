@@ -1,4 +1,5 @@
 ---
+date: "2026-02-15 14:43"
 title: "Understanding Helm Releases: Charts, Values, and Resources"
 description: "See how Helm translates values.yaml into running Kubernetes resources. Understand the rendering pipeline, release tracking, and how to troubleshoot each layer."
 ---

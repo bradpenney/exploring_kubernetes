@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: Essential kubectl Commands - A Developer's Cheat Sheet
 description: Master essential kubectl commands for managing Pods, Deployments, and Services. Practical cheat sheet with examples for troubleshooting K8s applications.
 ---

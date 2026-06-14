@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: What Is Kubernetes and Why Does It Matter?
 description: An easy-to-understand introduction to Kubernetes (K8s) for beginners. Learn about container orchestration, why it exists, and the benefits of using it.
 ---

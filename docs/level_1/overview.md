@@ -1,4 +1,5 @@
 ---
+date: "2026-02-08 15:51"
 title: "Level 1: Core Primitives — Kubernetes Building Blocks"
 description: "Master the fundamental Kubernetes resources: Pods, Services, ConfigMaps, Namespaces, and Labels. Build on Day One with deeper understanding of how Kubernetes works."
 ---

@@ -1,4 +1,5 @@
 ---
+date: "2026-02-15 14:43"
 title: Your First Helm Deployment - Deploying Kubernetes Charts
 description: Deploy your first Helm chart to Kubernetes. Covers CI/CD pipeline charts and vendor charts with values.yaml customization, upgrades, rollbacks, and cleanup.
 ---

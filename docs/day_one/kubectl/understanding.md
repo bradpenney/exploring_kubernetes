@@ -1,4 +1,5 @@
 ---
+date: "2026-02-15 14:43"
 title: Understanding Kubernetes Objects - Pods and Deployments
 description: Deep dive into Kubernetes architecture. Learn how Deployments, ReplicaSets, and Pods work together when you deploy applications to K8s clusters.
 ---

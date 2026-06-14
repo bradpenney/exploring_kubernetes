@@ -1,4 +1,5 @@
 ---
+date: "2026-02-15 14:43"
 title: "Essential Helm Commands: Managing Releases"
 description: "Master daily Helm commands: list, status, get values, upgrade, rollback. Covers when to use Helm vs kubectl, plus a real-world incident rollback walkthrough."
 ---
