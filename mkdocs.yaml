@@ -69,18 +69,26 @@ plugins:
   - meta
   - exclude:
       glob:
-        - "core_concepts/*"
-        - "workloads/*"
-        - "networking/*"
-        - "storage/*"
-        - "level_1/config_and_secrets.md"
-        - "level_1/namespaces.md"
-        - "level_1/labels_selectors.md"
-        - "level_2/*"
-        - "level_3/*"
-        - "level_4/*"
-        - "level_5/*"
-        - "level_6/*"
+        # Essentials Core Primitives — ALL PUBLISHED (overview, pods, services,
+        # config_and_secrets, namespaces, labels_selectors) as of 2026-06-18.
+        # Security — rewritten to dual persona; UNPUBLISHED until Core Primitives ships (2026-06-18)
+        - "essentials/security_overview.md"
+        - "essentials/security_context.md"
+        - "essentials/handling_secrets.md"
+        - "essentials/understanding_access.md"
+        - "essentials/pod_security_standards.md"
+        # Architecture — DRAFT stub (2026-06-19); light control-plane/nodes intro.
+        - "essentials/architecture.md"
+        # Troubleshooting — surgical move of Pod failure-state content out of
+        # pods.md (2026-06-19). DRAFT until the fuller diagnostic articles exist.
+        - "essentials/troubleshooting_overview.md"
+        - "essentials/pod_failure_states.md"
+        - "essentials/stuck_terminating.md"
+        - "essentials/service_connectivity.md"
+        # Efficiency (Workloads + Networking) — all draft
+        - "efficiency/*"
+        # Mastery (Storage + Scheduling/Security + Production Ops) — all draft
+        - "mastery/*"
   - rss:
       match_path: ".*"
       image: https://k8s.bradpenney.io/images/exploring_kubernetes.png
@@ -109,6 +117,9 @@ plugins:
           - "#__consent"
 
 markdown_extensions:
+  - toc:
+      permalink: "🔗"
+      permalink_title: "Link to this section"
   - admonition
   - pymdownx.details
   - pymdownx.highlight:
@@ -136,7 +147,7 @@ markdown_extensions:
 nav:
   - Home: index.md
 
-  - Day One - Getting Started:
+  - 🏥 Day One - Getting Started:
       - Overview: day_one/overview.md
       - What Is Kubernetes?: day_one/what_is_kubernetes.md
 
@@ -152,68 +163,88 @@ nav:
           - Essential Helm Commands: day_one/helm/commands.md
           - Understanding What Helm Created: day_one/helm/understanding.md
 
-  - Level 1 - Core Primitives:
-      - Overview: level_1/overview.md
-      - Pods Deep Dive: level_1/pods.md
-      - Services - Stable Networking for Pods: level_1/services.md
-      # Coming soon:
-      # - ConfigMaps and Secrets: level_1/config_and_secrets.md
-      # - Namespaces: level_1/namespaces.md
-      # - Labels and Selectors: level_1/labels_selectors.md
+  - 📦 Essentials:
+      - Overview: essentials/overview.md
+      # Architecture — DRAFT stub (2026-06-19). Light intro to control plane vs
+      # nodes + the reconcile loop, so "control plane" is a known term before the
+      # primitives lean on it. Publish FIRST. Fuller depth: mastery/cluster_architecture.md.
+      # - Cluster Architecture: essentials/architecture.md
+      - Core Primitives:
+          - Pods Deep Dive: essentials/pods.md
+          - Services - Stable Networking for Pods: essentials/services.md
+          - ConfigMaps and Secrets: essentials/config_and_secrets.md
+          - Namespaces: essentials/namespaces.md
+          - Labels and Selectors: essentials/labels_selectors.md
+      # Workloads — basic resources app devs already use; moved DOWN from
+      # Efficiency (2026-06-18). Articles to be migrated from efficiency/ and
+      # rewritten to the Essentials dual persona, then uncommented one at a time:
+      # - Workloads:
+      #     - Deployments: essentials/deployments.md
+      #     - ReplicaSets Under the Hood: essentials/replicasets.md
+      #     - Jobs and CronJobs: essentials/jobs_cronjobs.md
+      #     - Ingress (Basics): essentials/ingress.md
+      # Security — UNPUBLISHED until Core Primitives is complete (2026-06-18).
+      # Rewritten to the Essentials dual persona; do NOT uncomment until the
+      # Core Primitives + Workloads articles above are published first.
+      # - Security:
+      #     - Overview: essentials/security_overview.md
+      #     - Securing Your Containers: essentials/security_context.md
+      #     - Handling Secrets Safely: essentials/handling_secrets.md
+      #     - Understanding Your Access: essentials/understanding_access.md
+      #     - Meeting Pod Security Standards: essentials/pod_security_standards.md
+      # Troubleshooting — DRAFT (content moved out of pods.md 2026-06-19); needs
+      # the diagnostic-method + connectivity articles before publishing.
+      # - Troubleshooting:
+      #     - Overview: essentials/troubleshooting_overview.md
+      #     - Diagnosing Pod Failure States: essentials/pod_failure_states.md
+      #     - Resources Stuck in Terminating: essentials/stuck_terminating.md
+      #     - Service Has No Endpoints: essentials/service_connectivity.md
 
-  # EDITORIAL NOTE: Content below is commented out pending quality review
-  # Goal: Implement progressive learning journey (Day One → Level 6)
-  # Following Exploring Linux editorial standards established 2026-02-06
-  # Uncomment articles ONE AT A TIME after thorough editorial vetting
-  # See CLAUDE.md for quality standards and vetting checklist
+  # EDITORIAL NOTE: Content below is commented out pending quality review.
+  # Tier model: Day One (Essential) → Essentials → Efficiency → Mastery,
+  # matching Exploring Linux / GitOps. Build in order; uncomment articles
+  # ONE AT A TIME after thorough editorial vetting. See CLAUDE.md.
 
-  # - Level 2 - Workload Management:
-  #     - Overview: level_2/overview.md
-  #     - Deployments Explained: level_2/deployments.md
-  #     - ReplicaSets Under the Hood: level_2/replicasets.md
-  #     - StatefulSets: level_2/statefulsets.md
-  #     - DaemonSets: level_2/daemonsets.md
-  #     - Jobs and CronJobs: level_2/jobs_cronjobs.md
+  # ⚡ Efficiency - Running Real Workloads (curious dev / junior platform engineer)
+  # - ⚡ Efficiency:
+  #     - Overview: efficiency/overview.md
+  #     - Workloads:
+  #         - Overview: efficiency/workloads_overview.md
+  #         - Deployments Explained: efficiency/deployments.md
+  #         - ReplicaSets Under the Hood: efficiency/replicasets.md
+  #         - StatefulSets: efficiency/statefulsets.md
+  #         - DaemonSets: efficiency/daemonsets.md
+  #         - Jobs and CronJobs: efficiency/jobs_cronjobs.md
+  #     - Networking:
+  #         - Overview: efficiency/networking_overview.md
+  #         - Services Deep Dive: efficiency/services_deep_dive.md
+  #         - Ingress Controllers: efficiency/ingress.md
+  #         - Network Policies: efficiency/network_policies.md
+  #         - DNS and Service Discovery: efficiency/dns_service_discovery.md
+  #         - Troubleshooting Networking: efficiency/troubleshooting_networking.md
 
-  # - Level 3 - Networking:
-  #     - Overview: level_3/overview.md
-  #     - Services Deep Dive: level_3/services_deep_dive.md
-  #     - Ingress Controllers: level_3/ingress.md
-  #     - Network Policies: level_3/network_policies.md
-  #     - DNS and Service Discovery: level_3/dns_service_discovery.md
-  #     - Troubleshooting Networking: level_3/troubleshooting_networking.md
-
-  # - Level 4 - Storage and State:
-  #     - Overview: level_4/overview.md
-  #     - Understanding Volumes: level_4/volumes.md
-  #     - Persistent Volumes (PV): level_4/persistent_volumes.md
-  #     - Persistent Volume Claims (PVC): level_4/persistent_volume_claims.md
-  #     - StorageClasses: level_4/storage_classes.md
-  #     - Running Databases on Kubernetes: level_4/databases_on_k8s.md
-
-  # - Level 5 - Advanced Scheduling & Security:
-  #     - Overview: level_5/overview.md
-  #     - Resource Requests and Limits: level_5/resources.md
-  #     - Taints and Tolerations: level_5/taints_tolerations.md
-  #     - Node Affinity and Pod Affinity: level_5/affinity.md
-  #     - RBAC: level_5/rbac.md
-  #     - Security Best Practices: level_5/security.md
-
-  # - Level 6 - Production Operations:
-  #     - Overview: level_6/overview.md
-  #     - Logging Architecture: level_6/logging.md
-  #     - Monitoring and Metrics: level_6/monitoring.md
-  #     - Health Checks and Probes: level_6/probes.md
-  #     - Helm Package Manager: level_6/helm.md
-  #     - Operators and Custom Resources: level_6/operators.md
-
-  # OLD STRUCTURE (being retired):
-  # - Core Concepts:
-  #     - Architecture: core_concepts/architecture.md  # Will be moved to Day One or Level 1
-  # - Workloads:
-  #     - The Pod: workloads/the_pod.md  # Will be enhanced and moved to Level 1
-  #     - Deployments: workloads/deployments.md  # Will be enhanced and moved to Level 2
-  # - Networking:
-  #     - Services: networking/services.md  # Will be enhanced and moved to Level 1 or Level 3
-  # - Storage:
-  #     - Persistent Volumes: storage/persistent_volumes.md  # Will be moved to Level 4
+  # 🎯 Mastery - Production Kubernetes (platform engineer / SRE) — paywalled tier
+  # - 🎯 Mastery:
+  #     - Overview: mastery/overview.md
+  #     - Cluster Architecture: mastery/cluster_architecture.md  # harvested draft — needs frontmatter + slate mermaid colors
+  #     - Storage and State:
+  #         - Overview: mastery/storage_overview.md
+  #         - Understanding Volumes: mastery/volumes.md
+  #         - Persistent Volumes (PV): mastery/persistent_volumes.md
+  #         - Persistent Volume Claims (PVC): mastery/persistent_volume_claims.md
+  #         - StorageClasses: mastery/storage_classes.md
+  #         - Running Databases on Kubernetes: mastery/databases_on_k8s.md
+  #     - Scheduling & Security:
+  #         - Overview: mastery/security_overview.md
+  #         - Resource Requests and Limits: mastery/resources.md
+  #         - Taints and Tolerations: mastery/taints_tolerations.md
+  #         - Node Affinity and Pod Affinity: mastery/affinity.md
+  #         - RBAC: mastery/rbac.md
+  #         - Security Best Practices: mastery/security.md
+  #     - Production Operations:
+  #         - Overview: mastery/operations_overview.md
+  #         - Logging Architecture: mastery/logging.md
+  #         - Monitoring and Metrics: mastery/monitoring.md
+  #         - Health Checks and Probes: mastery/probes.md
+  #         - Helm Package Manager: mastery/helm.md
+  #         - Operators and Custom Resources: mastery/operators.md

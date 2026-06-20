@@ -6,14 +6,38 @@ This file provides guidance to Claude Code when working with this repository.
 
 **Exploring Kubernetes** teaches Kubernetes for application developers and platform engineers through a progressive learning journey—from first deployment to production operations. It follows the same editorial standards and progressive structure as [Exploring Enterprise Linux](https://github.com/bradpenney/exploring_linux).
 
-## Current Status: Editorial Quality Review & Restructuring
+## Current Status: Tier Restructure Complete (2026-06-16)
 
-**CRITICAL**: The site is undergoing restructuring to implement a progressive learning path (Day One → Level 6) matching the Exploring Linux site's approach.
+The site uses the **four-section tier model** shared across all `exploring_*` sites — Day One → Essentials → Efficiency → Mastery — matching Exploring Linux and Exploring GitOps. The old "Level 1–6" scheme has been **retired**.
 
-- Most navigation will be commented out in `mkdocs.yaml` pending editorial review
-- Articles will be reviewed and enhanced with practice exercises, further reading, cross-links
-- All content must be vetted before uncommenting in navigation
-- **Goal**: Transform from topic reference into progressive skill-building journey
+**Tier mapping (how the old levels map to tiers):**
+
+| Tier | Directory | Content (former level) | Audience |
+|------|-----------|------------------------|----------|
+| **Day One** (Essential entry) | `day_one/` | unchanged | Intimidated app dev, first deploy |
+| **Essentials** | `essentials/` | former Level 1 — Core Primitives **+ basic Workloads** | Deep-diving dev + junior platform engineer (peer/ops-aware) |
+| **Efficiency** | `efficiency/` | former Level 2 (Workloads) + Level 3 (Networking), **minus the basics moved to Essentials** | Intermediate platform engineer running workloads |
+| **Mastery** *(paywalled tier)* | `mastery/` | former Level 4 (Storage) + Level 5 (Sched/Security) + Level 6 (Prod Ops) | Platform engineer / SRE, production clusters |
+
+Within `efficiency/` and `mastery/`, each former level's `overview.md` was renamed to a topic-group overview (`workloads_overview.md`, `networking_overview.md`, `storage_overview.md`, `security_overview.md`, `operations_overview.md`), matching the sub-group pattern on the Linux site. Tier-level `overview.md` files (`efficiency/overview.md`, `mastery/overview.md`) are not yet written — create them when building out each tier.
+
+### Essentials scope expansion + Security sequencing (2026-06-18)
+
+Two editorial decisions that override the original Essentials = "Core Primitives only" plan:
+
+1. **The Essentials ↔ Efficiency dividing line is: does an application developer already touch this resource?**
+   - **Essentials** = every resource an app dev already uses, so a junior platform engineer must know it cold: Pods, Services, ConfigMaps/Secrets, Namespaces, Labels — **plus** basic Workloads: **Deployments, ReplicaSets** (how Deployments work under the hood), **Jobs & CronJobs**, and **basic Ingress**. Holding Deployments back to Efficiency was backwards — nobody runs bare Pods, and Deployments are table stakes, not "tier 2." These articles are to be **migrated from `efficiency/` into `essentials/` and rewritten to the Essentials dual persona**, then published one at a time. Add an Essentials **Workloads** topic group (alongside Core Primitives) for them.
+   - **Efficiency** = platform-engineering-specific resources/operations only: **StatefulSets, DaemonSets** (advanced/node-level workloads), advanced rollout/scaling ops, and the Networking deep dives (Ingress controllers/TLS depth, Network Policies, DNS, troubleshooting). `efficiency/deployments.md`, `efficiency/replicasets.md`, `efficiency/jobs_cronjobs.md`, and the basics of `efficiency/ingress.md` move out.
+
+2. **Security is NOT published until Core Primitives is complete.** The 5 `essentials/security_*` articles were live; as of 2026-06-18 they are **unpublished** (commented out of nav + added to the exclude list) and have been **rewritten to the Essentials dual persona** (deep-diving dev + junior platform engineer — including the operator-side of RBAC/Pod Security, not just the consumer view). Do NOT republish them until the Core Primitives + Workloads articles ship first. Note: `essentials/handling_secrets.md` was deliberately refocused on secret *hygiene/leak-prevention* and cross-links `config_and_secrets.md` for mechanics, to avoid duplicating it (no-repetition rule).
+
+**Published surface (2026-06-18):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`). Still draft/excluded: Security (all 5), Workloads, Efficiency, Mastery.
+
+- Navigation for Efficiency/Mastery (and now Security) stays commented out in `mkdocs.yaml` pending editorial review
+- Uncomment + un-exclude articles ONE AT A TIME after the quality checklist
+- **Goal**: progressive skill-building journey, free tiers funneling to a paywalled Mastery tier
+
+**URL redirects (2026-06-19):** The three formerly-live, indexed pages — `/level_1/overview/`, `/level_1/pods/`, `/level_1/services/` — moved to `/essentials/...` in the restructure. To avoid 404s on those indexed URLs, there are three static meta-refresh stub files at `docs/level_1/{overview,pods,services}/index.html` that redirect to the new `/essentials/` paths. **Do not delete them.** They are plain static HTML (copied verbatim by MkDocs, marked `noindex`, absent from the sitemap), deliberately NOT the `mkdocs-redirects` plugin — that plugin now injects a "switch to ProperDocs" nag banner into every build, so it was rejected. If more published URLs move later, add more stub files the same way rather than adding the plugin.
 
 ## Important Preferences
 
@@ -64,7 +88,7 @@ description: Compelling description for search results (150-160 chars ideal)
 - Search indexing
 - Navigation (even if accidentally uncommented)
 
-**Current exclude configuration** (as of 2026-05-14):
+**Current exclude configuration** (as of 2026-06-18):
 
 ```yaml
 plugins:
@@ -72,18 +96,18 @@ plugins:
   - meta
   - exclude:
       glob:
-        - "core_concepts/*"
-        - "workloads/*"
-        - "networking/*"
-        - "storage/*"
-        - "level_1/config_and_secrets.md"
-        - "level_1/namespaces.md"
-        - "level_1/labels_selectors.md"
-        - "level_2/*"
-        - "level_3/*"
-        - "level_4/*"
-        - "level_5/*"
-        - "level_6/*"
+        # Essentials Core Primitives — ALL PUBLISHED (overview, pods, services,
+        # config_and_secrets, namespaces, labels_selectors) as of 2026-06-18
+        # Security — rewritten to dual persona; UNPUBLISHED until Core Primitives ships
+        - "essentials/security_overview.md"
+        - "essentials/security_context.md"
+        - "essentials/handling_secrets.md"
+        - "essentials/understanding_access.md"
+        - "essentials/pod_security_standards.md"
+        # Efficiency (Workloads + Networking) — all draft
+        - "efficiency/*"
+        # Mastery (Storage + Scheduling/Security + Production Ops) — all draft
+        - "mastery/*"
   # ... other plugins
 ```
 
@@ -108,25 +132,25 @@ Edit `mkdocs.yaml` and remove the directory from the exclude plugin:
 ```yaml
 - exclude:
     glob:
-      - "level_1/*"  # Article is excluded
-      - "level_2/*"
+      - "essentials/*"  # Article is excluded
+      - "efficiency/*"
 ```
 
 **After (published):**
 ```yaml
 - exclude:
     glob:
-      # - "level_1/*"  # REMOVED - now published
-      - "level_2/*"
+      # - "essentials/*"  # REMOVED - now published
+      - "efficiency/*"
 ```
 
 **IMPORTANT**:
 - Remove the ENTIRE line, don't just comment it
 - If publishing individual files (not whole directories), use specific paths:
   ```yaml
-  - "level_1/overview.md"  # Still draft
-  - "level_1/pods.md"      # Still draft
-  # level_1/services.md is published (not in exclude list)
+  - "essentials/overview.md"  # Still draft
+  - "essentials/pods.md"      # Still draft
+  # essentials/services.md is published (not in exclude list)
   ```
 
 #### 3. Add to Navigation
@@ -135,17 +159,17 @@ Uncomment the article in the `nav:` section of `mkdocs.yaml`:
 
 **Before:**
 ```yaml
-# - Level 1 - Core Primitives:
-#     - Overview: level_1/overview.md
-#     - Pods Deep Dive: level_1/pods.md
+# - Essentials - Core Primitives:
+#     - Overview: essentials/overview.md
+#     - Pods Deep Dive: essentials/pods.md
 ```
 
 **After:**
 ```yaml
-- Level 1 - Core Primitives:
-    - Overview: level_1/overview.md
-    - Pods Deep Dive: level_1/pods.md
-    # - Services: level_1/services.md  # Still in draft
+- Essentials - Core Primitives:
+    - Overview: essentials/overview.md
+    - Pods Deep Dive: essentials/pods.md
+    # - Services: essentials/services.md  # Still in draft
 ```
 
 #### 4. Verify Publication
@@ -157,7 +181,7 @@ Run these commands to verify:
 poetry run mkdocs build --strict
 
 # Check sitemap includes the new article
-grep -o '<loc>[^<]*</loc>' site/sitemap.xml | grep level_1
+grep -o '<loc>[^<]*</loc>' site/sitemap.xml | grep essentials
 
 # Verify the article appears in search index
 grep -i "pods deep dive" site/search/search_index.json
@@ -221,7 +245,7 @@ Avoid duplication and repetition at all costs. Every time we repeat information,
 
 ### Before Explaining Any Concept, Ask:
 
-1. Have we explained this elsewhere in this section (Day One, Level 1, etc.)?
+1. Have we explained this elsewhere in this section (Day One, Essentials, etc.)?
 2. If yes, is my perspective SIGNIFICANTLY different?
 3. If no, add a cross-link: "Remember X from [Article]? Now let's see how..."
 4. If yes, explicitly state the new angle: "Earlier we covered X operationally - now let's understand the architecture"
@@ -242,7 +266,11 @@ Before marking any article complete, use the Explore agent to search for repeate
 
 **IMPORTANT**: This site has a unique audience assumption that differs from typical Kubernetes tutorials:
 
-### Day One - Level 2: Application Developer Persona
+> ### ⚠️ The persona is INTERNAL — never spell it out in published content (2026-06-18)
+>
+> The per-tier persona targeting is the **secret sauce**. It must shape *voice, depth, what we cover, and what we assume* — but the reader should never be told who they are. **No "Who This Is For: the developer who wants to go deep + the junior SRE" sections, no "for the intermediate platform engineer" intros** in published `.md`. Frame everything as content/outcomes ("what a Pod *is*, why it works this way, its blast radius"), tone promises ("direct, no hand-holding") are fine. The personas below live in CLAUDE.md and memory ONLY. (Site-level SEO metadata like "for developers and platform engineers" is fine — that's broad, not the granular strategy.)
+
+### Day One: Application Developer Persona
 
 **Who they are:**
 - Application developer (not infrastructure/ops initially)
@@ -263,7 +291,7 @@ Before marking any article complete, use the Explore agent to search for repeate
 - Deep Linux knowledge
 - Ops/admin responsibilities (yet)
 
-**Teaching approach for Day One - Level 2:**
+**Teaching approach for Day One:**
 - Assume real cluster access, NOT local cluster setup
 - Focus on `kubectl` commands they'll use daily
 - Emphasize deploying applications, not infrastructure
@@ -271,37 +299,55 @@ Before marking any article complete, use the Explore agent to search for repeate
 - Provide clear "read-only" vs "destructive" command labels
 - Use their actual use case: "You need to deploy your app to dev"
 
-### Level 3+: Platform Engineer Persona
+### Essentials: Dual Persona (deep-diving dev + junior SRE/platform engineer)
 
-Starting at Level 3, the persona can shift to include platform engineers and DevOps roles who need to:
+**IMPORTANT (updated 2026-06-18):** Essentials is NOT a continuation of the Day One app-developer voice. The reader has moved past "make it run." Essentials serves **two overlapping readers**:
+
+1. **The application developer who wants to go deep** — already shipping to the cluster, now wants the real mental model of how Kubernetes works underneath.
+2. **The junior SRE / platform engineer** — owns these primitives operationally, not just as a consumer of them.
+
+Both are competent. Treat them as **peers**, not beginners.
+
+**Tone — peer-to-peer, ops-aware (this is the global Efficient-tier voice, applied early here):**
+- **Drop the hand-holding.** No "don't panic," no "you can't break anything," no excessive reassurance. Day One did that job.
+- **Lead with why it works this way.** Don't just describe a primitive — explain the design decision behind it (why Pods wrap containers, why Services exist as virtual IPs, why namespaces are soft boundaries).
+- **Always include the cluster/ops angle.** What does this primitive mean for the scheduler, the control plane, multi-tenancy, blast radius, and other teams on a shared cluster? The junior platform engineer needs this; the deep-diving dev benefits from it.
+- **Safety becomes operational, not emotional.** Replace "don't worry, you won't break prod" with crisp blast-radius notes: what breaks, who it affects, what the recovery is.
+- **Declarative everything.** Lead with edit-YAML → `kubectl apply`. Treat imperative `kubectl create/edit/patch/label --overwrite` as quick-and-dirty dev shortcuts at most, clearly labelled — never the production path. (See the declarative rule in the workspace memory.)
+
+**Avoid in Essentials:**
+- "Translation for app developers:" asides and "this is the hardest concept for developers coming from servers" framing — that's Day One register.
+- Coddling safety admonitions ("you're still in your namespace, exploring is encouraged").
+
+### Efficiency: Intermediate Platform Engineer Persona
+
+**The audience steps up again at Efficiency.** This is the **intermediate platform engineer / SRE** — someone now responsible for running workloads, not just understanding primitives. Essentials' deep-diving application developer may follow along, but Efficiency is written **for the platform engineer**: managing Deployments and rollouts, exposing services through Ingress, controlling traffic with Network Policies, debugging networking across the cluster. The deep-diving dev is welcome but is no longer the primary reader; assume operational ownership and shared-cluster responsibility. Mastery then takes the same persona to production scale.
+
+### Mastery: Platform Engineer Persona
+
+In the Mastery tier, the persona shifts to platform engineers and DevOps/SRE roles who need to:
 - Understand cluster architecture deeply
 - Manage networking, storage, security
 - Run Kubernetes in production
 - Handle ops concerns (logging, monitoring, scaling)
 
-**If local cluster needed (Level 3+):**
+(Persona ladder: Day One = intimidated app dev → Essentials = deep-diving dev + junior platform engineer → Efficiency = intermediate platform engineer → Mastery = production platform engineer/SRE. The audience steps up at each tier; voice gets more peer-level and more ops-focused throughout.)
+
+**If local cluster needed (Mastery tier):**
 - Recommend **k0s** (lightweight, production-like)
 - NOT minikube or kind (too abstracted from real Kubernetes)
 
 ## Project Structure
 
-- `docs/` - Markdown content organized by progressive learning levels
-  - `day_one/` - Getting started (absolute beginner with cluster access) 🚧 Being created
-  - `level_1/` - Core Primitives (Pods, Services, ConfigMaps, Namespaces) 🚧 Pending restructure
-  - `level_2/` - Workload Management (Deployments, StatefulSets, DaemonSets) 🚧 Pending restructure
-  - `level_3/` - Networking (Services deep dive, Ingress, Network Policies) 🚧 Pending restructure
-  - `level_4/` - Storage and State (PV, PVC, StorageClass, StatefulSets) 🚧 Pending restructure
-  - `level_5/` - Advanced Scheduling & Security (RBAC, taints, affinity, resources) 🚧 Pending restructure
-  - `level_6/` - Production Operations (Logging, monitoring, Helm, operators) 🚧 Pending restructure
-- `mkdocs.yaml` - Site configuration and navigation (will be commented during restructure)
+- `docs/` - Markdown content organized into the four-tier model
+  - `day_one/` - Getting started (app dev with cluster access). ✅ Published. **Untouched in the restructure — all cross-site inbound links point here.**
+  - `essentials/` - Core Primitives: Pods, Services, ConfigMaps, Namespaces, Labels. ✅ overview/pods/services published; rest draft
+  - `efficiency/` - Workloads (Deployments, StatefulSets, DaemonSets, Jobs) + Networking (Ingress, Network Policies, DNS). 🚧 Draft
+  - `mastery/` - Storage (PV/PVC/StorageClass), Scheduling & Security (RBAC, taints, affinity, resources), Production Ops (logging, monitoring, probes, Helm, operators), plus `cluster_architecture.md`. 🚧 Draft (paywalled tier)
+- `mkdocs.yaml` - Site configuration and navigation (Efficiency/Mastery commented out)
 - `pyproject.toml` - Poetry dependencies
 
-**Old structure (being retired):**
-- `core_concepts/` → Will be redistributed across Day One and Level 1
-- `workloads/` → Will become Level 2
-- `networking/` → Will become Level 3
-- `storage/` → Will become Level 4
-- `observability/` → Will be part of Level 6
+**Retired (deleted 2026-06-16):** the old `core_concepts/`, `workloads/`, `networking/` dirs and the `level_1/`–`level_6/` scheme. Superseded early-draft articles (`the_pod`, `deployments`, `networking/services`) were deleted; the unique `core_concepts/architecture.md` was harvested to `mastery/cluster_architecture.md`.
 
 ## Learning Journey Structure
 
@@ -317,7 +363,7 @@ Articles:
 4. **Essential kubectl Commands** - The 10 commands you'll use daily (get, describe, logs, exec, delete, apply)
 5. **Understanding What Happened** - What actually runs when you deploy (Pods, ReplicaSets, Services basics)
 
-### Level 1: Core Primitives
+### Essentials: Core Primitives (dir: `essentials/`)
 **Persona:** App developer getting comfortable
 
 **Goal:** Master the fundamental Kubernetes building blocks
@@ -329,7 +375,7 @@ Articles:
 4. **Namespaces** - Logical separation, resource quotas, working across namespaces
 5. **Labels and Selectors** - Organizing resources, targeting workloads, best practices
 
-### Level 2: Workload Management
+### Efficiency — Workloads (dir: `efficiency/`)
 **Persona:** App developer deploying real applications
 
 **Goal:** Deploy and manage applications at scale with confidence
@@ -341,7 +387,7 @@ Articles:
 4. **DaemonSets** - One pod per node, use cases (logging agents, monitoring, networking)
 5. **Jobs and CronJobs** - Batch processing, scheduled tasks, cleanup jobs
 
-### Level 3: Networking
+### Efficiency — Networking (dir: `efficiency/`)
 **Persona:** App developer + platform engineer
 
 **Goal:** Connect services, expose applications, control traffic
@@ -353,7 +399,7 @@ Articles:
 4. **DNS and Service Discovery** - How services find each other, DNS patterns, troubleshooting
 5. **Troubleshooting Networking** - Common issues, debugging tools, packet inspection
 
-### Level 4: Storage and State
+### Mastery — Storage and State (dir: `mastery/`)
 **Persona:** App developer running stateful apps + platform engineer
 
 **Goal:** Handle persistent data and stateful applications
@@ -365,7 +411,7 @@ Articles:
 4. **StorageClasses** - Dynamic provisioning, storage parameters, cloud provider integration
 5. **Running Databases on Kubernetes** - StatefulSets with storage, backup strategies, when NOT to use K8s
 
-### Level 5: Advanced Scheduling & Security
+### Mastery — Scheduling & Security (dir: `mastery/`)
 **Persona:** Platform engineer
 
 **Goal:** Control pod placement and secure the cluster
@@ -377,7 +423,7 @@ Articles:
 4. **RBAC** - Users, service accounts, roles, role bindings, least privilege
 5. **Security Best Practices** - Pod Security Standards, security contexts, network policies, admission controllers
 
-### Level 6: Production Operations
+### Mastery — Production Operations (dir: `mastery/`)
 **Persona:** Platform engineer / SRE
 
 **Goal:** Observe, maintain, and scale production clusters
@@ -447,7 +493,7 @@ Articles must balance **playfulness with professionalism** and be **technically 
 - Condescending language or talking down to readers
 - Assuming prior Kubernetes or Linux knowledge without explanation
 - Jokey closings that undermine safety message
-- Infrastructure focus in Day One/Level 1-2 (save for Level 3+)
+- Infrastructure focus in Day One through Efficiency (save for Mastery)
 
 ### Kubernetes-Specific Writing Guidelines
 
@@ -676,8 +722,8 @@ Every substantial article should provide:
 - [CNCF Blog Post](url) - What it covers
 
 ### Related Articles
-- [Next Topic](../level_2/deployments.md) - Where to go next
-- [Related Topic](../level_1/services.md) - Connected concept
+- [Next Topic](../efficiency/deployments.md) - Where to go next
+- [Related Topic](../essentials/services.md) - Connected concept
 ```
 
 **Include when relevant:**
@@ -707,7 +753,7 @@ Every substantial article should provide:
 
 4. **Verify "Part of [Series]" callouts**
    - Each article in a level should have a callout linking to the level overview
-   - Format: `!!! tip "Part of Level 1: Core Primitives"` with link to overview
+   - Format: `!!! tip "Part of Essentials: Core Primitives"` with link to overview
 
 ### Practice Problems and Exercises
 
@@ -748,9 +794,9 @@ Every hands-on article should include practice exercises with **nested solutions
 **Progression:**
 
 - Day One: Simple, single-command exercises (get, describe, logs)
-- Level 1: YAML creation, applying manifests
-- Level 2-3: Multi-resource deployments, troubleshooting scenarios
-- Level 4-6: Production patterns, complex configurations, operational tasks
+- Essentials: YAML creation, applying manifests
+- Efficiency: Multi-resource deployments, troubleshooting scenarios
+- Mastery: Production patterns, complex configurations, operational tasks
 
 ## Quality Standards Checklist
 
@@ -759,7 +805,7 @@ Before uncommenting an article in `mkdocs.yaml`:
 **✅ Content Quality:**
 
 - [ ] **NO REPETITION AUDIT** - Searched for repeated concepts across published articles in this section (CRITICAL!)
-- [ ] Opening hooks with real-world relevance (app developer persona for Day One/Level 1-2)
+- [ ] Opening hooks with real-world relevance (right persona for the tier: app dev = Day One; deep-diving dev + junior platform engineer = Essentials; intermediate platform engineer = Efficiency; platform engineer/SRE = Mastery)
 - [ ] Clear learning objectives
 - [ ] kubectl commands with actual output shown
 - [ ] YAML manifests with line numbers and inline annotations
@@ -803,7 +849,7 @@ Before uncommenting an article in `mkdocs.yaml`:
 
 - [ ] All code blocks have `title=` attribute
 - [ ] YAML manifests use `linenums="1"` and inline annotations
-- [ ] Admonitions used appropriately (tip, warning)
+- [ ] Admonitions used appropriately — pick a meaningful type (`tip`, `info`, `warning`, `danger`, `success`, `example`). **Never use `!!! note` / `??? note`** — it's too generic and says nothing about *why* the callout exists; choose the type that matches the content.
 - [ ] **CRITICAL: Blank lines before ALL lists** (recurring issue - check every list in article)
 - [ ] Mermaid diagrams follow slate color scheme
 - [ ] Internal links use relative paths
@@ -826,7 +872,7 @@ Before uncommenting an article in `mkdocs.yaml`:
 - [ ] Safety labels for commands (read-only vs destructive)
 - [ ] YAML manifests follow best practices (no :latest tags in examples, resources defined, etc.)
 - [ ] Appropriate for persona (app developer vs platform engineer)
-- [ ] Assumes real cluster access (not minikube/kind for Day One - Level 2)
+- [ ] Assumes real cluster access (not minikube/kind for Day One through Efficiency)
 
 ## Migration and Content Development
 

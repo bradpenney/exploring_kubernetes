@@ -358,7 +358,7 @@ Whether you took the `kubectl` path (writing YAML directly) or the Helm path (us
 - Understood how Helm generates and tracks Kubernetes resources
 - Practiced the troubleshooting workflow from symptoms to root cause
 
-This is the foundation. Everything in Level 1 and beyond builds directly on these skills.
+This is the foundation. Everything in the Essentials tier and beyond builds directly on these skills.
 
 ---
 
@@ -366,4 +366,4 @@ This is the foundation. Everything in Level 1 and beyond builds directly on thes
 
 Day One is complete. Now it's time to understand the building blocks that Helm has been creating for you.
 
-**[Level 1: Core Primitives](../../level_1/overview.md)** — Deep dive into Pods, Services, and the other fundamental Kubernetes resources. You've deployed them; now you'll understand exactly how they work.
+**[Essentials: Core Primitives](../../essentials/overview.md)** — Deep dive into Pods, Services, and the other fundamental Kubernetes resources. You've deployed them; now you'll understand exactly how they work.

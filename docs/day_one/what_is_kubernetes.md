@@ -347,7 +347,7 @@ Remember the scenarios from the overview? Here's how Kubernetes addresses them:
 - **Roll back** → `kubectl rollout undo` instantly reverts bad deployments
 - **Scale** → `kubectl scale` adjusts how many copies are running
 
-We'll cover each of these in Day One and Level 1-2.
+We'll cover each of these in Day One, Essentials, and Efficiency.
 
 !!! tip "Is Your Company Using GitOps?"
     Many production Kubernetes environments use a GitOps controller like FluxCD — where `kubectl apply` is automated and you deploy by merging a pull request instead. If that's your situation, [Exploring GitOps](https://gitops.bradpenney.io/day_one/what_is_gitops/) explains the paradigm.

@@ -223,7 +223,7 @@ Why are you really here? Probably one of these situations (examples show both pa
         - Run `helm upgrade my-app ./chart` to apply changes
         - How to verify the new value is being used
 
-    **Level 1: ConfigMaps and Secrets covers this.** Configuration management made clear.
+    **Essentials: ConfigMaps and Secrets covers this.** Configuration management made clear.
 
 === ":material-undo: Roll Back Bad Deploy"
 
@@ -245,7 +245,7 @@ Why are you really here? Probably one of these situations (examples show both pa
         - `helm history my-app` - see all release versions
         - How to verify you're back to the working version
 
-    **Day One and Level 2 cover this.** Rollbacks become your safety net.
+    **Day One and the Efficiency tier cover this.** Rollbacks become your safety net.
 
 === ":material-scale-balance: Scale Up for Load Testing"
 
@@ -268,7 +268,7 @@ Why are you really here? Probably one of these situations (examples show both pa
         - How to verify all replicas are running
         - Update values and upgrade again to scale back down
 
-    **Level 2: Deployments covers scaling.** It's easier than you think.
+    **Efficiency: Deployments covers scaling.** It's easier than you think.
 
 **Sound familiar?** These are the real-world tasks you'll master. Not theoretical Kubernetes architecture—practical skills for shipping code.
 
@@ -420,7 +420,7 @@ Day One focuses on **practical, immediate needs**—the skills you need to deplo
 
 ## What's Next?
 
-Once you're comfortable deploying applications and troubleshooting them, you're ready for **Level 1: Core Primitives**. That's where you'll dive deeper into Pods, Services, ConfigMaps, and the fundamental building blocks of Kubernetes—regardless of whether you deployed them with kubectl or Helm.
+Once you're comfortable deploying applications and troubleshooting them, you're ready for **Essentials: Core Primitives**. That's where you'll dive deeper into Pods, Services, ConfigMaps, and the fundamental building blocks of Kubernetes—regardless of whether you deployed them with kubectl or Helm.
 
 But first, let's get you deploying applications. That's what Day One is all about.
 

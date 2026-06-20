@@ -162,7 +162,7 @@ graph TD
     - `CLUSTER-IP`: The stable internal IP for this Service
     - `PORT(S)`: What port the Service listens on
 
-    **When you need it:** If your app needs to receive network traffic (web server, API, database), you need a Service. If it just runs a job and exits, you might not.
+    **When you need it:** If your app needs to receive network traffic (web server, API, cache), you need a Service. If it just runs a job and exits, you might not.
 
 </div>
 
@@ -714,9 +714,9 @@ The `kubectl` commands aren't scary anymore. The YAML makes sense. The cluster i
 **Day One is complete. You're ready for production work.**
 
 !!! tip "Note for Experienced Developers"
-    We intentionally skipped one topic: **resource requests and limits** (how much CPU/memory your Pods need). That's a Level 2 topic for when you're deploying real applications and need to tune performance. Day One focused on getting things running—optimizing resource allocation comes after you understand the basics.
+    We intentionally skipped one topic: **resource requests and limits** (how much CPU/memory your Pods need). That's a topic for a later tier — for when you're deploying real applications and need to tune performance. Day One focused on getting things running—optimizing resource allocation comes after you understand the basics.
 
-The deeper dive into Kubernetes continues with Level 1, where you'll master each primitive in detail—but honestly? With what you know right now, you can already ship code to Kubernetes. Many developers work productively for months with just Day One knowledge.
+The deeper dive into Kubernetes continues with the Essentials tier, where you'll master each primitive in detail—but honestly? With what you know right now, you can already ship code to Kubernetes. Many developers work productively for months with just Day One knowledge.
 
 The difference between you when you started Day One and you right now is confidence. You've deployed. You've investigated. You've understood. That's what Day One was for.
 
@@ -726,7 +726,7 @@ Congratulations! You've completed the Day One journey. You've gone from "What is
 
 When you're ready to move beyond the basics and master the individual building blocks of Kubernetes, continue to:
 
-- **[Level 1: Core Primitives](../../level_1/overview.md)** — Deep dive into Pods and Services. Start with **[Pods: The Atomic Unit](../../level_1/pods.md)**
+- **[Essentials: Core Primitives](../../essentials/overview.md)** — Deep dive into Pods and Services. Start with **[Pods: The Atomic Unit](../../essentials/pods.md)**
 - **[Essential kubectl Commands](commands.md)** - Review the commands for investigating resources
 - **[Your First Deployment](first_deploy.md)** - Revisit the deployment process with your new understanding
 

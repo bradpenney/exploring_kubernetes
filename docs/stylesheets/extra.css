@@ -45,12 +45,29 @@
   grid-template-columns: 1fr !important;
 }
 
+/* Opt-in two-column card grid: add `cols-2` to the div, e.g.
+   <div class="grid cards cols-2" markdown>. Falls back to one column on
+   narrow screens. More specific than the rule above, so it wins. */
+@media screen and (min-width: 60em) {
+  .grid.cards.cols-2 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
 /* Center all tables */
 .md-typeset table {
   display: table;
   margin-left: auto;
   margin-right: auto;
   width: auto;
+}
+
+/* Restore full width for line-numbered code blocks (linenums renders as a
+   <table> internally and otherwise gets caught by the centering rule above) */
+.md-typeset .highlight table {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .md-typeset .md-typeset__scrollwrap,

@@ -488,7 +488,7 @@ graph TD
     **When to use this:**
 
     - Testing an application before creating an Ingress
-    - Accessing a database that's not publicly exposed
+    - Accessing an internal service (an admin UI or metrics endpoint) that isn't publicly exposed
     - Debugging connectivity issues
 
     ✅ **Safe:** Only affects your local machine—doesn't change anything in the cluster
