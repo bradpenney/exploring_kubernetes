@@ -459,6 +459,7 @@ Use multiple containers in a Pod only when:
 
 - [Processes](https://linux.bradpenney.io/essentials/processes/) - Listing and managing Linux processes with `ps`, `top`, and signals — the OS-level parallel to managing Pods
 - [Finite State Machines](https://cs.bradpenney.io/efficiency/finite_state_machines/) - Pod lifecycle phases (Pending → Running → Succeeded/Failed) are a finite state machine — understanding FSMs makes the lifecycle click
+- [Why HTTP APIs Forget You: Statelessness](https://cs.bradpenney.io/efficiency/web/http_statelessness/) - Why Pods can be disposable at all: a stateless app keeps no per-request memory, so any replica can serve any request and a lost Pod costs nothing
 
 ### Related Articles
 

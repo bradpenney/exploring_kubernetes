@@ -445,6 +445,7 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 ### Related Learning
 
 - [Finite State Machines](https://cs.bradpenney.io/efficiency/finite_state_machines/) - The CS concept behind Kubernetes' reconciliation loop: constantly comparing desired state to actual state and acting to close the gap
+- [Why HTTP APIs Forget You: Statelessness](https://cs.bradpenney.io/efficiency/web/http_statelessness/) - The application property that makes self-healing and autoscaling possible: stateless apps can be freely replaced and replicated without losing anyone's session
 
 ### Related Articles
 - [Day One: Getting Started](overview.md) - Complete learning path overview
