@@ -53,7 +53,7 @@ graph TD
 
 A namespace is a scope for the *names* of namespaced API objects. Two teams can both have a Deployment named `web-app` as long as they're in different namespaces — the fully qualified identity is `namespace/name`, not just `name`.
 
-<div class="grid cards cols-2" markdown>
+<div class="grid cards two-col" markdown>
 
 -   :material-package-variant-closed: **Inside a namespace**
 

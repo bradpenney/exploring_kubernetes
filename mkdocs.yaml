@@ -36,6 +36,9 @@ extra_css:
   - stylesheets/extra.css
 theme:
   name: material
+  font:
+    text: IBM Plex Sans
+    code: IBM Plex Mono
   palette:
     scheme: slate
     primary: black

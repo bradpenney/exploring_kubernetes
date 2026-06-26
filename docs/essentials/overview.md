@@ -16,7 +16,7 @@ This tier treats you as a peer — design rationale and operational reality, no 
 
 The atomic objects everything else is built from. Work through them in order — each builds on the last.
 
-<div class="grid cards cols-2" markdown>
+<div class="grid cards two-col" markdown>
 
 -   :material-cube: **[Pods](pods.md)**
 
@@ -54,7 +54,7 @@ The atomic objects everything else is built from. Work through them in order —
 
 The same foundation, deepening as each group lands:
 
-<div class="grid cards cols-2" markdown>
+<div class="grid cards two-col" markdown>
 
 -   :material-sitemap: **Architecture** *(coming soon)* — control plane vs. nodes, and the reconcile loop
 

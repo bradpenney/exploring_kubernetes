@@ -1,9 +1,283 @@
-/* Increase logo size in the header */
-.md-header__button.md-logo img {
-  height: 100px !important; /* try 48px, 64px, or larger */
+/* ==========================================================================
+   BRAND LAYER — "Amber phosphor, refined"
+   Shared identity across the Exploring * sites. Per-site theming lives in the
+   :root tokens below — to retheme a site, change --brand-accent,
+   --brand-accent-glow, and (optionally) the warm background hexes.
+   Everything in this block is identical on every site; per-site functional CSS
+   lives below the SITE-SPECIFIC marker at the end of the file.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  /* Per-site identity — the only values that change between sites */
+  --brand-accent: #f59e0b;                    /* amber */
+  --brand-accent-link: #fbbf24;               /* lighter amber for body links */
+  --brand-accent-glow: rgba(245, 158, 11, 0.35);
+  --brand-accent-soft: rgba(245, 158, 11, 0.12);
+
+  /* Shared structure */
+  --brand-display: "Space Grotesk", "IBM Plex Sans", system-ui, sans-serif;
+  --brand-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --brand-radius: 10px;
+  --brand-hairline: rgba(234, 228, 214, 0.10);
+}
+
+/* --- Recolor Material's slate scheme into a warm amber-phosphor palette --- */
+[data-md-color-scheme="slate"] {
+  --md-hue: 38;
+
+  --md-default-bg-color: #15130d;
+  --md-default-bg-color--light: rgba(21, 19, 13, 0.72);
+  --md-default-bg-color--lighter: rgba(21, 19, 13, 0.36);
+  --md-default-bg-color--lightest: rgba(21, 19, 13, 0.10);
+
+  --md-default-fg-color: #eae4d6;
+  --md-default-fg-color--light: rgba(234, 228, 214, 0.72);
+  --md-default-fg-color--lighter: rgba(234, 228, 214, 0.36);
+  --md-default-fg-color--lightest: rgba(234, 228, 214, 0.12);
+
+  --md-typeset-color: var(--md-default-fg-color);
+  --md-typeset-a-color: var(--brand-accent-link);
+
+  /* Header / nav / footer */
+  --md-primary-fg-color: #100e09;
+  --md-primary-fg-color--light: #1c190f;
+  --md-primary-fg-color--dark: #0b0906;
+  --md-primary-bg-color: #eae4d6;
+  --md-primary-bg-color--light: rgba(234, 228, 214, 0.72);
+
+  /* Interactive accent */
+  --md-accent-fg-color: var(--brand-accent);
+  --md-accent-fg-color--transparent: var(--brand-accent-soft);
+  --md-accent-bg-color: #15130d;
+  --md-accent-bg-color--light: rgba(21, 19, 13, 0.72);
+
+  /* Code */
+  --md-code-bg-color: #1b1810;
+  --md-code-fg-color: #e4dccb;
+  --md-code-hl-color: var(--brand-accent-soft);
+  --md-code-hl-keyword-color: #f0a868;
+  --md-code-hl-function-color: #e8c77d;
+  --md-code-hl-name-color: #e4dccb;
+  --md-code-hl-string-color: #b7c98a;
+  --md-code-hl-number-color: #e5b567;
+  --md-code-hl-constant-color: #e0a0c0;
+  --md-code-hl-special-color: #f0a868;
+  --md-code-hl-variable-color: #e4dccb;
+  --md-code-hl-comment-color: #877c66;
+  --md-code-hl-operator-color: rgba(234, 228, 214, 0.72);
+  --md-code-hl-punctuation-color: rgba(234, 228, 214, 0.72);
+}
+
+/* --- Typography: rhythm, measure, and the display face --------------------- */
+.md-typeset {
+  line-height: 1.72;
+  overflow-wrap: break-word;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  font-family: var(--brand-display);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.md-typeset h1 {
+  font-size: 2.05rem;
+  line-height: 1.15;
+  margin-bottom: 0.7em;
+}
+
+.md-typeset h2 {
+  font-size: 1.5rem;
+  margin-top: 2.4em;
+}
+
+/* Authored `---` rules are the section dividers — give them presence */
+.md-typeset hr {
+  border-bottom: 1px solid var(--brand-hairline);
+}
+
+.md-typeset h3 {
+  font-size: 1.18rem;
+  margin-top: 1.8em;
+}
+
+/* Signature: shell-prompt glyph with a faint amber-phosphor glow on sections */
+.md-typeset h2::before {
+  content: "\276F";              /* ❯ */
+  font-family: var(--brand-mono);
+  font-weight: 500;
+  color: var(--brand-accent);
+  margin-right: 0.55rem;
+  text-shadow: 0 0 12px var(--brand-accent-glow);
+}
+
+/* Links: quiet until intentional */
+.md-typeset a {
+  text-decoration-color: var(--brand-accent-soft);
+  text-underline-offset: 0.18em;
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+.md-typeset a:hover {
+  color: var(--brand-accent);
+  text-decoration-color: var(--brand-accent);
+}
+
+/* --- Code blocks: terminal chrome ----------------------------------------- */
+.md-typeset pre > code,
+.md-typeset .highlighttable {
+  border: 1px solid var(--brand-hairline);
+  border-radius: var(--brand-radius);
+}
+.md-typeset pre > code {
+  display: block;        /* not inline — so long lines scroll, not overflow */
+  overflow-x: auto;
+  box-shadow: inset 0 1px 0 rgba(234, 228, 214, 0.03);
+}
+/* Make the <pre> itself a scroll container too, so long lines can never widen
+   the page even if the inner <code> renders inline. */
+.md-typeset pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Code block title rendered like a terminal title bar */
+.md-typeset .highlight span.filename {
+  font-family: var(--brand-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--md-default-fg-color--light);
+  background: #100e09;
+  border: 1px solid var(--brand-hairline);
+  border-bottom: none;
+  border-radius: var(--brand-radius) var(--brand-radius) 0 0;
+  padding-left: 2.1em;
+  position: relative;
+}
+.md-typeset .highlight span.filename::before {
+  content: "";
+  position: absolute;
+  left: 1em;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brand-accent);
+  box-shadow: 0 0 8px var(--brand-accent-glow);
+  transform: translateY(-50%);
+}
+
+.md-typeset code {
+  border-radius: 5px;
+}
+
+/* --- Admonitions: lighter frame, accent spine ----------------------------- */
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--brand-hairline);
+  border-left-width: 3px;
+  border-radius: var(--brand-radius);
+  box-shadow: none;
+  font-size: 0.74rem;
+}
+
+/* --- Cards: hover lift + accent edge -------------------------------------- */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border: 1px solid var(--brand-hairline);
+  border-radius: var(--brand-radius);
+  background: rgba(234, 228, 214, 0.015);
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid > .card:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand-accent);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* --- Nav: amber active state ---------------------------------------------- */
+.md-nav__link--active,
+.md-nav__link:hover {
+  color: var(--brand-accent);
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset .grid > .card,
+  .md-typeset a {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   STANDARDS — uniform across every site
+   ========================================================================== */
+
+/* Card grids: ONE column by default. Opt into two columns with `two-col`
+   (e.g. <div class="grid cards two-col" markdown>). minmax(0, 1fr) — NOT 1fr —
+   so a track can shrink below a code block's intrinsic width; otherwise the
+   longest code line stretches the column and the page scrolls sideways. */
+.md-typeset .grid.cards {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.md-typeset .grid.cards.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+/* ...but always collapse two-col back to one column on phones. */
+@media screen and (max-width: 768px) {
+  .md-typeset .grid.cards.two-col {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Tables: center content tables on the page. `:not([class])` targets only
+   Markdown content tables — the linenums code blocks render as
+   <table class="..."> internally, so they're excluded and stay full-width. */
+.md-typeset table:not([class]) {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+.md-typeset table:not([class]) th {
+  text-align: center;
+  vertical-align: middle;
+}
+.md-typeset table:not([class]) td {
+  text-align: left;
+  vertical-align: middle;
+}
+.md-typeset .md-typeset__scrollwrap,
+.md-typeset .md-typeset__table {
+  display: flex;
+  justify-content: center;
+}
+
+/* Header logo: force it into the top bar at every width (Material hides the
+   header logo below 76em by default) and size it consistently across sites. */
+.md-header__button.md-logo {
+  display: inline-flex !important;
+  align-items: center;
+  margin: 0.2rem;
+}
+.md-header__button.md-logo img,
+.md-nav__button.md-logo img {
+  height: 56px !important;
+  width: auto;
   padding: 0;
   margin: 0;
 }
+
+/* ==========================================================================
+   SITE-SPECIFIC FUNCTIONAL CSS (preserved per site)
+   ========================================================================== */
 
 /* Responsive image alignment: right on large, center on small */
 .img-responsive-right {
@@ -12,7 +286,6 @@
   max-width: 100%;
 }
 
-/* On tablet and larger: float right */
 @media screen and (min-width: 768px) {
   .img-responsive-right {
     float: right;
@@ -38,51 +311,4 @@
 .mermaid {
   display: flex;
   justify-content: center;
-}
-
-/* Force card grids to single column */
-.grid.cards {
-  grid-template-columns: 1fr !important;
-}
-
-/* Opt-in two-column card grid: add `cols-2` to the div, e.g.
-   <div class="grid cards cols-2" markdown>. Falls back to one column on
-   narrow screens. More specific than the rule above, so it wins. */
-@media screen and (min-width: 60em) {
-  .grid.cards.cols-2 {
-    grid-template-columns: 1fr 1fr !important;
-  }
-}
-
-/* Center all tables */
-.md-typeset table {
-  display: table;
-  margin-left: auto;
-  margin-right: auto;
-  width: auto;
-}
-
-/* Restore full width for line-numbered code blocks (linenums renders as a
-   <table> internally and otherwise gets caught by the centering rule above) */
-.md-typeset .highlight table {
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.md-typeset .md-typeset__scrollwrap,
-.md-typeset .md-typeset__table {
-  display: flex;
-  justify-content: center;
-}
-
-/* Center table headers, left-align content */
-.md-typeset table th {
-  text-align: center !important;
-  vertical-align: middle !important;
-}
-
-.md-typeset table td {
-  text-align: left !important;
-  vertical-align: middle !important;
 }
