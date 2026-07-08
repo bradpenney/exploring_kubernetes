@@ -440,6 +440,12 @@ Use multiple containers in a Pod only when:
 | **Sidecar** | A helper container in the same Pod as the main application |
 | **Init containers** | Run before the main container; must succeed for the app to start |
 
+## What's Next?
+
+You understand Pods — the atomic unit of Kubernetes. But you can't connect to them directly, because their IP addresses change. That's what Services solve.
+
+**Next:** [Services: Stable Networking for Pods](services.md) — how to expose your Pods reliably, route traffic to them, and let different parts of your application discover each other.
+
 ---
 
 ## Further Reading
@@ -466,10 +472,3 @@ Use multiple containers in a Pod only when:
 - [Services: Stable Networking for Pods](services.md) - How to access Pods reliably as they come and go
 - [Day One Overview](../day_one/overview.md) - The deployment skills that Pods are built on
 
----
-
-## What's Next?
-
-You understand Pods — the atomic unit of Kubernetes. But you can't connect to them directly, because their IP addresses change. That's what Services solve.
-
-**Next:** [Services: Stable Networking for Pods](services.md) — how to expose your Pods reliably, route traffic to them, and let different parts of your application discover each other.

@@ -219,6 +219,12 @@ When a selector matches *no* Pods, the Service's endpoint list is empty and traf
 | **Set-based** | `app in (a,b)`, `notin`, existence — in `kubectl` queries |
 | **Recommended labels** | `app.kubernetes.io/*` — tooling depends on them |
 
+## What's Next?
+
+You've finished **Essentials: Core Primitives**. You can reason about Pods, Services, configuration, namespaces, and the label-driven query layer that connects them — not just how to create each, but *why* Kubernetes is built this way and what each means for a shared cluster.
+
+That foundation is exactly what the next tier assumes. **Efficiency** steps up to the intermediate platform-engineer's job: running these primitives at scale — Deployments and rollout strategies, StatefulSets and DaemonSets, Jobs, and the networking layer (Ingress, NetworkPolicies, DNS) that ties real applications together.
+
 ---
 
 ## Further Reading
@@ -235,10 +241,3 @@ When a selector matches *no* Pods, the Service's endpoint list is empty and traf
 - [Pods: What Actually Runs Your Application](pods.md) - Where labels are stamped
 - [Namespaces](namespaces.md) - Namespace labels drive policy targeting
 
----
-
-## What's Next?
-
-You've finished **Essentials: Core Primitives**. You can reason about Pods, Services, configuration, namespaces, and the label-driven query layer that connects them — not just how to create each, but *why* Kubernetes is built this way and what each means for a shared cluster.
-
-That foundation is exactly what the next tier assumes. **Efficiency** steps up to the intermediate platform-engineer's job: running these primitives at scale — Deployments and rollout strategies, StatefulSets and DaemonSets, Jobs, and the networking layer (Ingress, NetworkPolicies, DNS) that ties real applications together.

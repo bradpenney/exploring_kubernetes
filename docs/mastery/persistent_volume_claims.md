@@ -686,6 +686,10 @@ kubectl get pvc -o wide            # Show bound PV and storage class
 - **StatefulSets:** volumeClaimTemplates create unique PVC per pod
 - **Deletion:** PVC deletion triggers PV reclaim policy (Retain or Delete)
 
+## What's Next?
+
+You understand how to request persistent storage with PVCs. Next, learn about **dynamic provisioning** with ****StorageClasses****—no manual PV creation required.
+
 ---
 
 ## Further Reading
@@ -704,8 +708,3 @@ kubectl get pvc -o wide            # Show bound PV and storage class
 - **StorageClasses** - Dynamic provisioning (next article)
 - **Running Databases on Kubernetes** - Real-world stateful applications
 
----
-
-## What's Next?
-
-You understand how to request persistent storage with PVCs. Next, learn about **dynamic provisioning** with ****StorageClasses****—no manual PV creation required.

@@ -1355,6 +1355,16 @@ We'll cover all of these in detail in the next article about essential `kubectl`
 | **Switch context** | `kubectl config use-context <name>` |
 | **Set namespace** | `kubectl config set-context --current --namespace=<ns>` |
 
+## What's Next?
+
+You're connected! `kubectl` is working, and you can access your namespace. Ready to deploy something?
+
+**Next:** [Your First Deployment](first_deploy.md) - Deploy a simple web application and see it run in Kubernetes.
+
+---
+
+**Don't worry if `kubectl` feels foreign.** After deploying a few applications, these commands will become second nature.
+
 ---
 
 ## Further Reading
@@ -1381,14 +1391,3 @@ We'll cover all of these in detail in the next article about essential `kubectl`
 
 - [Getting Access](https://linux.bradpenney.io/day_one/getting_access/) - The same "day one with credentials" flow on the Linux site — the mental model of contexts, namespaces, and current working environment maps directly to Linux users, groups, and working directories
 
----
-
-## What's Next?
-
-You're connected! `kubectl` is working, and you can access your namespace. Ready to deploy something?
-
-**Next:** [Your First Deployment](first_deploy.md) - Deploy a simple web application and see it run in Kubernetes.
-
----
-
-**Don't worry if `kubectl` feels foreign.** After deploying a few applications, these commands will become second nature.

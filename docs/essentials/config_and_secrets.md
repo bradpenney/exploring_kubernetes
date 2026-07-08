@@ -377,6 +377,12 @@ This recreates the Pods (respecting the Deployment's rollout strategy, so it's z
 | **`rollout restart`** | Declarative way to push config to running Pods |
 | **Real secret security** | Access controls + encryption at rest + a real secret manager — not the object itself |
 
+## What's Next?
+
+You can keep configuration out of your images and reason honestly about what a Secret does and doesn't protect. Next: the boundary that scopes all of these objects — and the multi-tenancy controls built on it.
+
+**Next:** [Namespaces](namespaces.md) — isolation boundaries, resource quotas, and the soft-vs-hard reality of separating teams on one cluster.
+
 ---
 
 ## Further Reading
@@ -399,10 +405,3 @@ This recreates the Pods (respecting the Deployment's rollout strategy, so it's z
 - [Namespaces](namespaces.md) - ConfigMaps and Secrets are namespace-scoped
 - [Labels and Selectors](labels_selectors.md) - Organizing and querying these objects
 
----
-
-## What's Next?
-
-You can keep configuration out of your images and reason honestly about what a Secret does and doesn't protect. Next: the boundary that scopes all of these objects — and the multi-tenancy controls built on it.
-
-**Next:** [Namespaces](namespaces.md) — isolation boundaries, resource quotas, and the soft-vs-hard reality of separating teams on one cluster.

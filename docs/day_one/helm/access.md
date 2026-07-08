@@ -10,9 +10,12 @@ description: Install Helm, the Kubernetes package manager, and connect it to you
 
 Your company's platform team told you: "We use `Helm` for everything. Just install the CLI, and you're good to go." 
 
-Maybe you've seen `Helm` mentioned in a CI/CD pipeline, or maybe you need to install a third-party tool like `Prometheus` or `Grafana`. Either way, you're not writing Kubernetes YAML from scratch today—you're using a package manager.
+Maybe a software vendor shipped your team a chart with suggested values and now it's yours to get running. Maybe a former teammate wrote a chart for the app you just inherited. Or maybe you need to install a third-party tool like `Prometheus` or `Grafana`. Either way, you're not writing Kubernetes YAML from scratch today — you're operating a package someone else already built.
 
-**Good news:** `Helm` makes deploying complex applications much simpler. It handles the "glue" that connects multiple Kubernetes resources together, so you don't have to.
+**Good news:** for exactly that situation, `Helm` does a lot for you. It handles the "glue" that connects multiple Kubernetes resources together, so you can get an inherited chart running without reverse-engineering it first.
+
+!!! info "Where Helm fits — and where it stops"
+    Helm earns its place on Day One because charts are something you *inherit* — from vendors, and from the people who had your job before you. It isn't the pattern the rest of this site builds on: as you move toward the platform side, deployment becomes plain declarative manifests [delivered automatically from version control](https://gitops.bradpenney.io/day_one/what_is_gitops/). Learn Helm here to run what you've been handed — not as the way you'll build.
 
 Let's get you set up and connected.
 
@@ -312,6 +315,12 @@ Even though you're using `Helm`, namespace security works exactly the same as `k
 | **Find Software** | `helm search repo <keyword>` |
 | **Update Repos** | `helm repo update` |
 
+## What's Next?
+
+You have the tools, and you have the access. Now let's actually put something on the cluster.
+
+**Next:** **[Your First Helm Deployment](first_deploy.md)** - Deploy your first chart, whether it's a third-party tool or your own application from a CI/CD pipeline.
+
 ---
 
 ## Further Reading
@@ -333,10 +342,3 @@ Even though you're using `Helm`, namespace security works exactly the same as `k
 - [Getting kubectl Access](../kubectl/access.md) - **Required** before `Helm` will work
 - [What Is Kubernetes?](../what_is_kubernetes.md) - Core concepts
 
----
-
-## What's Next?
-
-You have the tools, and you have the access. Now let's actually put something on the cluster.
-
-**Next:** **[Your First Helm Deployment](first_deploy.md)** - Deploy your first chart, whether it's a third-party tool or your own application from a CI/CD pipeline.

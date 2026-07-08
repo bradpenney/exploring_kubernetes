@@ -550,6 +550,10 @@ volumes:
 - **Volume vs VolumeMount:** Declare volume at pod level, mount it in container spec
 - **PersistentVolumeClaims:** For durable storage that survives pod deletion (covered next)
 
+## What's Next?
+
+You understand ephemeral volumes. Now learn how to request **durable storage** that survives pod deletion: **[Persistent Volumes (PV)](persistent_volumes.md)**.
+
 ---
 
 ## Further Reading
@@ -568,8 +572,3 @@ volumes:
 - [ConfigMaps and Secrets](../essentials/config_and_secrets.md) - Managing configuration
 - [Persistent Volumes](persistent_volumes.md) - Durable storage (next article)
 
----
-
-## What's Next?
-
-You understand ephemeral volumes. Now learn how to request **durable storage** that survives pod deletion: **[Persistent Volumes (PV)](persistent_volumes.md)**.

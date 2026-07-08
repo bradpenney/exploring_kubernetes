@@ -1027,6 +1027,19 @@ Before going to production, ensure you have:
 | **Log retention** | Delete old logs to control costs |
 | **Trace IDs** | Correlate logs across services |
 
+## What's Next?
+
+You understand how to collect, aggregate, and query logs at scale. Next in Production Operations:
+
+- **Monitoring and Metrics** - Track cluster health with Prometheus and Grafana
+- **Health Checks and Probes** - Configure liveness and readiness probes for applications
+
+Logging tells you **what happened**. Monitoring tells you **what's happening now**. Together, they give you complete observability.
+
+---
+
+**Your production cluster now has eyes and ears.**
+
 ---
 
 ## Further Reading
@@ -1056,17 +1069,3 @@ Before going to production, ensure you have:
 - [Health Checks and Probes](probes.md) - Application health and readiness
 - [Production Operations Overview](operations_overview.md) - All production operations topics
 
----
-
-## What's Next?
-
-You understand how to collect, aggregate, and query logs at scale. Next in Production Operations:
-
-- **Monitoring and Metrics** - Track cluster health with Prometheus and Grafana
-- **Health Checks and Probes** - Configure liveness and readiness probes for applications
-
-Logging tells you **what happened**. Monitoring tells you **what's happening now**. Together, they give you complete observability.
-
----
-
-**Your production cluster now has eyes and ears.**

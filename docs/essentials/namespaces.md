@@ -397,6 +397,12 @@ If the namespace then hangs in `Terminating` instead of disappearing, that's a f
 | **Soft boundary** | Namespaces don't isolate network or grant security — RBAC + NetworkPolicies do |
 | **Deletion** | Cascades to everything inside — no undo |
 
+## What's Next?
+
+You can scope, isolate, and rein in resources per namespace — and you know precisely where that boundary stops. The last primitive ties the whole system together: the key/value query layer that Services, Deployments, quotas, and NetworkPolicies all use to find the objects they act on.
+
+**Next:** [Labels and Selectors](labels_selectors.md) — the query language wired through every controller in Kubernetes.
+
 ---
 
 ## Further Reading
@@ -418,10 +424,3 @@ If the namespace then hangs in `Terminating` instead of disappearing, that's a f
 - [ConfigMaps and Secrets](config_and_secrets.md) - Namespace-scoped, no cross-namespace references
 - [Labels and Selectors](labels_selectors.md) - How namespace labels drive policy
 
----
-
-## What's Next?
-
-You can scope, isolate, and rein in resources per namespace — and you know precisely where that boundary stops. The last primitive ties the whole system together: the key/value query layer that Services, Deployments, quotas, and NetworkPolicies all use to find the objects they act on.
-
-**Next:** [Labels and Selectors](labels_selectors.md) — the query language wired through every controller in Kubernetes.

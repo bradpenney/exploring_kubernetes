@@ -1,0 +1,29 @@
+{#-
+  Override of the built-in Material for MkDocs analytics partial.
+
+  Only difference from the vendor file: gates __md_analytics() behind a
+  hostname check, so Google Analytics never fires on local previews
+  (mkdocs serve, LAN IPs, custom hosts) — only on the real *.bradpenney.io
+  production domain. Everything else (consent gating) is unchanged.
+-#}
+{% if config.extra.analytics %}
+  {% set provider = config.extra.analytics.provider %}
+{% endif %}
+{% if provider %}
+  {% include "partials/integrations/analytics/" ~ provider ~ ".html" %}
+  <script>
+    (function () {
+      if (!/(^|\.)bradpenney\.io$/.test(window.location.hostname)) {
+        return;
+      }
+      {% if config.extra.consent %}
+        if (typeof __md_analytics !== "undefined") {
+          var consent = __md_get("__consent");
+          if (consent && consent.analytics) { __md_analytics(); }
+        }
+      {% else %}
+        if (typeof __md_analytics !== "undefined") { __md_analytics(); }
+      {% endif %}
+    })();
+  </script>
+{% endif %}

@@ -1243,6 +1243,19 @@ Before going to production, ensure you have:
 | **USE method** | Monitor Utilization, Saturation, Errors (infrastructure) |
 | **RED method** | Monitor Rate, Errors, Duration (applications) |
 
+## What's Next?
+
+You can now monitor your cluster and applications with Prometheus and Grafana. Next in Production Operations:
+
+- **Health Checks and Probes** - Configure liveness, readiness, and startup probes
+- **Helm Package Manager** - Package and deploy applications with Helm charts
+
+Metrics tell you **what's happening now**. Probes tell you **whether to route traffic**. Together with logging, you have complete observability.
+
+---
+
+**Your production cluster is no longer a black box.**
+
 ---
 
 ## Further Reading
@@ -1272,17 +1285,3 @@ Before going to production, ensure you have:
 - [Health Checks and Probes](probes.md) - Liveness and readiness probes
 - [Production Operations Overview](operations_overview.md) - All production operations topics
 
----
-
-## What's Next?
-
-You can now monitor your cluster and applications with Prometheus and Grafana. Next in Production Operations:
-
-- **Health Checks and Probes** - Configure liveness, readiness, and startup probes
-- **Helm Package Manager** - Package and deploy applications with Helm charts
-
-Metrics tell you **what's happening now**. Probes tell you **whether to route traffic**. Together with logging, you have complete observability.
-
----
-
-**Your production cluster is no longer a black box.**

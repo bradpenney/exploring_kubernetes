@@ -1309,6 +1309,18 @@ rules:
 | **RBAC** | Role, RoleBinding | Access control |
 | **Audit Logging** | kube-apiserver flags | Compliance and forensics |
 
+## What's Next?
+
+You've now completed **Mastery: Scheduling & Security**. Your cluster is production-ready from a security perspective.
+
+Next up: **Mastery: Production Operations**—learn about logging, monitoring, health checks, Helm, and operators.
+
+Check the [Scheduling & Security Overview](security_overview.md) for the complete learning path.
+
+---
+
+**Security is not a feature—it's a foundation.** You've built that foundation. Now maintain it.
+
 ---
 
 ## Further Reading
@@ -1339,16 +1351,3 @@ rules:
 - [Scheduling & Security Overview](security_overview.md) - See all Scheduling & Security articles
 - [RBAC](rbac.md) - Access control (companion article)
 
----
-
-## What's Next?
-
-You've now completed **Mastery: Scheduling & Security**. Your cluster is production-ready from a security perspective.
-
-Next up: **Mastery: Production Operations**—learn about logging, monitoring, health checks, Helm, and operators.
-
-Check the [Scheduling & Security Overview](security_overview.md) for the complete learning path.
-
----
-
-**Security is not a feature—it's a foundation.** You've built that foundation. Now maintain it.

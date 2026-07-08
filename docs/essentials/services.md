@@ -6,7 +6,7 @@ description: "How Kubernetes Services give ephemeral Pods a stable address — C
 # Services: How Your Apps Talk to Each Other
 
 !!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md). Make sure you've read [Pods: The Atomic Unit](pods.md) first — Services only make sense once you understand why Pod IPs are unreliable.
+    This article is part of [Essentials: Core Primitives](overview.md) — read [Pods: The Atomic Unit](pods.md) first, since Services only make sense once you understand why Pod IPs are unreliable. It's also a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io).
 
 You have a frontend app that needs to call a backend API. The backend is running in three Pods. What URL do you hardcode in your frontend config?
 
@@ -150,6 +150,8 @@ The type of Service you create determines **who can reach it**.
     - You get a stable external IP from the cloud provider
     - Requires cloud support (EKS, GKE, AKS all do; bare-metal needs MetalLB)
 
+    What actually gets provisioned — and why you won't want one of these per app — is covered in depth in [LoadBalancer Services](loadbalancer_services.md).
+
 ---
 
 ## Creating a ClusterIP Service
@@ -291,6 +293,12 @@ When a Service exists but traffic reaches nothing, its selector almost certainly
 | **Endpoints** | The actual Pod IPs behind a Service; `<none>` means label mismatch |
 | **Port-forwarding** | Local tunnel to a Service for development testing |
 
+## What's Next?
+
+You understand how Pods run your application and how Services give them stable networking. That's the foundation of Kubernetes application architecture.
+
+**Next:** [ConfigMaps and Secrets](config_and_secrets.md) — how to keep configuration and credentials out of your container images, and the real security limits of a Secret.
+
 ---
 
 ## Further Reading
@@ -313,10 +321,3 @@ When a Service exists but traffic reaches nothing, its selector almost certainly
 - [Pods: The Atomic Unit](pods.md) - What Services are routing traffic to
 - [Essentials: Core Primitives Overview](overview.md) - The full Essentials learning path
 
----
-
-## What's Next?
-
-You understand how Pods run your application and how Services give them stable networking. That's the foundation of Kubernetes application architecture.
-
-**Next:** [ConfigMaps and Secrets](config_and_secrets.md) — how to keep configuration and credentials out of your container images, and the real security limits of a Secret.

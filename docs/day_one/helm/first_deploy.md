@@ -305,6 +305,14 @@ helm uninstall my-app
 | **Rollback** | `helm rollback <name> <rev>` | Reverts to a known good state |
 | **Delete** | `helm uninstall <name>` | Removes all created resources |
 
+## What's Next?
+
+You've deployed your first application using `Helm`! You've seen how `values.yaml` controls the deployment and how `Helm` manages the lifecycle.
+
+**Next:** **[Essential Helm Commands](commands.md)** - Master the lifecycle management commands for investigating, updating, and fixing your releases.
+
+**Also worth exploring:** If you haven't worked through the `kubectl` path, [Essential kubectl Commands](../kubectl/commands.md) is useful reading—`Helm` creates the same Kubernetes resources, and you'll use `kubectl` daily for debugging regardless of how you deploy.
+
 ---
 
 ## Further Reading
@@ -324,12 +332,3 @@ helm uninstall my-app
 
 - [Getting Helm Access](access.md) - Prerequisites for this article: install, connect, and add repositories
 
----
-
-## What's Next?
-
-You've deployed your first application using `Helm`! You've seen how `values.yaml` controls the deployment and how `Helm` manages the lifecycle.
-
-**Next:** **[Essential Helm Commands](commands.md)** - Master the lifecycle management commands for investigating, updating, and fixing your releases.
-
-**Also worth exploring:** If you haven't worked through the `kubectl` path, [Essential kubectl Commands](../kubectl/commands.md) is useful reading—`Helm` creates the same Kubernetes resources, and you'll use `kubectl` daily for debugging regardless of how you deploy.

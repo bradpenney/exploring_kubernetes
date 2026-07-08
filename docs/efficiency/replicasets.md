@@ -249,6 +249,14 @@ metadata:
 | **Self-Healing** | Automatically replaces failed pods |
 | **Rolling Update** | Uses two ReplicaSets (old + new) |
 
+## What's Next?
+
+You understand how ReplicaSets maintain pod counts. Next, learn about **[StatefulSets](statefulsets.md)** for applications that need stable identities and ordered deployment (like databases).
+
+---
+
+**Key Takeaway:** Use Deployments in production, not ReplicaSets directly. But understanding ReplicaSets helps you debug and understand how Kubernetes works under the hood.
+
 ---
 
 ## Further Reading
@@ -257,12 +265,3 @@ metadata:
 - [Deployments](deployments.md) - How Deployments use ReplicaSets
 - [ReplicaSet vs ReplicationController](https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/) - Legacy comparison
 
----
-
-## What's Next?
-
-You understand how ReplicaSets maintain pod counts. Next, learn about **[StatefulSets](statefulsets.md)** for applications that need stable identities and ordered deployment (like databases).
-
----
-
-**Key Takeaway:** Use Deployments in production, not ReplicaSets directly. But understanding ReplicaSets helps you debug and understand how Kubernetes works under the hood.

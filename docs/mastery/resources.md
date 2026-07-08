@@ -880,6 +880,15 @@ kubectl describe pod web-app-7c5ddbdf54-2xkqn
 | **LimitRange** | Set defaults and constraints per pod | `kubectl describe limitrange` |
 | **OOMKilled** | Pod killed for exceeding memory limit | Check `kubectl describe pod` |
 
+## What's Next?
+
+You've mastered resource management! Next up in Scheduling & Security:
+
+- **[Taints and Tolerations](taints_tolerations.md)** - Dedicate nodes to specific workloads (GPUs, high-memory, etc.)
+- **[Node Affinity and Pod Affinity](affinity.md)** - Advanced scheduling: co-location, anti-affinity, topology constraints
+
+Resource management is the foundation. Node scheduling builds on top.
+
 ---
 
 ## Further Reading
@@ -903,13 +912,3 @@ kubectl describe pod web-app-7c5ddbdf54-2xkqn
 - [Taints and Tolerations](taints_tolerations.md) - Control which nodes pods can schedule on
 - [Node Affinity and Pod Affinity](affinity.md) - Advanced scheduling rules
 
----
-
-## What's Next?
-
-You've mastered resource management! Next up in Scheduling & Security:
-
-- **[Taints and Tolerations](taints_tolerations.md)** - Dedicate nodes to specific workloads (GPUs, high-memory, etc.)
-- **[Node Affinity and Pod Affinity](affinity.md)** - Advanced scheduling: co-location, anti-affinity, topology constraints
-
-Resource management is the foundation. Node scheduling builds on top.

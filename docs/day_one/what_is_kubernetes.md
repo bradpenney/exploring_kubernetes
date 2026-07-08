@@ -429,6 +429,14 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 | **What problem does it solve?** | Automated deployment, scaling, healing, and updates |
 | **Do I need to learn it?** | If your company uses it, yes! |
 
+## What's Next?
+
+You understand why Kubernetes exists. Now let's get you connected: **[Getting kubectl Access](kubectl/access.md)** will show you how to connect to your company's cluster and verify you're ready to deploy.
+
+---
+
+**Remember:** Every Kubernetes expert started by asking "What even is this?" You're on your way.
+
 ---
 
 ## Further Reading
@@ -450,12 +458,3 @@ These aren't hands-on exercises (we'll do that in the next article), but take a 
 ### Related Articles
 - [Day One: Getting Started](overview.md) - Complete learning path overview
 
----
-
-## What's Next?
-
-You understand why Kubernetes exists. Now let's get you connected: **[Getting kubectl Access](kubectl/access.md)** will show you how to connect to your company's cluster and verify you're ready to deploy.
-
----
-
-**Remember:** Every Kubernetes expert started by asking "What even is this?" You're on your way.

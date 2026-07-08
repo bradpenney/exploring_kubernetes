@@ -678,6 +678,10 @@ Use this checklist for any network issue:
 - **Read logs:** CoreDNS, ingress controller, and pod logs reveal most issues
 - **Network policies:** Default-deny blocks everything—must add explicit allows
 
+## What's Next?
+
+You've mastered Kubernetes networking (Networking). Ready to tackle persistent storage? Continue to ****Mastery: Storage and State** (coming soon)**.
+
 ---
 
 ## Further Reading
@@ -699,10 +703,5 @@ Use this checklist for any network issue:
 - [Services Deep Dive](services_deep_dive.md) - Understanding services
 - [DNS and Service Discovery](dns_service_discovery.md) - How DNS works
 - [Network Policies](network_policies.md) - Controlling traffic flow
-- [Ingress Controllers](ingress.md) - External access
+- [Ingress Controllers](../essentials/ingress.md) - External access
 
----
-
-## What's Next?
-
-You've mastered Kubernetes networking (Networking). Ready to tackle persistent storage? Continue to ****Mastery: Storage and State** (coming soon)**.

@@ -758,6 +758,22 @@ kubectl delete job --field-selector status.successful=1
         kubectl delete cronjob hourly-backup
         ```
 
+## What's Next?
+
+**Congratulations!** You've completed Efficiency: Workloads. You understand:
+
+- Deployments for stateless applications
+- ReplicaSets under the hood
+- StatefulSets for stable identities
+- DaemonSets for node-level workloads
+- Jobs and CronJobs for batch processing
+
+Move on to ****Efficiency: Networking** (coming soon)** to learn how to connect services, expose applications, and control traffic flow.
+
+---
+
+**Key Takeaway:** Jobs run tasks to completion. CronJobs run Jobs on a schedule. Use them for migrations, backups, batch processing, and any work that needs to finish (not run forever).
+
 ---
 
 ## Further Reading
@@ -781,20 +797,3 @@ kubectl delete job --field-selector status.successful=1
 - **Init Containers** - One-time setup per pod (coming in Networking)
 - **Resource Requests** - Managing job resources (coming in Scheduling & Security)
 
----
-
-## What's Next?
-
-**Congratulations!** You've completed Efficiency: Workloads. You understand:
-
-- Deployments for stateless applications
-- ReplicaSets under the hood
-- StatefulSets for stable identities
-- DaemonSets for node-level workloads
-- Jobs and CronJobs for batch processing
-
-Move on to ****Efficiency: Networking** (coming soon)** to learn how to connect services, expose applications, and control traffic flow.
-
----
-
-**Key Takeaway:** Jobs run tasks to completion. CronJobs run Jobs on a schedule. Use them for migrations, backups, batch processing, and any work that needs to finish (not run forever).

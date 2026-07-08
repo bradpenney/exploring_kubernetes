@@ -36,6 +36,7 @@ extra_css:
   - stylesheets/extra.css
 theme:
   name: material
+  custom_dir: overrides
   font:
     text: IBM Plex Sans
     code: IBM Plex Mono
@@ -88,8 +89,21 @@ plugins:
         - "essentials/pod_failure_states.md"
         - "essentials/stuck_terminating.md"
         - "essentials/service_connectivity.md"
-        # Efficiency (Workloads + Networking) — all draft
-        - "efficiency/*"
+        # Efficiency — drafts listed individually since networking/gateway_api.md
+        # published (2026-07-02). New efficiency drafts must be ADDED here.
+        - "efficiency/overview.md"
+        - "efficiency/workloads_overview.md"
+        - "efficiency/deployments.md"
+        - "efficiency/replicasets.md"
+        - "efficiency/statefulsets.md"
+        - "efficiency/daemonsets.md"
+        - "efficiency/jobs_cronjobs.md"
+        - "efficiency/deployment_strategies.md"
+        - "efficiency/networking_overview.md"
+        - "efficiency/services_deep_dive.md"
+        - "efficiency/network_policies.md"
+        - "efficiency/dns_service_discovery.md"
+        - "efficiency/troubleshooting_networking.md"
         # Mastery (Storage + Scheduling/Security + Production Ops) — all draft
         - "mastery/*"
   - rss:
@@ -178,6 +192,10 @@ nav:
           - ConfigMaps and Secrets: essentials/config_and_secrets.md
           - Namespaces: essentials/namespaces.md
           - Labels and Selectors: essentials/labels_selectors.md
+      # Networking — Essentials-tier exposure articles (cluster-to-internet pathway).
+      - Networking:
+          - "LoadBalancer Services: From Cloud to Bare Metal": essentials/loadbalancer_services.md
+          - "Kubernetes Ingress: Reading the Front Door You Inherit": essentials/ingress.md
       # Workloads — basic resources app devs already use; moved DOWN from
       # Efficiency (2026-06-18). Articles to be migrated from efficiency/ and
       # rewritten to the Essentials dual persona, then uncommented one at a time:
@@ -185,7 +203,6 @@ nav:
       #     - Deployments: essentials/deployments.md
       #     - ReplicaSets Under the Hood: essentials/replicasets.md
       #     - Jobs and CronJobs: essentials/jobs_cronjobs.md
-      #     - Ingress (Basics): essentials/ingress.md
       # Security — UNPUBLISHED until Core Primitives is complete (2026-06-18).
       # Rewritten to the Essentials dual persona; do NOT uncomment until the
       # Core Primitives + Workloads articles above are published first.
@@ -209,7 +226,12 @@ nav:
   # ONE AT A TIME after thorough editorial vetting. See CLAUDE.md.
 
   # ⚡ Efficiency - Running Real Workloads (curious dev / junior platform engineer)
-  # - ⚡ Efficiency:
+  - ⚡ Efficiency:
+      - Networking:
+          - "Gateway API with Traefik: The Standard Front Door": efficiency/networking/gateway_api.md
+          - "cert-manager: Certificates as Cluster Resources": efficiency/networking/cert_manager.md
+          - "Pointing Your Domain at the Cluster with external-dns": efficiency/networking/external_dns.md
+  # Remaining Efficiency drafts (uncomment into the section above as they publish):
   #     - Overview: efficiency/overview.md
   #     - Workloads:
   #         - Overview: efficiency/workloads_overview.md
@@ -221,7 +243,6 @@ nav:
   #     - Networking:
   #         - Overview: efficiency/networking_overview.md
   #         - Services Deep Dive: efficiency/services_deep_dive.md
-  #         - Ingress Controllers: efficiency/ingress.md
   #         - Network Policies: efficiency/network_policies.md
   #         - DNS and Service Discovery: efficiency/dns_service_discovery.md
   #         - Troubleshooting Networking: efficiency/troubleshooting_networking.md

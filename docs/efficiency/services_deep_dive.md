@@ -750,6 +750,14 @@ kubectl get service web-svc
         kubectl delete deployment web
         ```
 
+## What's Next?
+
+You understand how Services work under the hood. Next, learn about **[Ingress Controllers](../essentials/ingress.md)** for HTTP routing, path-based routing, and TLS termination.
+
+---
+
+**Key Takeaway:** Services provide stable networking for ephemeral Pods. ClusterIP for internal, LoadBalancer for external, Ingress for HTTP routing (next article). Understanding Endpoints and kube-proxy helps debug routing issues.
+
 ---
 
 ## Further Reading
@@ -766,16 +774,7 @@ kubectl get service web-svc
 
 ### Related Articles
 - [Services Basics](../essentials/services.md) - Introduction to Services (Essentials)
-- [Ingress Controllers](ingress.md) - HTTP routing and TLS termination
+- [Ingress Controllers](../essentials/ingress.md) - HTTP routing and TLS termination
 - [DNS and Service Discovery](dns_service_discovery.md) - How DNS works
 - [Troubleshooting Networking](troubleshooting_networking.md) - Debug connection issues
 
----
-
-## What's Next?
-
-You understand how Services work under the hood. Next, learn about **[Ingress Controllers](ingress.md)** for HTTP routing, path-based routing, and TLS termination.
-
----
-
-**Key Takeaway:** Services provide stable networking for ephemeral Pods. ClusterIP for internal, LoadBalancer for external, Ingress for HTTP routing (next article). Understanding Endpoints and kube-proxy helps debug routing issues.

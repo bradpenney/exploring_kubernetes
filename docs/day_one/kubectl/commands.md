@@ -1217,6 +1217,12 @@ EOF
 
 **Remember:** Start with read-only commands (`get`, `describe`, `logs`) to understand the state, then use deployment commands to make changes.
 
+## What's Next?
+
+You've mastered the essential commands. Now understand what actually happens when you deploy:
+
+**[Understanding What Happened](understanding.md)** - Learn about the Kubernetes architecture, how controllers work, and what all those resources (`Deployment`, `ReplicaSet`, `Pod`, `Service`) actually do behind the scenes.
+
 ---
 
 ## Further Reading
@@ -1245,10 +1251,3 @@ EOF
 - [Your First Deployment](first_deploy.md) - How you got here
 - [Understanding What Happened](understanding.md) - What's next: understand the architecture
 
----
-
-## What's Next?
-
-You've mastered the essential commands. Now understand what actually happens when you deploy:
-
-**[Understanding What Happened](understanding.md)** - Learn about the Kubernetes architecture, how controllers work, and what all those resources (`Deployment`, `ReplicaSet`, `Pod`, `Service`) actually do behind the scenes.

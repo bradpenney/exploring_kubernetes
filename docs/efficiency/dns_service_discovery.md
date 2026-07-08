@@ -538,6 +538,10 @@ options ndots:5
 - **Automatic configuration:** Pods get DNS config automatically
 - **No hardcoded IPs:** Services provide stable DNS names even as pods move
 
+## What's Next?
+
+You understand how services discover each other. Next, learn systematic approaches to debugging network issues: **[Troubleshooting Networking](troubleshooting_networking.md)**.
+
 ---
 
 ## Further Reading
@@ -556,8 +560,3 @@ options ndots:5
 - [StatefulSets](statefulsets.md) - Stateful applications with stable network IDs
 - [Troubleshooting Networking](troubleshooting_networking.md) - Network debugging techniques
 
----
-
-## What's Next?
-
-You understand how services discover each other. Next, learn systematic approaches to debugging network issues: **[Troubleshooting Networking](troubleshooting_networking.md)**.

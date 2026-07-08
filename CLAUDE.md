@@ -31,7 +31,7 @@ Two editorial decisions that override the original Essentials = "Core Primitives
 
 2. **Security is NOT published until Core Primitives is complete.** The 5 `essentials/security_*` articles were live; as of 2026-06-18 they are **unpublished** (commented out of nav + added to the exclude list) and have been **rewritten to the Essentials dual persona** (deep-diving dev + junior platform engineer — including the operator-side of RBAC/Pod Security, not just the consumer view). Do NOT republish them until the Core Primitives + Workloads articles ship first. Note: `essentials/handling_secrets.md` was deliberately refocused on secret *hygiene/leak-prevention* and cross-links `config_and_secrets.md` for mechanics, to avoid duplicating it (no-repetition rule).
 
-**Published surface (2026-06-18):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`). Still draft/excluded: Security (all 5), Workloads, Efficiency, Mastery.
+**Published surface (2026-07-02):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`) + **Essentials Networking** (`loadbalancer_services`, `ingress` — pathway steps 7 and 9) + **Efficiency Networking** (`efficiency/networking/gateway_api.md`, `efficiency/networking/cert_manager.md`, `efficiency/networking/external_dns.md` — cert_manager holds the k8s-side certificate machinery split out of the networking site's ACME article 2026-07-08; external_dns carries the Bindy mention + no-financial-stake disclosure). NOTE: the old `efficiency/ingress.md` draft ("Ingress Controllers") was superseded by `essentials/ingress.md` and **deleted 2026-07-07** (also removed from the exclude list and commented nav). Still draft/excluded: Security (all 5), Workloads, remaining Efficiency flat drafts, Mastery.
 
 - Navigation for Efficiency/Mastery (and now Security) stays commented out in `mkdocs.yaml` pending editorial review
 - Uncomment + un-exclude articles ONE AT A TIME after the quality checklist
@@ -106,8 +106,10 @@ plugins:
         - "essentials/handling_secrets.md"
         - "essentials/understanding_access.md"
         - "essentials/pod_security_standards.md"
-        # Efficiency (Workloads + Networking) — all draft
-        - "efficiency/*"
+        # Efficiency — drafts listed INDIVIDUALLY since efficiency/networking/gateway_api.md
+        # published (2026-07-02); the old blanket "efficiency/*" glob is gone because
+        # mkdocs-exclude globs cross "/" (fnmatch). New efficiency drafts MUST be added here.
+        - "efficiency/overview.md"       # …and the other 13 flat drafts (see mkdocs.yaml)
         # Mastery (Storage + Scheduling/Security + Production Ops) — all draft
         - "mastery/*"
   # ... other plugins
@@ -660,8 +662,8 @@ Articles must not be simple command references. They must teach skills with cont
 6. Safety Warnings - What NOT to do
 7. Practice Exercises - Hands-on reinforcement
 8. Quick Recap - Bullet summary
-9. Further Reading - Organized by category
-10. What's Next - Progression path
+9. What's Next - Progression path
+10. Further Reading - Organized by category
 
 **Hands-On Deployment Articles (like Your First Deployment):**
 
@@ -672,8 +674,8 @@ Articles must not be simple command references. They must teach skills with cont
 5. Exploration - Investigating what was created
 6. Troubleshooting - Common issues (collapsible)
 7. Practice Exercises
-8. Further Reading
-9. What's Next
+8. What's Next
+9. Further Reading
 
 **Architecture/Concept Articles (like Cluster Architecture):**
 
@@ -684,8 +686,8 @@ Articles must not be simple command references. They must teach skills with cont
 5. Workflow - How components interact
 6. Practical examples - Seeing it in action
 7. Practice Exercises
-8. Further Reading
-9. What's Next
+8. What's Next
+9. Further Reading
 
 #### Context Before Commands
 

@@ -331,6 +331,14 @@ kubectl delete deployment nginx-deployment
 | **Rollback** | Instant recovery from bad deployments |
 | **Self-Healing** | Automatic pod replacement on failure |
 
+## What's Next?
+
+You understand how Deployments manage applications with zero-downtime updates. Next, learn **[ReplicaSets Under the Hood](replicasets.md)** to understand exactly how Deployments work internally, or jump to **[StatefulSets](statefulsets.md)** for stateful applications.
+
+---
+
+Deployments turn Kubernetes into a self-driving system. By describing the "Desired State" of your application, you free yourself from the manual labor of monitoring servers and restarting failed processes.
+
 ---
 
 ## Further Reading
@@ -353,12 +361,3 @@ kubectl delete deployment nginx-deployment
 - [StatefulSets](statefulsets.md) - For stateful applications
 - **Health Checks and Probes** - Ensuring pod health (coming in Production Operations)
 
----
-
-## What's Next?
-
-You understand how Deployments manage applications with zero-downtime updates. Next, learn **[ReplicaSets Under the Hood](replicasets.md)** to understand exactly how Deployments work internally, or jump to **[StatefulSets](statefulsets.md)** for stateful applications.
-
----
-
-Deployments turn Kubernetes into a self-driving system. By describing the "Desired State" of your application, you free yourself from the manual labor of monitoring servers and restarting failed processes.

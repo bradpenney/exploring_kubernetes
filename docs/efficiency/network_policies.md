@@ -730,6 +730,14 @@ kubectl exec frontend -- wget -O- --timeout=2 http://backend
         kubectl delete namespace team-a team-b
         ```
 
+## What's Next?
+
+You understand Network Policies for Pod-level firewall rules. Next, learn about **[DNS and Service Discovery](dns_service_discovery.md)** to understand how Services find each other.
+
+---
+
+**Key Takeaway:** Network Policies provide Pod-level firewall rules. Start with default deny, then explicitly allow required traffic. Always allow DNS (UDP port 53 to kube-dns). Requires compatible CNI plugin (Calico, Cilium, Weave).
+
 ---
 
 ## Further Reading
@@ -754,12 +762,3 @@ kubectl exec frontend -- wget -O- --timeout=2 http://backend
 - [Namespaces](../essentials/namespaces.md) - Namespace-based isolation
 - **Security Best Practices** - Comprehensive security (coming in Scheduling & Security)
 
----
-
-## What's Next?
-
-You understand Network Policies for Pod-level firewall rules. Next, learn about **[DNS and Service Discovery](dns_service_discovery.md)** to understand how Services find each other.
-
----
-
-**Key Takeaway:** Network Policies provide Pod-level firewall rules. Start with default deny, then explicitly allow required traffic. Always allow DNS (UDP port 53 to kube-dns). Requires compatible CNI plugin (Calico, Cilium, Weave).

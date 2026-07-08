@@ -660,6 +660,14 @@ kubectl delete daemonset log-collector
         # Should only see pods on node-1 and node-2
         ```
 
+## What's Next?
+
+You understand DaemonSets for node-level workloads. Next, learn about **[Jobs and CronJobs](jobs_cronjobs.md)** for batch processing and scheduled tasks.
+
+---
+
+**Key Takeaway:** DaemonSets run infrastructure workloads (monitoring, logging, networking) on every node. They're automatic, node-aware, and essential for cluster operations.
+
 ---
 
 ## Further Reading
@@ -679,12 +687,3 @@ kubectl delete daemonset log-collector
 - [StatefulSets](statefulsets.md) - For stateful workloads
 - **Node Affinity** - Advanced scheduling (coming in Scheduling & Security)
 
----
-
-## What's Next?
-
-You understand DaemonSets for node-level workloads. Next, learn about **[Jobs and CronJobs](jobs_cronjobs.md)** for batch processing and scheduled tasks.
-
----
-
-**Key Takeaway:** DaemonSets run infrastructure workloads (monitoring, logging, networking) on every node. They're automatic, node-aware, and essential for cluster operations.

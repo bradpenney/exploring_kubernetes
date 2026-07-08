@@ -633,6 +633,14 @@ kubectl exec postgres-0 -- df -h | grep postgresql
         # Output: "hello world"
         ```
 
+## What's Next?
+
+You understand StatefulSets for apps with stable identities. Next, learn about **[DaemonSets](daemonsets.md)** for running a pod on every node (monitoring agents, log collectors, etc.).
+
+---
+
+**Key Takeaway:** Use StatefulSets only when you need stable network identity, persistent storage per pod, or ordered operations. For everything else, use Deployments.
+
 ---
 
 ## Further Reading
@@ -652,12 +660,3 @@ kubectl exec postgres-0 -- df -h | grep postgresql
 - **Persistent Volumes** - Storage deep dive (coming in Storage)
 - **Init Containers** - For StatefulSet initialization (coming in Networking)
 
----
-
-## What's Next?
-
-You understand StatefulSets for apps with stable identities. Next, learn about **[DaemonSets](daemonsets.md)** for running a pod on every node (monitoring agents, log collectors, etc.).
-
----
-
-**Key Takeaway:** Use StatefulSets only when you need stable network identity, persistent storage per pod, or ordered operations. For everything else, use Deployments.

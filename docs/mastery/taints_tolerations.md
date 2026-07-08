@@ -1024,6 +1024,14 @@ kubectl get pod ml-app-7c5ddbdf54-2xkqn -o jsonpath='{.spec.tolerations}' | jq
 | **Remove Taint** | Untaint node | `kubectl taint nodes <node> key:effect-` |
 | **System Taints** | Automatic taints for node conditions | `node.kubernetes.io/*` keys |
 
+## What's Next?
+
+You've mastered taints and tolerations! Next up in Scheduling & Security:
+
+- **[Node Affinity and Pod Affinity](affinity.md)** - Advanced scheduling rules for co-location, anti-affinity, and topology constraints
+
+Taints are the "stick" (repel pods). Affinity is the "carrot" (attract pods). Use them together for complete scheduling control.
+
 ---
 
 ## Further Reading
@@ -1045,12 +1053,3 @@ kubectl get pod ml-app-7c5ddbdf54-2xkqn -o jsonpath='{.spec.tolerations}' | jq
 - [Resource Requests and Limits](resources.md) - Foundation for scheduling decisions
 - [Node Affinity and Pod Affinity](affinity.md) - Complementary scheduling controls
 
----
-
-## What's Next?
-
-You've mastered taints and tolerations! Next up in Scheduling & Security:
-
-- **[Node Affinity and Pod Affinity](affinity.md)** - Advanced scheduling rules for co-location, anti-affinity, and topology constraints
-
-Taints are the "stick" (repel pods). Affinity is the "carrot" (attract pods). Use them together for complete scheduling control.

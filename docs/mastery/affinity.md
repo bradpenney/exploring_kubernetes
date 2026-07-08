@@ -1196,6 +1196,15 @@ kubectl get pod frontend-8mz4p -o yaml | grep -A 10 podAffinity
 | **Pod Anti-Affinity** | Spread pods for HA | High availability, resource isolation |
 | **Topology Spread** | Even distribution across domains | Multi-zone, multi-node, multi-rack |
 
+## What's Next?
+
+You've mastered advanced scheduling! Next up in Scheduling & Security:
+
+- **RBAC** - Users, service accounts, roles, role bindings, least privilege (coming soon)
+- **Security Best Practices** - Pod Security Standards, security contexts, network policies (coming soon)
+
+Advanced scheduling is complete. Now secure your cluster.
+
 ---
 
 ## Further Reading
@@ -1217,13 +1226,3 @@ kubectl get pod frontend-8mz4p -o yaml | grep -A 10 podAffinity
 - [Resource Requests and Limits](resources.md) - Foundation for scheduling decisions
 - [Taints and Tolerations](taints_tolerations.md) - Complementary node selection
 
----
-
-## What's Next?
-
-You've mastered advanced scheduling! Next up in Scheduling & Security:
-
-- **RBAC** - Users, service accounts, roles, role bindings, least privilege (coming soon)
-- **Security Best Practices** - Pod Security Standards, security contexts, network policies (coming soon)
-
-Advanced scheduling is complete. Now secure your cluster.

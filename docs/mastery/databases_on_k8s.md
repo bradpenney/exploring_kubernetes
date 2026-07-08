@@ -952,6 +952,16 @@ Before running a database in production on Kubernetes:
 - **Use operators when available** - Percona, Zalando, CrunchyData automate best practices
 - **Resource limits are essential** - Prevent databases from consuming all node resources
 
+## What's Next?
+
+You've completed Mastery: Storage and State. Next, move to **Mastery: Scheduling & Security**, where you'll learn resource management, node affinity, RBAC, and security best practices.
+
+Check the [Storage Overview](storage_overview.md) for the complete storage learning path.
+
+---
+
+**Final thought:** Running databases on Kubernetes is possible, but it's not a requirement. Choose the path that matches your team's capabilities and your application's needs. Sometimes the best Kubernetes database strategy is... not running it on Kubernetes.
+
 ---
 
 ## Further Reading
@@ -982,14 +992,3 @@ Before running a database in production on Kubernetes:
 - [Persistent Volume Claims (PVC)](persistent_volume_claims.md) - Requesting storage
 - [StorageClasses](storage_classes.md) - Dynamic provisioning
 
----
-
-## What's Next?
-
-You've completed Mastery: Storage and State. Next, move to **Mastery: Scheduling & Security**, where you'll learn resource management, node affinity, RBAC, and security best practices.
-
-Check the [Storage Overview](storage_overview.md) for the complete storage learning path.
-
----
-
-**Final thought:** Running databases on Kubernetes is possible, but it's not a requirement. Choose the path that matches your team's capabilities and your application's needs. Sometimes the best Kubernetes database strategy is... not running it on Kubernetes.

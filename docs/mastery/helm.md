@@ -1292,6 +1292,21 @@ helm package my-app
 | **Dry run** | `helm install <name> <chart> --dry-run` |
 | **Render templates** | `helm template <name> <chart>` |
 
+## What's Next?
+
+Now that you understand Helm package management, explore:
+
+- **[Operators and Custom Resources](operators.md)** - Extending Kubernetes with custom automation
+- **GitOps with ArgoCD or Flux** - Automated Helm deployments from git repositories
+- **Helmfile** - Manage multiple Helm releases declaratively
+- **Chart Testing (ct)** - Automated testing for Helm charts
+
+Helm is the foundation of Kubernetes package management. Combined with GitOps, it enables production-grade application delivery at scale.
+
+---
+
+**You now have production-ready Kubernetes package management skills.**
+
 ---
 
 ## Further Reading
@@ -1315,19 +1330,3 @@ helm package my-app
 - [Mastery: Production Operations](operations_overview.md) - Overview of Production Operations topics
 - [Operators and Custom Resources](operators.md) - When to use operators vs Helm
 
----
-
-## What's Next?
-
-Now that you understand Helm package management, explore:
-
-- **[Operators and Custom Resources](operators.md)** - Extending Kubernetes with custom automation
-- **GitOps with ArgoCD or Flux** - Automated Helm deployments from git repositories
-- **Helmfile** - Manage multiple Helm releases declaratively
-- **Chart Testing (ct)** - Automated testing for Helm charts
-
-Helm is the foundation of Kubernetes package management. Combined with GitOps, it enables production-grade application delivery at scale.
-
----
-
-**You now have production-ready Kubernetes package management skills.**

@@ -1126,6 +1126,22 @@ spec:
 kubectl auth can-i <verb> <resource> -n <namespace> --as=<subject>
 ```
 
+## What's Next?
+
+Now that you understand RBAC and access control, learn how to **harden your entire cluster** in [Security Best Practices](security.md):
+
+- Pod Security Standards
+- Security contexts
+- Network policies
+- Admission controllers
+- Secrets management
+
+RBAC is one piece of the security puzzle. The next article covers the full picture.
+
+---
+
+**You now control who can do what in your cluster.** That's power. Use it wisely.
+
 ---
 
 ## Further Reading
@@ -1152,20 +1168,3 @@ kubectl auth can-i <verb> <resource> -n <namespace> --as=<subject>
 - [Scheduling & Security Overview](security_overview.md) - See all Scheduling & Security articles
 - [Security Best Practices](security.md) - Hardening Kubernetes clusters (companion article)
 
----
-
-## What's Next?
-
-Now that you understand RBAC and access control, learn how to **harden your entire cluster** in [Security Best Practices](security.md):
-
-- Pod Security Standards
-- Security contexts
-- Network policies
-- Admission controllers
-- Secrets management
-
-RBAC is one piece of the security puzzle. The next article covers the full picture.
-
----
-
-**You now control who can do what in your cluster.** That's power. Use it wisely.

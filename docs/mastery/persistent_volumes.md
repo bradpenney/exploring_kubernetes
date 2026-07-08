@@ -541,6 +541,10 @@ kubectl get pv nfs-pv -o yaml
 - **Static vs Dynamic:** Manual PV creation vs automatic StorageClass provisioning
 - **PVCs bind to PVs:** Developers request storage via PVCs (next article)
 
+## What's Next?
+
+You understand Persistent Volumes—cluster-wide storage resources. Next, learn how developers request storage: **[Persistent Volume Claims (PVC)](persistent_volume_claims.md)**.
+
 ---
 
 ## Further Reading
@@ -559,8 +563,3 @@ kubectl get pv nfs-pv -o yaml
 - [Persistent Volume Claims (PVC)](persistent_volume_claims.md) - How to request storage (next)
 - **StorageClasses** - Dynamic provisioning
 
----
-
-## What's Next?
-
-You understand Persistent Volumes—cluster-wide storage resources. Next, learn how developers request storage: **[Persistent Volume Claims (PVC)](persistent_volume_claims.md)**.

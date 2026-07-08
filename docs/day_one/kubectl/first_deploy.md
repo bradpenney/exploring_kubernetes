@@ -681,6 +681,20 @@ kubectl delete -f nginx-service.yaml
 | **Scaled** | Edit `replicas:` in YAML → `kubectl apply` |
 | **Cleaned Up** | `kubectl delete` |
 
+## What's Next?
+
+You've deployed your first application! Next up in the Day One series:
+
+- **[Essential kubectl Commands](commands.md)** - Master the 10 commands you'll use every day
+- **[Understanding What Happened](understanding.md)** - Deep dive into Deployments, ReplicaSets, and Pods
+- **[What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/)** - In production, the `kubectl apply` you just ran is often replaced by a Git commit — see how that works
+
+Check the [Day One Overview](../overview.md) for the complete learning path.
+
+---
+
+**Congratulations!** You're officially running applications on Kubernetes.
+
 ---
 
 ## Further Reading
@@ -707,18 +721,3 @@ kubectl delete -f nginx-service.yaml
 - [Getting kubectl Access](access.md) - Review how to connect to your cluster
 - [What Is Kubernetes?](../what_is_kubernetes.md) - Understanding Kubernetes fundamentals
 
----
-
-## What's Next?
-
-You've deployed your first application! Next up in the Day One series:
-
-- **[Essential kubectl Commands](commands.md)** - Master the 10 commands you'll use every day
-- **[Understanding What Happened](understanding.md)** - Deep dive into Deployments, ReplicaSets, and Pods
-- **[What Is GitOps?](https://gitops.bradpenney.io/day_one/what_is_gitops/)** - In production, the `kubectl apply` you just ran is often replaced by a Git commit — see how that works
-
-Check the [Day One Overview](../overview.md) for the complete learning path.
-
----
-
-**Congratulations!** You're officially running applications on Kubernetes.

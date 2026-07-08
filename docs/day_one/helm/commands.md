@@ -357,6 +357,12 @@ This is the most important judgment call in a Helm-based workflow. The confusion
 | `helm rollback <name> <rev>` | Revert to a previous revision | ⚠️ Modifies cluster |
 | `helm uninstall <name>` | Remove release and all its resources | 🚨 Destructive |
 
+## What's Next?
+
+You know the commands. Now let's understand **what** they're actually managing.
+
+**Next:** [Understanding What Helm Created](understanding.md) — see how Helm translates your `values.yaml` into Pods and Services, how it tracks releases, and exactly where to look when things break.
+
 ---
 
 ## Further Reading
@@ -379,10 +385,3 @@ This is the most important judgment call in a Helm-based workflow. The confusion
 - [Pipes and Redirection](https://linux.bradpenney.io/essentials/pipes_and_redirection/) - The Linux tools (`grep`, `|`) used throughout Helm troubleshooting
 - [Reading Logs](https://linux.bradpenney.io/day_one/reading_logs/) - The `kubectl logs` mental model applies directly
 
----
-
-## What's Next?
-
-You know the commands. Now let's understand **what** they're actually managing.
-
-**Next:** [Understanding What Helm Created](understanding.md) — see how Helm translates your `values.yaml` into Pods and Services, how it tracks releases, and exactly where to look when things break.

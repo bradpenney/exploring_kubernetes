@@ -1406,6 +1406,29 @@ spec:
 | **Operator SDK** | Framework for building operators (Go/Ansible/Helm) |
 | **Kubebuilder** | Lower-level framework for building operators (Go) |
 
+## What's Next?
+
+You've completed the Production Operations section! You now understand:
+
+- How operators extend Kubernetes with custom resources
+- Popular operators for production workloads
+- When to use operators vs Helm
+- How to install and manage operators
+- The foundations of building your own operators
+
+**Beyond operators:**
+
+- **GitOps** - ArgoCD and Flux automate operator and Helm deployments from git
+- **Service Meshes** - Istio and Linkerd are implemented as operators
+- **Multi-cluster Management** - Tools like Rancher and OpenShift use operators extensively
+- **Advanced Operator Development** - Build your own operators with Operator SDK
+
+**Congratulations on reaching the end of the Exploring Kubernetes journey!** You've gone from deploying your first pod to understanding production operations at scale.
+
+---
+
+**You are now equipped to operate Kubernetes in production.**
+
 ---
 
 ## Further Reading
@@ -1440,27 +1463,3 @@ spec:
 - [Mastery: Production Operations](operations_overview.md) - Overview of Production Operations topics
 - [Helm Package Manager](helm.md) - When to use Helm vs operators
 
----
-
-## What's Next?
-
-You've completed the Production Operations section! You now understand:
-
-- How operators extend Kubernetes with custom resources
-- Popular operators for production workloads
-- When to use operators vs Helm
-- How to install and manage operators
-- The foundations of building your own operators
-
-**Beyond operators:**
-
-- **GitOps** - ArgoCD and Flux automate operator and Helm deployments from git
-- **Service Meshes** - Istio and Linkerd are implemented as operators
-- **Multi-cluster Management** - Tools like Rancher and OpenShift use operators extensively
-- **Advanced Operator Development** - Build your own operators with Operator SDK
-
-**Congratulations on reaching the end of the Exploring Kubernetes journey!** You've gone from deploying your first pod to understanding production operations at scale.
-
----
-
-**You are now equipped to operate Kubernetes in production.**

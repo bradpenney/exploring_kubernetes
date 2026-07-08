@@ -741,6 +741,10 @@ kubectl delete storageclass <name>
 - **Reclaim policies:** Delete (auto-cleanup) vs Retain (manual cleanup)
 - **Allow volume expansion:** Resize PVCs without recreating them
 
+## What's Next?
+
+You understand dynamic provisioning and StorageClasses. Next, learn when and how to run stateful applications: **[Running Databases on Kubernetes](databases_on_k8s.md)**.
+
 ---
 
 ## Further Reading
@@ -768,8 +772,3 @@ kubectl delete storageclass <name>
 - [Persistent Volume Claims (PVC)](persistent_volume_claims.md) - How to request storage
 - [Running Databases on Kubernetes](databases_on_k8s.md) - Using StorageClasses with StatefulSets (next)
 
----
-
-## What's Next?
-
-You understand dynamic provisioning and StorageClasses. Next, learn when and how to run stateful applications: **[Running Databases on Kubernetes](databases_on_k8s.md)**.

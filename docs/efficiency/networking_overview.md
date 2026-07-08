@@ -27,7 +27,7 @@ This is where **application developers and platform engineers meet**—both need
 
     **Beyond Basics** — Service types, endpoints, kube-proxy modes, headless services
 
--   :material-web: **[Ingress Controllers](ingress.md)** *(coming soon)*
+-   :material-web: **[Ingress Controllers](../essentials/ingress.md)** *(coming soon)*
 
     ---
 

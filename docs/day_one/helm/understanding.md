@@ -321,6 +321,12 @@ When something breaks, work backwards through the layers:
 | **Troubleshooting order** | Running resources → Rendered YAML → Applied values → Template logic |
 | **`kubectl` for debugging** | After Helm deploys, `kubectl` is your investigation tool |
 
+## What's Next?
+
+Day One is complete. Now it's time to understand the building blocks that Helm has been creating for you.
+
+**[Essentials: Core Primitives](../../essentials/overview.md)** — Deep dive into Pods, Services, and the other fundamental Kubernetes resources. You've deployed them; now you'll understand exactly how they work.
+
 ---
 
 ## Further Reading
@@ -360,10 +366,3 @@ Whether you took the `kubectl` path (writing YAML directly) or the Helm path (us
 
 This is the foundation. Everything in the Essentials tier and beyond builds directly on these skills.
 
----
-
-## What's Next?
-
-Day One is complete. Now it's time to understand the building blocks that Helm has been creating for you.
-
-**[Essentials: Core Primitives](../../essentials/overview.md)** — Deep dive into Pods, Services, and the other fundamental Kubernetes resources. You've deployed them; now you'll understand exactly how they work.

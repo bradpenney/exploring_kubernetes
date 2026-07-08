@@ -1327,6 +1327,19 @@ func readyHandler(w http.ResponseWriter, r *http.Request) {
 4. Finish in-flight requests
 5. Shutdown
 
+## What's Next?
+
+You now understand how to keep traffic flowing to healthy pods and handle graceful shutdowns. Next in Production Operations:
+
+- **Helm Package Manager** - Package and deploy applications with Helm charts (coming soon)
+- **Operators and Custom Resources** - Extend Kubernetes with custom functionality (coming soon)
+
+Probes ensure **traffic goes to healthy pods**. Combined with logging and monitoring, you have complete production-grade observability.
+
+---
+
+**Your applications are now production-ready with health checks.**
+
 ---
 
 ## Further Reading
@@ -1349,17 +1362,3 @@ func readyHandler(w http.ResponseWriter, r *http.Request) {
 - [Monitoring and Metrics](monitoring.md) - Monitoring pod health and restarts
 - [Production Operations Overview](operations_overview.md) - All production operations topics
 
----
-
-## What's Next?
-
-You now understand how to keep traffic flowing to healthy pods and handle graceful shutdowns. Next in Production Operations:
-
-- **Helm Package Manager** - Package and deploy applications with Helm charts (coming soon)
-- **Operators and Custom Resources** - Extend Kubernetes with custom functionality (coming soon)
-
-Probes ensure **traffic goes to healthy pods**. Combined with logging and monitoring, you have complete production-grade observability.
-
----
-
-**Your applications are now production-ready with health checks.**
