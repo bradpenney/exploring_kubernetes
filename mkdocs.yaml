@@ -29,6 +29,8 @@ extra:
       link: https://github.com/bradpenney
     - icon: fontawesome/brands/linkedin
       link: https://linkedin.com/in/bradpenney
+    - icon: fontawesome/solid/globe
+      link: https://bradpenney.io
     - icon: fontawesome/solid/rss
       link: https://k8s.bradpenney.io/feed_rss_created.xml
 
