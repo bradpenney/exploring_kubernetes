@@ -55,6 +55,14 @@ Not how to *use* each primitive, but what it *is* — why Kubernetes works this 
 
 <div class="grid cards" markdown>
 
+-   :material-server-network: **Cluster Architecture**
+
+    ---
+
+    Control plane vs. nodes, and the reconcile loop that makes Kubernetes self-healing — the mental model everything else builds on.
+
+    [:octicons-arrow-right-24: Cluster Architecture](essentials/architecture.md)
+
 -   :material-cube: **Core Primitives**
 
     ---
@@ -62,6 +70,14 @@ Not how to *use* each primitive, but what it *is* — why Kubernetes works this 
     The atomic objects everything else is built from — Pods, Services, configuration, isolation, and the labels that wire it all together.
 
     [:octicons-arrow-right-24: Pods](essentials/pods.md) · [Services](essentials/services.md) · [ConfigMaps & Secrets](essentials/config_and_secrets.md) · [Namespaces](essentials/namespaces.md) · [Labels & Selectors](essentials/labels_selectors.md)
+
+-   :material-lan: **Networking**
+
+    ---
+
+    Getting traffic into the cluster — LoadBalancer Services from cloud to bare metal, and reading the Ingress your team inherited.
+
+    [:octicons-arrow-right-24: LoadBalancer Services](essentials/loadbalancer_services.md) · [Ingress](essentials/ingress.md)
 
 -   :material-layers-triple: **Workloads & Security** *(coming soon)*
 
@@ -73,23 +89,33 @@ Not how to *use* each primitive, but what it *is* — why Kubernetes works this 
 
 ---
 
-## ⚡ Efficiency *(Coming soon)*
+## ⚡ Efficiency
 
 Running real workloads at scale — the platform-specific pieces beyond the basics.
 
 <div class="grid cards" markdown>
 
--   :material-cog-sync: **Advanced Workloads** *(coming soon)*
+-   :material-cog-sync: **Architecture**
+
+    ---
+
+    How kubelet actually talks to the container runtime — the CRI, containerd and CRI-O, and the dockershim history behind it.
+
+    [:octicons-arrow-right-24: The CRI](efficiency/container_runtime.md)
+
+-   :material-lan: **Networking**
+
+    ---
+
+    Putting a cluster app on the real internet — Gateway API with Traefik as the front door, cert-manager for TLS, and external-dns to point your domain at the cluster.
+
+    [:octicons-arrow-right-24: Gateway API](efficiency/networking/gateway_api.md) · [cert-manager](efficiency/networking/cert_manager.md) · [external-dns](efficiency/networking/external_dns.md)
+
+-   :material-layers-triple: **Advanced Workloads** *(coming soon)*
 
     ---
 
     Beyond Deployments: StatefulSets for stable identity and ordered startup, DaemonSets for node-level agents, and the rollout and scaling controls that keep real applications healthy.
-
--   :material-lan: **Networking** *(coming soon)*
-
-    ---
-
-    Connecting and controlling traffic across the cluster — Ingress controllers and TLS, Network Policies, DNS and service discovery, and how to troubleshoot networking when it breaks.
 
 </div>
 
