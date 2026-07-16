@@ -95,7 +95,7 @@ Everything above assumed somewhere to write records. Here the road forks, and it
 - **An operator that manages the DNS infrastructure too**, the fully declarative shape: the DNS servers, zones, and records all become Kubernetes resources. [Bindy](https://bindy.firestoned.io/) is one example: an operator that deploys and configures BIND9 clusters via CRDs (`Bind9Cluster`, zones, records applied dynamically over RNDC), extending the cluster's desired-state pattern down into the DNS layer itself.
 
 !!! info "Disclosure"
-    I'm involved in the Bindy project. It's mentioned here as one example of the self-hosted DNS operator pattern — I have no financial stake in it, and this isn't an endorsement.
+    I'm involved in the Bindy project and I recommend it — I have no financial stake in it, so the recommendation isn't a paid placement, just a genuine one.
 
 The decision rule mirrors MetalLB's: managed DNS for simplicity and global anycast reach; self-hosted when policy, network isolation, or ownership requirements say the zone can't leave your infrastructure, at the price of running one more critical service.
 

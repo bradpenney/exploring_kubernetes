@@ -186,11 +186,25 @@ exploring_kubernetes/
 
 ---
 
-## Related Projects
+## Where This Fits in the bradpenney.io Network
 
-- [Exploring Enterprise Linux](https://linux.bradpenney.io) - Progressive Linux learning for developers
+Kubernetes sits above containers and below GitOps in the stack — it orchestrates what one site
+teaches and gets driven by the pipeline another one automates:
+
+- **[containers.bradpenney.io](https://containers.bradpenney.io)** - what a Pod's containers
+  actually are, and what `kubelet` is talking to through the CRI. This site orchestrates
+  containers; it doesn't teach what one is — that site does.
+- **[linux.bradpenney.io](https://linux.bradpenney.io)** - every node is a Linux machine, and
+  the namespaces/cgroups a container runtime constructs are Linux kernel mechanisms explained
+  there in depth.
+- **[gitops.bradpenney.io](https://gitops.bradpenney.io)** - how production actually deploys to
+  a cluster: Flux and OCI artifacts, not `kubectl apply` run by hand.
 - [Exploring Computer Science](https://cs.bradpenney.io) - CS theory for working engineers
-- [Exploring Python](https://python.bradpenney.io) - Python from basics to advanced
+- [Exploring Python](https://python.bradpenney.io) - Python from basics to advanced, including
+  Kubernetes automation and client libraries
+
+The short version: containers explains the unit Kubernetes schedules, Linux explains the node
+underneath it, and GitOps explains how a change actually gets there in production.
 
 ---
 

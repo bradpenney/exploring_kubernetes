@@ -56,7 +56,7 @@ The same foundation, deepening as each group lands:
 
 <div class="grid cards two-col" markdown>
 
--   :material-sitemap: **Architecture** *(coming soon)* — control plane vs. nodes, and the reconcile loop
+-   :material-sitemap: **[Architecture](architecture.md)** — control plane vs. nodes, and the reconcile loop
 
 -   :material-cog-sync: **Workloads** *(coming soon)* — Deployments, ReplicaSets, Jobs, basic Ingress
 

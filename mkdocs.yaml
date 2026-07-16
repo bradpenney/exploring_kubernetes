@@ -83,8 +83,7 @@ plugins:
         - "essentials/handling_secrets.md"
         - "essentials/understanding_access.md"
         - "essentials/pod_security_standards.md"
-        # Architecture — DRAFT stub (2026-06-19); light control-plane/nodes intro.
-        - "essentials/architecture.md"
+        # Architecture — PUBLISHED 2026-07-14 (finished stub, light control-plane/nodes intro).
         # Troubleshooting — surgical move of Pod failure-state content out of
         # pods.md (2026-06-19). DRAFT until the fuller diagnostic articles exist.
         - "essentials/troubleshooting_overview.md"
@@ -184,10 +183,10 @@ nav:
 
   - 📦 Essentials:
       - Overview: essentials/overview.md
-      # Architecture — DRAFT stub (2026-06-19). Light intro to control plane vs
+      # Architecture — PUBLISHED 2026-07-14. Light intro to control plane vs
       # nodes + the reconcile loop, so "control plane" is a known term before the
-      # primitives lean on it. Publish FIRST. Fuller depth: mastery/cluster_architecture.md.
-      # - Cluster Architecture: essentials/architecture.md
+      # primitives lean on it. Fuller depth: mastery/cluster_architecture.md (still draft).
+      - Cluster Architecture: essentials/architecture.md
       - Core Primitives:
           - Pods Deep Dive: essentials/pods.md
           - Services - Stable Networking for Pods: essentials/services.md
@@ -229,6 +228,8 @@ nav:
 
   # ⚡ Efficiency - Running Real Workloads (curious dev / junior platform engineer)
   - ⚡ Efficiency:
+      - Architecture:
+          - "The CRI: How kubelet Talks to Container Runtimes": efficiency/container_runtime.md
       - Networking:
           - "Gateway API with Traefik: The Standard Front Door": efficiency/networking/gateway_api.md
           - "cert-manager: Certificates as Cluster Resources": efficiency/networking/cert_manager.md
