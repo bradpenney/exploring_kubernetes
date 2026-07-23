@@ -94,11 +94,8 @@ plugins:
         # published (2026-07-02). New efficiency drafts must be ADDED here.
         - "efficiency/overview.md"
         - "efficiency/workloads_overview.md"
-        - "efficiency/deployments.md"
-        - "efficiency/replicasets.md"
         - "efficiency/statefulsets.md"
         - "efficiency/daemonsets.md"
-        - "efficiency/jobs_cronjobs.md"
         - "efficiency/deployment_strategies.md"
         - "efficiency/networking_overview.md"
         - "efficiency/services_deep_dive.md"
@@ -198,15 +195,20 @@ nav:
           - "LoadBalancer Services: From Cloud to Bare Metal": essentials/loadbalancer_services.md
           - "Kubernetes Ingress: Reading the Front Door You Inherit": essentials/ingress.md
       # Workloads — basic resources app devs already use; moved DOWN from
-      # Efficiency (2026-06-18). Articles to be migrated from efficiency/ and
-      # rewritten to the Essentials dual persona, then uncommented one at a time:
-      # - Workloads:
-      #     - Deployments: essentials/deployments.md
-      #     - ReplicaSets Under the Hood: essentials/replicasets.md
-      #     - Jobs and CronJobs: essentials/jobs_cronjobs.md
-      # Security — UNPUBLISHED until Core Primitives is complete (2026-06-18).
-      # Rewritten to the Essentials dual persona; do NOT uncomment until the
-      # Core Primitives + Workloads articles above are published first.
+      # Efficiency (2026-06-18). Migrated + rewritten to the Essentials dual
+      # persona 2026-07-19; expanded from 3 to 5 articles after finding
+      # Resource Requests/Limits and Probes were stuck at Mastery despite
+      # being fields every app dev sets in their own container spec.
+      - Workloads:
+          - Deployments: essentials/deployments.md
+          - ReplicaSets Under the Hood: essentials/replicasets.md
+          - Jobs and CronJobs: essentials/jobs_cronjobs.md
+          - Resource Requests and Limits: essentials/resource_requests_limits.md
+          - Health Checks and Probes: essentials/probes.md
+      # Security — UNPUBLISHED. Rewritten to the Essentials dual persona.
+      # Core Primitives + Workloads (above) are now both published (2026-07-19) —
+      # the original publish gate is clear. Still commented pending a final
+      # editorial pass before going live.
       # - Security:
       #     - Overview: essentials/security_overview.md
       #     - Securing Your Containers: essentials/security_context.md
@@ -238,11 +240,11 @@ nav:
   #     - Overview: efficiency/overview.md
   #     - Workloads:
   #         - Overview: efficiency/workloads_overview.md
-  #         - Deployments Explained: efficiency/deployments.md
-  #         - ReplicaSets Under the Hood: efficiency/replicasets.md
+  #         # Deployments/ReplicaSets/Jobs & CronJobs migrated to essentials/
+  #         # (2026-07-19) — they're app-dev table stakes, not platform-specific.
+  #         # Only the platform-specific workload types stay here:
   #         - StatefulSets: efficiency/statefulsets.md
   #         - DaemonSets: efficiency/daemonsets.md
-  #         - Jobs and CronJobs: efficiency/jobs_cronjobs.md
   #     - Networking:
   #         - Overview: efficiency/networking_overview.md
   #         - Services Deep Dive: efficiency/services_deep_dive.md

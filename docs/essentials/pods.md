@@ -12,7 +12,7 @@ You've deployed an application. You've seen `kubectl get pods` return a name lik
 
 **Pods are where all of that actually lives.**
 
-When you deploy to Kubernetes, you're creating Pods. When you check logs, you're reading from a Pod. When you debug, you're inspecting a Pod. When you scale, you're adding more Pods. Understanding what a Pod is — and isn't — is the single most important concept in Kubernetes.
+When you deploy to Kubernetes, you're creating Pods. When you check logs, you're reading from a Pod. When you debug, you're inspecting a Pod. When you scale, you're adding more Pods. Understanding what a Pod is (and isn't) is the single most important concept in Kubernetes.
 
 !!! info "What You'll Learn"
     By the end of this article, you'll understand:
@@ -52,7 +52,7 @@ If you've used Docker on your laptop, you're used to the container being the sma
 **The relationship:**
 
 - Your container is your application (the code, the runtime, the dependencies)
-- A Pod is the box that holds your container — plus network configuration, storage, and metadata
+- A Pod is the box that holds your container, plus network configuration, storage, and metadata
 - Kubernetes schedules, manages, and monitors Pods (not containers directly)
 
 **Think of it like a Linux process:** If you've worked with Linux, processes are the atomic unit the OS manages. Pods are the atomic unit Kubernetes manages. Just like you use `ps` to list running processes, you use `kubectl get pods` to list running Pods. If the Linux side feels unfamiliar, [Processes](https://linux.bradpenney.io/essentials/processes/) on the Linux site covers listing and managing them with `ps`, `top`, and signals.
@@ -65,7 +65,7 @@ A Pod can hold one container (most common) or several containers that must run t
 
 Kubernetes adds the Pod wrapper for one critical reason: **co-location guarantees**.
 
-Imagine you have two containers that must run on the same physical machine to work correctly — a web server and a log collector that reads the web server's log files directly from disk. If Kubernetes managed containers individually, it might schedule them on different nodes. The log collector couldn't find the log files.
+Imagine you have two containers that must run on the same physical machine to work correctly: a web server and a log collector that reads the web server's log files directly from disk. If Kubernetes managed containers individually, it might schedule them on different nodes. The log collector couldn't find the log files.
 
 A Pod solves this by **guaranteeing all its containers run on the same node**, every time. The scheduler treats the Pod as a single unit and places all of its containers together.
 
@@ -83,7 +83,7 @@ Containers inside a Pod share three things:
 
     **Why it matters:** The Pod gets one IP address. Every container inside uses `localhost` to talk to the others.
 
-    A web server on port 8080 and a sidecar on port 9090 can communicate on `localhost:8080` and `localhost:9090` — as if they're running on the same machine, because from a network perspective they are.
+    A web server on port 8080 and a sidecar on port 9090 can communicate on `localhost:8080` and `localhost:9090`, as if they're running on the same machine, because from a network perspective they are.
 
     **Implication:** No two containers in the same Pod can bind to the same port number.
 
@@ -106,7 +106,7 @@ Containers inside a Pod share three things:
 </div>
 
 !!! info "How this actually works under the hood"
-    The shared network and (optionally) IPC come from **shared Linux namespaces**. When the kubelet starts a Pod, it first creates a tiny `pause` container that holds the network namespace open; every application container in the Pod then *joins* that namespace instead of creating its own. That's the mechanism behind "one IP, talk over `localhost`" — they're literally in the same network namespace. The shared volumes are bind-mounted into each container's filesystem. Containers do **not** share a process namespace by default (so `ps` in one container won't see the other's processes) unless you set `shareProcessNamespace: true`. Knowing this is the difference between memorizing "Pods share a network" and understanding *why*.
+    The shared network and (optionally) IPC come from **shared Linux namespaces** — the same general kernel mechanism covered in depth in [Namespaces and cgroups: How Linux Isolates a Process](https://linux.bradpenney.io/efficiency/namespaces_cgroups/) on the Linux site, applied here specifically to Pods. When the kubelet starts a Pod, it first creates a tiny `pause` container that holds the network namespace open; every application container in the Pod then *joins* that namespace instead of creating its own. That's the mechanism behind "one IP, talk over `localhost`" — they're literally in the same network namespace. The shared volumes are bind-mounted into each container's filesystem. Containers do **not** share a process namespace by default (so `ps` in one container won't see the other's processes) unless you set `shareProcessNamespace: true`. Knowing this is the difference between memorizing "Pods share a network" and understanding *why*.
 
 ---
 
@@ -124,7 +124,7 @@ This isn't a limitation you tolerate; it's the property that makes self-healing 
 **The direct consequence for anything you build:** never address a Pod by its IP, and never store anything in a Pod you can't afford to lose. Pod IPs are ephemeral, so traffic goes through a **Service** ([next article](services.md)) that tracks healthy Pods and routes to whatever IPs currently exist. Local Pod storage dies with the Pod, so durable state goes to a volume backed by real storage (Mastery covers PVs/PVCs).
 
 !!! warning "Why this matters on a shared cluster"
-    Treating Pods as cattle is also what lets the scheduler pack many teams' workloads onto the same nodes and move them around freely. The moment someone treats a Pod as a pet — SSHing in to fix it by hand, depending on its IP, writing important data to its local disk — they've created a fragile snowflake that breaks the next time the scheduler does its job.
+    Treating Pods as cattle is also what lets the scheduler pack many teams' workloads onto the same nodes and move them around freely. The moment someone treats a Pod as a pet (SSHing in to fix it by hand, depending on its IP, writing important data to its local disk), they've created a fragile snowflake that breaks the next time the scheduler does its job.
 
 ---
 
@@ -147,10 +147,10 @@ A Pod moves through these phases:
 
 ## Creating Pods
 
-You never tell Kubernetes *how* to build a Pod step by step. You write down the Pod you want — a **manifest** — and hand it to the cluster with `kubectl apply`. Kubernetes compares what you asked for against what's actually running and makes reality match. That distinction matters more than it first sounds: the manifest is a durable description you keep in Git, not a one-off command that vanishes from your shell history. Apply the same file a hundred times and you get the same Pod; lose the file and you've lost the source of truth.
+You never tell Kubernetes *how* to build a Pod step by step. You write down the Pod you want, a **manifest**, and hand it to the cluster with `kubectl apply`. Kubernetes compares what you asked for against what's actually running and makes reality match. That distinction matters more than it first sounds: the manifest is a durable description you keep in Git, not a one-off command that vanishes from your shell history. Apply the same file a hundred times and you get the same Pod; lose the file and you've lost the source of truth.
 
 !!! warning "`kubectl run` is for experimentation only"
-    There *is* an imperative shortcut — `kubectl run nginx --image=nginx:1.21` creates a Pod in a single line. **Use it for nothing but throwaway experiments.** It leaves no manifest behind: nothing in Git, nothing to review, nothing to re-apply, nothing to roll back to. Production runs off committed YAML, not shell history. Everything here is declarative: edit YAML, `kubectl apply`, commit.
+    There *is* an imperative shortcut: `kubectl run nginx --image=nginx:1.21` creates a Pod in a single line. **Use it for nothing but throwaway experiments.** It leaves no manifest behind: nothing in Git, nothing to review, nothing to re-apply, nothing to roll back to. Production runs off committed YAML, not shell history. Everything here is declarative: edit YAML, `kubectl apply`, commit.
 
 ### Single-Container Pod
 
@@ -186,7 +186,11 @@ spec:
 6. Always pin to a specific version — never use `:latest` in real deployments
 7. Documents which port the container listens on (doesn't actually open the port — that's what Services are for)
 
-Read it top to bottom and you can now name what every block is doing: the API to talk to, the kind of object, who it is, and what it should look like. No magic — just the four keys, filled in. Hand it to the cluster:
+Read it top to bottom and you can now name what every block is doing: the API to talk to, the kind of object, who it is, and what it should look like. No magic — just the four keys, filled in.
+
+`apiVersion`, `kind`, and `metadata` are generic — every Kubernetes object has them. What's Pod-specific is each entry in `containers:`, and that maps to one real Go struct: [`Container`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L2908-L3114) in the Kubernetes API source. It's a big struct — `name`/`image`/`ports` here are three of dozens of fields on it, including the `resources` ([Resource Requests and Limits](resource_requests_limits.md)) and `livenessProbe`/`readinessProbe` ([Health Checks and Probes](probes.md)) blocks covered in their own articles later.
+
+Hand it to the cluster:
 
 ```bash title="Apply and verify"
 kubectl apply -f nginx-pod.yaml
@@ -200,17 +204,19 @@ kubectl get pods
 That `READY 1/1` is worth reading closely: one of the Pod's one containers is ready, and `STATUS Running` means it started and hasn't crashed. A two-container Pod would read `2/2` when healthy — and the moment it shows `1/2`, you know one container is in trouble while the other carries on.
 
 !!! warning "Use Deployments in practice"
-    You'll rarely create standalone Pods directly in real work. A standalone Pod has no controller watching it, so if it crashes hard or its node dies, nothing recreates it — it's just gone. A Deployment (Efficiency tier) adds that reconciliation loop, which is why real workloads are always managed by a controller, never naked Pods.
+    You'll rarely create standalone Pods directly in real work. A standalone Pod has no controller watching it, so if it crashes hard or its node dies, nothing recreates it — it's just gone. A [Deployment](deployments.md) adds that reconciliation loop, which is why real workloads are always managed by a controller, never naked Pods.
 
 ---
 
 ## Multi-Container Patterns
 
+Co-location is the whole reason a Pod can safely hold more than one container: two processes that must share a filesystem or a network namespace can only get that guarantee from being in the same Pod, not from being scheduled onto the same node by luck.
+
 ### Sidecar Pattern
 
 The most common multi-container pattern: a "helper" container that supports the main container without being part of the main application.
 
-Notice the shape of it below: `containers:` is a **list**, and each container is its own self-contained definition that begins with a `- name:` entry. The two highlighted lines are exactly where each container's definition starts — everything indented beneath a `- name:` (its image, ports, volume mounts) belongs to *that* container until the next `- name:` begins the next one.
+Notice the shape of it below: `containers:` is a **list**, and each container is its own self-contained definition that begins with a `- name:` entry. The two highlighted lines are exactly where each container's definition starts: everything indented beneath a `- name:` (its image, ports, volume mounts) belongs to *that* container until the next `- name:` begins the next one.
 
 ```yaml title="web-with-log-sidecar.yaml" linenums="1" hl_lines="9 17"
 apiVersion: v1
@@ -247,7 +253,7 @@ spec:
 4. Same volume, different mount path — the sidecar sees nginx's logs at `/logs`
 5. `emptyDir` creates a temporary directory that exists for the lifetime of the Pod; both containers can read and write to it
 
-**Key insight:** Both containers communicate through the shared volume. The web server doesn't know or care about the sidecar. The sidecar doesn't need to understand nginx — it just tails a file.
+**Key insight:** Both containers communicate through the shared volume. The web server doesn't know or care about the sidecar. The sidecar doesn't need to understand nginx. It just tails a file.
 
 **When to use sidecars:** Log shipping, metrics collection, configuration reloading, or proxies (like Envoy/Istio service mesh proxies).
 
@@ -259,7 +265,7 @@ Init containers run **before** your main application container starts. They run 
 
 **Common use cases:**
 
-- Wait for a dependency — a cache, message broker, or backend API — to be reachable
+- Wait for a dependency (a cache, message broker, or backend API) to be reachable
 - Run a schema migration against your managed (external) database before the app boots
 - Copy configuration files into a shared volume the main container reads
 
@@ -288,6 +294,8 @@ spec:
 ---
 
 ## Working with Pods: Essential kubectl Commands
+
+Four things you'll do constantly, grouped by how much damage each one can do if you get it wrong:
 
 <div class="grid cards" markdown>
 
@@ -403,7 +411,7 @@ Use multiple containers in a Pod only when:
 
         Kubernetes scales horizontally by adding more Pods — each Pod runs on a potentially different node and gets its own IP. Adding a second container inside the same Pod doesn't help: both would share the same node and the same IP, creating a more complex single point of failure.
 
-        This horizontal scaling (more Pods, not bigger Pods) is exactly what Deployments automate. You'll cover this in the Efficiency tier.
+        This horizontal scaling (more Pods, not bigger Pods) is exactly what Deployments automate — covered next in [Deployments](deployments.md).
 
 ??? question "Exercise 3: Deploy, Inspect, and Debug"
     Create the `nginx-pod.yaml` from this article, apply it, and answer these questions using only `kubectl` commands:

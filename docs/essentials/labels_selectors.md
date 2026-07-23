@@ -61,7 +61,7 @@ metadata:
     version: v1.4.2
 ```
 
-The design decision worth pausing on: controllers never hold direct references to the objects they manage. A Service doesn't store "Pod abc123, Pod def456." It stores a *selector*, and the set of matching Pods is recomputed continuously. That indirection is exactly why Kubernetes self-heals — when a Pod dies and a new one is created with the same labels, it silently joins every Service, Deployment, and policy whose selector it matches. Nothing has to be rewired, because nothing was wired by name in the first place.
+The design decision worth pausing on: controllers never hold direct references to the objects they manage. A Service doesn't store "Pod abc123, Pod def456." It stores a *selector*, and the set of matching Pods is recomputed continuously. That indirection is exactly why Kubernetes self-heals: when a Pod dies and a new one is created with the same labels, it silently joins every Service, Deployment, and policy whose selector it matches. Nothing has to be rewired, because nothing was wired by name in the first place.
 
 This is the same idea as a database query versus a hardcoded primary-key list: the query keeps working as rows come and go. Internalize that and the rest of this article is just syntax.
 
@@ -72,7 +72,7 @@ This is the same idea as a database query versus a hardcoded primary-key list: t
 
 ## Adding Labels
 
-Labels live in the manifest, right alongside the object's name — set there, they're part of the desired state that `kubectl apply` reconciles:
+Labels live in the manifest, right alongside the object's name: set there, they're part of the desired state that `kubectl apply` reconciles.
 
 ``` yaml title="pod-with-labels.yaml" linenums="1"
 apiVersion: v1
@@ -96,7 +96,11 @@ spec:
 
 ## Querying with Selectors
 
+Kubernetes actually supports two selector grammars, not one, and they're not interchangeable everywhere: `kubectl` accepts both, but plenty of API objects (a Service's `spec.selector`, notably) only understand the simpler one.
+
 ### Equality-based
+
+The grammar you'll use from the command line constantly:
 
 ``` bash title="Equality selectors (✅ read-only)"
 kubectl get pods -l app=backend  # (1)!
@@ -112,6 +116,8 @@ kubectl get pods -l app=backend --show-labels  # (4)!
 
 ### Set-based
 
+The richer grammar, for queries equality alone can't express:
+
 ``` bash title="Set-based selectors (✅ read-only)"
 kubectl get pods -l 'app in (backend,frontend)'  # (1)!
 kubectl get pods -l 'environment notin (prod)'  # (2)!
@@ -124,11 +130,13 @@ kubectl get pods -l '!tier'  # (4)!
 3. Label exists (any value).
 4. Label absent.
 
+Those four map directly onto `In`, `NotIn`, `Exists`, and `DoesNotExist` — the valid values for `Operator` on each requirement inside [`LabelSelector`, pkg/apis/meta/v1/types.go](https://github.com/kubernetes/apimachinery/blob/v0.36.2/pkg/apis/meta/v1/types.go#L1319-L1334) in the `apimachinery` repo (not `api`, since selectors are shared plumbing, not a resource type of their own). This is the structured selector type that ReplicaSets, Deployments, and most controllers embed in their `spec.selector`.
+
 ---
 
 ## The Recommended Labels
 
-Kubernetes defines a set of common labels under the `app.kubernetes.io/` prefix. They're not mandatory, but Helm, dashboards, and observability tooling key off them — adopt them and your resources slot into the ecosystem for free:
+Kubernetes defines a set of common labels under the `app.kubernetes.io/` prefix. They're not mandatory, but Helm, dashboards, and observability tooling key off them. Adopt them and your resources slot into the ecosystem for free:
 
 ``` yaml title="recommended-labels.yaml" linenums="1"
 metadata:
@@ -145,13 +153,13 @@ metadata:
 2. The component's role within the larger app.
 3. The higher-level application this belongs to — lets tools group everything in one system.
 
-For your own organizational labels (`environment`, `team`, `tier`), keep them short, consistent, and *agreed on across teams* — inconsistent labelling is what makes cluster-wide queries and cost reporting useless.
+For your own organizational labels (`environment`, `team`, `tier`), keep them short, consistent, and *agreed on across teams*: inconsistent labelling is what makes cluster-wide queries and cost reporting useless.
 
 ---
 
 ## A Selector Inside a Service
 
-You'll meet selectors most often in a Service's `spec.selector` — equality-based, an AND of exact matches:
+You'll meet selectors most often in a Service's `spec.selector`, equality-based, an AND of exact matches:
 
 ``` yaml title="service.yaml" linenums="1"
 apiVersion: v1
@@ -169,7 +177,9 @@ spec:
 
 1. Matches Pods that have **both** labels. A Pod with extra labels still matches; a Pod missing either one does not.
 
-When a selector matches *no* Pods, the Service's endpoint list is empty and traffic goes nowhere — diagnosing that mismatch is its own topic, covered in the Troubleshooting section.
+That's not a design choice you have to take on faith: [`ServiceSpec.Selector`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L5979-L6227) is typed as plain `map[string]string`, not the structured `LabelSelector` above. A Service literally *cannot* express set-based matching — the field it's stored in has no room for operators. Compare that to a ReplicaSet or Deployment's `spec.selector`, which is the full `LabelSelector` type and supports both.
+
+When a selector matches *no* Pods, the Service's endpoint list is empty and traffic goes nowhere. Diagnosing that mismatch is its own topic, covered in the Troubleshooting section.
 
 ---
 
@@ -223,7 +233,7 @@ When a selector matches *no* Pods, the Service's endpoint list is empty and traf
 
 You've finished **Essentials: Core Primitives**. You can reason about Pods, Services, configuration, namespaces, and the label-driven query layer that connects them — not just how to create each, but *why* Kubernetes is built this way and what each means for a shared cluster.
 
-That foundation is exactly what the next tier assumes. **Efficiency** steps up to the intermediate platform-engineer's job: running these primitives at scale — Deployments and rollout strategies, StatefulSets and DaemonSets, Jobs, and the networking layer (Ingress, NetworkPolicies, DNS) that ties real applications together.
+That foundation is exactly what **[Workloads](deployments.md)** builds on next, still in Essentials: Deployments, ReplicaSets, Jobs and CronJobs, resource requests/limits, and health probes, the resources every app dev actually creates day to day. The selectors from this article are how every one of them finds the Pods it manages. Efficiency then steps up to the intermediate platform-engineer's job: StatefulSets and DaemonSets, rollout strategies, and the networking layer (Ingress controllers, NetworkPolicies, DNS) that ties real applications together.
 
 ---
 

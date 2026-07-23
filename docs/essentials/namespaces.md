@@ -8,9 +8,9 @@ description: "How Kubernetes namespaces scope resources and enable multi-tenancy
 !!! tip "Part of Essentials: Core Primitives"
     This article is part of [Essentials: Core Primitives](overview.md). It assumes you're comfortable with [Pods](pods.md), [Services](services.md), and [ConfigMaps and Secrets](config_and_secrets.md).
 
-Almost everything you've created so far — Pods, Services, ConfigMaps, Secrets — lives **inside a namespace**. It's the partition that lets dozens of teams share one cluster without their object names colliding, lets one cluster hold `dev` and `staging` side by side, and gives the platform team a unit to attach quotas and access rules to.
+Almost everything you've created so far (Pods, Services, ConfigMaps, Secrets) lives **inside a namespace**. It's the partition that lets dozens of teams share one cluster without their object names colliding, lets one cluster hold `dev` and `staging` side by side, and gives the platform team a unit to attach quotas and access rules to.
 
-The trap is assuming a namespace is more of a wall than it is. It cleanly separates *names* and *API objects*. It does **not**, by default, separate network traffic or grant any security isolation. Knowing exactly where that boundary stops — and what you bolt on to make it real — is what separates someone who *uses* namespaces from someone who can be trusted to *carve up* a cluster.
+The trap is assuming a namespace is more of a wall than it is. It cleanly separates *names* and *API objects*. It does **not**, by default, separate network traffic or grant any security isolation. Knowing exactly where that boundary stops, and what you bolt on to make it real, is what separates someone who *uses* namespaces from someone who can be trusted to *carve up* a cluster.
 
 !!! info "What You'll Learn"
     By the end of this article, you'll understand:
@@ -51,7 +51,7 @@ graph TD
 
 ## What a Namespace Actually Scopes
 
-A namespace is a scope for the *names* of namespaced API objects. Two teams can both have a Deployment named `web-app` as long as they're in different namespaces — the fully qualified identity is `namespace/name`, not just `name`.
+A namespace is a scope for the *names* of namespaced API objects. Two teams can both have a Deployment named `web-app` as long as they're in different namespaces: the fully qualified identity is `namespace/name`, not just `name`.
 
 <div class="grid cards two-col" markdown>
 
@@ -87,23 +87,25 @@ kubectl api-resources --namespaced=false  # (2)!
 1. Everything scoped to a namespace.
 2. Cluster-scoped resources.
 
-That `api-resources` split is worth internalizing — it tells you, for any object type, whether a `-n` flag even applies.
+That `api-resources` split is worth internalizing: it tells you, for any object type, whether a `-n` flag even applies.
 
 ---
 
 ## Why Namespaces Exist
 
+Three overlapping reasons, in increasing order of how much they actually matter day to day:
+
 ### Name collisions
 
-Without namespaces, object names would have to be globally unique across the cluster — unworkable the moment more than one team shares it. Namespaces make `team-a/web-app` and `team-b/web-app` distinct objects that never interfere.
+Without namespaces, object names would have to be globally unique across the cluster: unworkable the moment more than one team shares it. Namespaces make `team-a/web-app` and `team-b/web-app` distinct objects that never interfere.
 
 ### Multi-tenancy on a shared cluster
 
-This is the real reason they matter operationally. One cluster, many tenants — teams, environments, or both. Each tenant gets a namespace, and the platform team hangs the controls off it: access rules, resource quotas, and network policy all attach *to* the namespace. That's why "give team-c their own namespace" is shorthand for an entire onboarding workflow.
+This is the real reason they matter operationally. One cluster, many tenants: teams, environments, or both. Each tenant gets a namespace, and the platform team hangs the controls off it: access rules, resource quotas, and network policy all attach *to* the namespace. That's why "give team-c their own namespace" is shorthand for an entire onboarding workflow.
 
 ### Environment separation
 
-`dev`, `staging`, and `prod` as namespaces in one cluster is common for smaller setups — same manifests, different namespace. Be aware of the tradeoff: it's cheaper than separate clusters, but a namespace is a *soft* boundary (see below), so true prod isolation usually means a separate cluster, not just a separate namespace.
+`dev`, `staging`, and `prod` as namespaces in one cluster is common for smaller setups: same manifests, different namespace. Be aware of the tradeoff: it's cheaper than separate clusters, but a namespace is a *soft* boundary (see below), so true prod isolation usually means a separate cluster, not just a separate namespace.
 
 ---
 
@@ -129,6 +131,8 @@ kubectl get namespaces
 
 ## Creating Namespaces
 
+A namespace is a Kubernetes object like any other, so the same declarative-vs-imperative split applies here too.
+
 ### Declaratively (the default)
 
 A namespace is a versioned object like anything else, and putting it in Git lets you attach labels that drive policy (cost allocation, NetworkPolicy targeting, environment tagging):
@@ -147,6 +151,8 @@ metadata:
 1. Labels on the namespace are how NetworkPolicies and tooling target it — not decoration.
 2. Kubernetes injects this immutable label on every namespace automatically; you can select on it.
 
+Worth a glance for what it *doesn't* have: [`NamespaceSpec`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L7077-L7084) in the Kubernetes API source is almost empty — one `Finalizers` field. A namespace's real enforcement power lives in the separate objects below, not in the namespace's own `spec`.
+
 ``` bash title="Apply it (⚠️ creates a resource)"
 kubectl apply -f namespace.yaml
 ```
@@ -158,7 +164,7 @@ kubectl apply -f namespace.yaml
 
 ## Targeting the Right Namespace
 
-Every command runs against *some* namespace. Getting this wrong is the classic "my resources vanished" confusion — they're fine, you're just looking in the wrong place.
+Every command runs against *some* namespace. Getting this wrong is the classic "my resources vanished" confusion: they're fine, you're just looking in the wrong place.
 
 ``` bash title="Namespace targeting (✅ read-only)"
 kubectl get pods -n team-a-dev  # (1)!
@@ -179,9 +185,9 @@ kubectl config set-context --current --namespace=team-a-dev  # (1)!
 1. Now bare commands target `team-a-dev`.
 
 !!! tip "kubens"
-    On a multi-namespace cluster, `kubens` (from the `kubectx` project) switches your default namespace interactively — much faster than the `set-context` incantation. Worth installing.
+    On a multi-namespace cluster, `kubens` (from the `kubectx` project) switches your default namespace interactively, much faster than the `set-context` incantation. Worth installing.
 
-Prefer **not** hardcoding `namespace:` in manifests — leaving it out keeps them portable, with the namespace supplied at apply time (`-n`, your context, or Kustomize). Hardcode it only when an object must always live in one place.
+Prefer **not** hardcoding `namespace:` in manifests: leaving it out keeps them portable, with the namespace supplied at apply time (`-n`, your context, or Kustomize). Hardcode it only when an object must always live in one place.
 
 ---
 
@@ -197,11 +203,13 @@ Both the quota and LimitRange below hinge on two words — the two most-confused
 !!! warning "The model to unlearn"
     The wrong mental model — "`requests` is how much I want, `limits` is how much I *really* want" — is everywhere, and it quietly wastes clusters. Say it the right way until it sticks: **`requests` is the minimum to start; `limits` is the maximum before Kubernetes steps in.** Padding requests "to be safe" reserves capacity nobody uses and makes the scheduler treat a half-empty node as full.
 
+This is the namespace-level view: aggregate ceilings across every tenant. For the per-container mechanics behind the same two words, including why a CPU limit can throttle a Pod whose average usage graph looks fine, see [Resource Requests and Limits](resource_requests_limits.md).
+
 ---
 
 ## Resource Quotas: Stopping One Tenant from Eating the Cluster
 
-A namespace with no quota can schedule Pods until the cluster runs out of capacity — and on a shared cluster that's *everyone's* problem. A `ResourceQuota` puts a hard ceiling on aggregate consumption in the namespace:
+A namespace with no quota can schedule Pods until the cluster runs out of capacity. On a shared cluster, that's *everyone's* problem. A `ResourceQuota` puts a hard ceiling on aggregate consumption in the namespace:
 
 ``` yaml title="resource-quota.yaml" linenums="1"
 apiVersion: v1
@@ -222,6 +230,8 @@ spec:
 1. Sum of all container CPU *requests* in the namespace can't exceed 10 cores.
 2. Object-count ceilings matter too — runaway controllers create Pods, not just consume CPU.
 
+The `hard:` block corresponds to exactly one field — `Hard` — on [`ResourceQuotaSpec`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L7822-L7838) in the Kubernetes API source. The struct also has `scopes`/`scopeSelector` fields for restricting a quota to a subset of objects (only `BestEffort` Pods, say) — a real feature, out of scope for this article.
+
 ``` bash title="Check quota usage (✅ read-only)"
 kubectl describe resourcequota team-a-quota -n team-a-dev  # (1)!
 ```
@@ -235,7 +245,7 @@ kubectl describe resourcequota team-a-quota -n team-a-dev  # (1)!
 
 ## LimitRanges: Defaults and Guardrails per Container
 
-Where a `ResourceQuota` caps the *namespace total*, a `LimitRange` sets *per-container* defaults — so Pods that don't declare resources still satisfy the quota:
+Where a `ResourceQuota` caps the *namespace total*, a `LimitRange` sets *per-container* defaults, so Pods that don't declare resources still satisfy the quota:
 
 ``` yaml title="limit-range.yaml" linenums="1"
 apiVersion: v1
@@ -256,6 +266,8 @@ spec:
 
 1. Applied as the container's *limit* if it doesn't set one.
 2. Applied as the container's *request* if it doesn't set one — this is what auto-satisfies a quota.
+
+`default`, `defaultRequest`, and the `max`/`min` bounds mentioned next are all fields on [`LimitRangeItem`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L7689-L7708) in the Kubernetes API source — a `LimitRangeSpec` is just a list of these.
 
 A `LimitRange` can also set `max`/`min` bounds that reject any container asking for too much or too little. Together, a `ResourceQuota` plus a `LimitRange` are the standard "fair-share" setup a platform team drops on every tenant namespace.
 
@@ -293,11 +305,11 @@ This is exactly the cluster-DNS machinery from the [Services article](services.m
 
 ## The Soft-Boundary Reality
 
-Here's the part people get wrong: **by default, a Pod in one namespace can reach a Service in any other namespace.** The namespace scopes names and gives you a handle for policy — it does **not** isolate network traffic, and it grants **no** security on its own.
+Here's the part people get wrong: **by default, a Pod in one namespace can reach a Service in any other namespace.** The namespace scopes names and gives you a handle for policy. It does **not** isolate network traffic, and it grants **no** security on its own.
 
 Real isolation is something you add:
 
-<div class="grid cards" markdown>
+<div class="grid cards two-col" markdown>
 
 -   :material-shield-account: **RBAC** = who can touch the objects
 
@@ -327,7 +339,7 @@ Real isolation is something you add:
 kubectl delete namespace team-a-dev
 ```
 
-If the namespace then hangs in `Terminating` instead of disappearing, that's a finalizer waiting on cleanup that isn't happening — a troubleshooting topic in its own right, covered in the Troubleshooting section.
+If the namespace then hangs in `Terminating` instead of disappearing, that's a finalizer waiting on cleanup that isn't happening, a troubleshooting topic in its own right, covered in the Troubleshooting section.
 
 ---
 
@@ -399,7 +411,7 @@ If the namespace then hangs in `Terminating` instead of disappearing, that's a f
 
 ## What's Next?
 
-You can scope, isolate, and rein in resources per namespace — and you know precisely where that boundary stops. The last primitive ties the whole system together: the key/value query layer that Services, Deployments, quotas, and NetworkPolicies all use to find the objects they act on.
+You can scope, isolate, and rein in resources per namespace, and you know precisely where that boundary stops. The last primitive ties the whole system together: the key/value query layer that Services, Deployments, quotas, and NetworkPolicies all use to find the objects they act on.
 
 **Next:** [Labels and Selectors](labels_selectors.md) — the query language wired through every controller in Kubernetes.
 

@@ -8,11 +8,11 @@ description: "How Kubernetes ConfigMaps and Secrets keep config out of images �
 !!! tip "Part of Essentials: Core Primitives"
     This article is part of [Essentials: Core Primitives](overview.md). It assumes you're comfortable with [Pods](pods.md) and [Services](services.md).
 
-A container image should be **environment-agnostic**. The same `myapp:v1.4.2` artifact that runs in dev should run in staging and production unchanged — same bytes, same SHA. The only thing that differs is configuration: the database URL, the log level, the feature flags, the API credentials.
+A container image should be **environment-agnostic**. The same `myapp:v1.4.2` artifact that runs in dev should run in staging and production unchanged: same bytes, same SHA. The only thing that differs is configuration: the database URL, the log level, the feature flags, the API credentials.
 
 Bake any of that into the image and you've broken the contract. Now "promote to prod" means "rebuild," every environment is a different artifact, and a credential is sitting in an image layer that anyone with pull access can `docker history` out of.
 
-**ConfigMaps and Secrets are how Kubernetes keeps configuration out of the image** — as cluster objects you mount or inject at runtime. ConfigMaps for non-sensitive data, Secrets for sensitive data. Understanding the difference between them, and the real (and limited) security boundary a Secret provides, is the point of this article.
+**ConfigMaps and Secrets are how Kubernetes keeps configuration out of the image:** as cluster objects you mount or inject at runtime. ConfigMaps for non-sensitive data, Secrets for sensitive data. Understanding the difference between them, and the real (and limited) security boundary a Secret provides, is the point of this article.
 
 !!! info "What You'll Learn"
     By the end of this article, you'll understand:
@@ -54,18 +54,18 @@ graph TD
 
 ## Why Externalize Configuration?
 
-The principle predates Kubernetes — it's [config factor III of the Twelve-Factor App](https://12factor.net/config): keep config in the environment, not the code. Kubernetes just gives you typed objects to do it with.
+The principle predates Kubernetes: it's [config factor III of the Twelve-Factor App](https://12factor.net/config), keep config in the environment, not the code. Kubernetes just gives you typed objects to do it with.
 
 The payoff is concrete:
 
 | Benefit | What it gives you |
 | :--- | :--- |
-| **One artifact, every environment** | Promote the exact image you tested — differences live in the ConfigMap/Secret, not a rebuild. |
-| **Config changes without a code redeploy** | Update the object and restart the workload — no CI pipeline run. |
-| **Separation of duties** | The config repo and the secret manager can be owned by different people than the application code. On a GitOps-managed cluster this matters a lot — app config is one concern, credentials are another. |
+| **One artifact, every environment** | Promote the exact image you tested, differences live in the ConfigMap/Secret, not a rebuild. |
+| **Config changes without a code redeploy** | Update the object and restart the workload, no CI pipeline run. |
+| **Separation of duties** | The config repo and the secret manager can be owned by different people than the application code. On a GitOps-managed cluster this matters a lot: app config is one concern, credentials are another. |
 | **Auditability** | Configuration is a versioned object, not a value buried in an image layer. |
 
-ConfigMaps and Secrets are nearly identical mechanically. The split exists so that the *sensitive* values can be treated differently — restricted by access controls (who's allowed to read them), encrypted at rest, kept out of Git, sourced from a real secret manager. Use the right one for the data; don't put a password in a ConfigMap because it was convenient.
+ConfigMaps and Secrets are nearly identical mechanically. The split exists so that the *sensitive* values can be treated differently: restricted by access controls (who's allowed to read them), encrypted at rest, kept out of Git, sourced from a real secret manager. Use the right one for the data; don't put a password in a ConfigMap because it was convenient.
 
 ---
 
@@ -95,6 +95,8 @@ data:  # (1)!
 2. Feature flags are the textbook ConfigMap use case — flip behaviour without a rebuild.
 3. A value can be a whole file. The `|` block scalar preserves newlines, so `app.properties` mounts as a real multi-line file.
 
+Unlike Deployments or Services, a ConfigMap has no `spec`: `data` sits directly on the object. That's visible in the real struct: [`ConfigMap`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L8077-L8109) in the Kubernetes API source.
+
 ``` bash title="Apply it (⚠️ creates/updates a resource)"
 kubectl apply -f app-config.yaml
 # configmap/app-config created
@@ -107,7 +109,7 @@ kubectl apply -f app-config.yaml
 
 ## Consuming Config in a Pod
 
-There are two ways to get a ConfigMap's data into a container, and the choice has real consequences — especially for updates (covered below).
+There are two ways to get a ConfigMap's data into a container, and the choice has real consequences, especially for updates (covered below).
 
 === "As environment variables"
 
@@ -134,7 +136,7 @@ There are two ways to get a ConfigMap's data into a container, and the choice ha
     1. Map one specific key to one env var — use this when the var name differs from the key.
     2. Inject **every** key in the ConfigMap as an env var at once. Convenient, but it pulls in keys like `app.properties` too (which becomes an awkward multi-line env var).
 
-    **Tradeoff:** simplest for apps that already read config from the environment. But env vars are **read once at process start** — a ConfigMap change does nothing until the Pod restarts.
+    **Tradeoff:** simplest for apps that already read config from the environment. But env vars are **read once at process start**: a ConfigMap change does nothing until the Pod restarts.
 
 === "As mounted files"
 
@@ -201,11 +203,15 @@ Secrets invert the declarative-first rule for one reason: **you must not commit 
     1. `Opaque` is the generic type — arbitrary key/values. Specialized types exist (see the table below).
     2. `stringData` takes plaintext and Kubernetes base64-encodes it for you — far less error-prone than hand-encoding into a `data:` block. Useful for templating tools, but the rendered file still holds the secret, so it must never be committed.
 
+    Same shape as ConfigMap — `type`, `data`, and `stringData` all sit directly on the object, no `spec`: [`Secret`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L7933-L7968) in the Kubernetes API source. The doc comment right above it is a genuinely useful read: it's what states the byte-size limit on `Data` in the first place.
+
 === "Production (External Secrets)"
 
-    In production you don't manage Secret YAML by hand at all. A controller like the [External Secrets Operator](https://external-secrets.io/) pulls values from a real secret manager (HashiCorp Vault, AWS Secrets Manager, GCP Secret Manager) and *materializes* the Kubernetes Secret for you. The source of truth is the vault; Git holds only a non-sensitive `ExternalSecret` reference. This is the pattern to reach for once you're past a dev cluster — it's covered properly in the Mastery tier.
+    In production you don't manage Secret YAML by hand at all. A controller like the [External Secrets Operator](https://external-secrets.io/) pulls values from a real secret manager (HashiCorp Vault, AWS Secrets Manager, GCP Secret Manager) and *materializes* the Kubernetes Secret for you. The source of truth is the vault; Git holds only a non-sensitive `ExternalSecret` reference. This is the pattern to reach for once you're past a dev cluster. It's covered properly in the Mastery tier.
 
 ### Consuming Secrets — prefer files over env vars
+
+Same two mechanisms as a ConfigMap, but the stakes are higher: which one you pick determines whether a credential ends up somewhere it can leak.
 
 ``` yaml title="pod-secret-volume.yaml" linenums="1"
 apiVersion: v1
@@ -231,7 +237,7 @@ spec:
 2. `0400` = readable only by the container's user. Lock the file down.
 
 !!! warning "Why mounted files beat env vars for secrets"
-    Environment variables leak. `kubectl exec <pod> -- env` dumps them in one command, child processes inherit them, and crash/observability tooling routinely captures the full environment into logs. A mounted Secret file isn't sprayed across the process tree and can be permission-restricted. When you have the choice, mount secrets as files — reserve secret env vars for apps that genuinely can't read from a path.
+    Environment variables leak. `kubectl exec <pod> -- env` dumps them in one command, child processes inherit them, and crash/observability tooling routinely captures the full environment into logs. A mounted Secret file isn't sprayed across the process tree and can be permission-restricted. When you have the choice, mount secrets as files. Reserve secret env vars for apps that genuinely can't read from a path.
 
 ---
 
@@ -248,7 +254,7 @@ spec:
 | `kubernetes.io/ssh-auth` | SSH private key | `ssh-privatekey` |
 | `kubernetes.io/service-account-token` | Service-account token | managed by the API server |
 
-The registry-pull case comes up constantly — a Pod referencing a private image needs an `imagePullSecrets` entry pointing at a `dockerconfigjson` Secret, or it sits in `ImagePullBackOff`:
+The registry-pull case comes up constantly: a Pod referencing a private image needs an `imagePullSecrets` entry pointing at a `dockerconfigjson` Secret, or it sits in `ImagePullBackOff`:
 
 ``` yaml title="private-image-pull.yaml" linenums="1"
 spec:
@@ -272,7 +278,7 @@ Change a ConfigMap or Secret and the behaviour depends entirely on *how it's con
 | **Environment variable** | **Nothing.** Env vars are set at process start. The running Pod keeps the old value until it's recreated. |
 | **Mounted file** | The kubelet refreshes the file automatically, typically within a minute (it's eventually consistent, not instant). The app sees the new value *if it re-reads the file*. |
 
-Because env-var config can't be hot-reloaded, the standard way to roll out a config change to running Pods is to trigger a fresh rollout — which the workload controller does declaratively:
+Because env-var config can't be hot-reloaded, the standard way to roll out a config change to running Pods is to trigger a fresh rollout, which the workload controller does declaratively:
 
 ``` bash title="Roll the workload to pick up new config (⚠️ restarts Pods)"
 kubectl rollout restart deployment/myapp
@@ -287,6 +293,8 @@ This recreates the Pods (respecting the Deployment's rollout strategy, so it's z
 
 ## Common Pitfalls
 
+The three symptoms that trace straight back to something covered above:
+
 ??? warning "ConfigMap or Secret not found — Pod stuck in `CreateContainerConfigError`"
     The Pod references a ConfigMap/Secret that doesn't exist in **its namespace**. These objects are namespace-scoped (see [Namespaces](namespaces.md)) and there is no cross-namespace reference — a Pod in `dev` cannot mount a Secret from `staging`.
 
@@ -299,7 +307,7 @@ This recreates the Pods (respecting the Deployment's rollout strategy, so it's z
     You're consuming it as an **environment variable**. Env vars don't hot-reload. Either switch to a mounted file (if the app re-reads it) or `kubectl rollout restart` the workload.
 
 ??? warning "Treated a Secret as if it were encrypted"
-    It isn't. If a base64 value ended up somewhere it shouldn't — a committed manifest, a Slack paste, a log line — treat it as **compromised and rotate it**. Decoding it back is one command.
+    It isn't. If a base64 value ended up somewhere it shouldn't (a committed manifest, a Slack paste, a log line), treat it as **compromised and rotate it**. Decoding it back is one command.
 
 ---
 
@@ -379,7 +387,7 @@ This recreates the Pods (respecting the Deployment's rollout strategy, so it's z
 
 ## What's Next?
 
-You can keep configuration out of your images and reason honestly about what a Secret does and doesn't protect. Next: the boundary that scopes all of these objects — and the multi-tenancy controls built on it.
+You can keep configuration out of your images and reason honestly about what a Secret does and doesn't protect. Next: the boundary that scopes all of these objects, and the multi-tenancy controls built on it.
 
 **Next:** [Namespaces](namespaces.md) — isolation boundaries, resource quotas, and the soft-vs-hard reality of separating teams on one cluster.
 

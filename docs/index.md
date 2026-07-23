@@ -79,11 +79,19 @@ Not how to *use* each primitive, but what it *is* — why Kubernetes works this 
 
     [:octicons-arrow-right-24: LoadBalancer Services](essentials/loadbalancer_services.md) · [Ingress](essentials/ingress.md)
 
--   :material-layers-triple: **Workloads & Security** *(coming soon)*
+-   :material-layers-triple: **Workloads**
 
     ---
 
-    The workloads every app dev already uses — Deployments, ReplicaSets, Jobs — and the security you own: `securityContext`, secret hygiene, RBAC, and Pod Security Standards.
+    The workloads every app dev already uses — Deployments, ReplicaSets, Jobs and CronJobs — plus the two fields every real container spec needs: resource requests/limits and health probes.
+
+    [:octicons-arrow-right-24: Deployments](essentials/deployments.md) · [ReplicaSets](essentials/replicasets.md) · [Jobs & CronJobs](essentials/jobs_cronjobs.md) · [Resource Requests & Limits](essentials/resource_requests_limits.md) · [Probes](essentials/probes.md)
+
+-   :material-shield-lock: **Security** *(coming soon)*
+
+    ---
+
+    The security you own as an app dev: `securityContext`, secret hygiene, RBAC from both sides, and Pod Security Standards.
 
 </div>
 

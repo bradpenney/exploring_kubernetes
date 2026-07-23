@@ -59,7 +59,7 @@ graph TD
 
 ## The Networking Problem Services Solve
 
-In the [Pods article](pods.md), we established that Pods are temporary. Every time a Pod restarts — whether from a crash, a deployment update, or a node failure — it gets a **new IP address**. The old IP is gone.
+In the [Pods article](pods.md), we established that Pods are temporary. Every time a Pod restarts (whether from a crash, a deployment update, or a node failure), it gets a **new IP address**. The old IP is gone.
 
 If you hardcode `http://10.42.0.5` in your frontend config, you're one deployment away from a broken application. And even if you tried to keep up with changing IPs, you'd miss the load balancing across all three backend Pods.
 
@@ -74,7 +74,7 @@ Kubernetes continuously tracks which Pods are healthy and updates the routing be
 
 ## How Services Find Pods: Labels and Selectors
 
-A Service doesn't hardcode Pod names or IPs — it uses **label selectors** to dynamically find matching Pods.
+A Service doesn't hardcode Pod names or IPs: it uses **label selectors** to dynamically find matching Pods.
 
 1. You give your Pods a label: `app: backend`
 2. You configure the Service to select Pods with `app: backend`
@@ -102,13 +102,13 @@ graph TD
 
 When a Pod dies, Kubernetes removes it from the Service's routing list automatically. When a new Pod with the right label starts, it's added. You don't manage this — Kubernetes does.
 
-Labels and selectors aren't just a Service feature — they're the query layer the whole cluster runs on. This is enough to make Services work; for the full picture (set-based selectors, the recommended label set, and the design rationale), see **[Labels and Selectors](labels_selectors.md)**.
+Labels and selectors aren't just a Service feature: they're the query layer the whole cluster runs on. This is enough to make Services work; for the full picture (set-based selectors, the recommended label set, and the design rationale), see **[Labels and Selectors](labels_selectors.md)**.
 
 !!! info "What's actually doing the work"
-    There's no proxy process sitting in the request path for a ClusterIP Service — the "virtual IP" is a routing illusion maintained on every node. Two Kubernetes components make it happen:
+    There's no proxy process sitting in the request path for a ClusterIP Service: the "virtual IP" is a routing illusion maintained on every node. Two Kubernetes components make it happen:
 
     - **The EndpointSlice controller** watches Pods matching the Service's selector and keeps a list of their current IP:port pairs (the `Endpoints` / `EndpointSlice` objects). This is the live membership list — when a Pod's readiness probe fails, it's pulled from here, which is *why* a NotReady Pod stops receiving traffic.
-    - **`kube-proxy`** runs on every node, watches those EndpointSlices, and programs the kernel — **iptables** rules or, on larger clusters, **IPVS** — so that any packet sent to the ClusterIP is DNAT'd to one of the real Pod IPs, load-balanced roughly evenly.
+    - **`kube-proxy`** runs on every node, watches those EndpointSlices, and programs the kernel (**iptables** rules or, on larger clusters, **IPVS**) so that any packet sent to the ClusterIP is DNAT'd to one of the real Pod IPs, load-balanced roughly evenly.
 
     So a Service is really *cluster-side bookkeeping plus per-node kernel rules*. When traffic mysteriously isn't balancing or a "dead" Pod still gets hits, this is the layer you're debugging — start with `kubectl get endpointslices`.
 
@@ -120,7 +120,7 @@ The type of Service you create determines **who can reach it**.
 
 === ":material-lock: ClusterIP (default)"
 
-    **Why it matters:** The most secure option. Traffic can only come from inside the cluster — other Pods, internal tools, but nothing external.
+    **Why it matters:** The most secure option. Traffic can only come from inside the cluster: other Pods, internal tools, but nothing external.
 
     **When to use it:** Any service that should only be reachable by other parts of your application.
 
@@ -132,7 +132,7 @@ The type of Service you create determines **who can reach it**.
 
 === ":material-network: NodePort"
 
-    **Why it matters:** Exposes the Service on a specific port on every node's IP address — accessible from outside the cluster without cloud infrastructure.
+    **Why it matters:** Exposes the Service on a specific port on every node's IP address, accessible from outside the cluster without cloud infrastructure.
 
     **When to use it:** Development testing, on-premise clusters without a cloud load balancer.
 
@@ -150,13 +150,13 @@ The type of Service you create determines **who can reach it**.
     - You get a stable external IP from the cloud provider
     - Requires cloud support (EKS, GKE, AKS all do; bare-metal needs MetalLB)
 
-    What actually gets provisioned — and why you won't want one of these per app — is covered in depth in [LoadBalancer Services](loadbalancer_services.md).
+    What actually gets provisioned, and why you won't want one of these per app, is covered in depth in [LoadBalancer Services](loadbalancer_services.md).
 
 ---
 
 ## Creating a ClusterIP Service
 
-ClusterIP is the type you'll use most — any service that other Pods in your cluster need to reach.
+ClusterIP is the type you'll use most: any service that other Pods in your cluster need to reach.
 
 ```yaml title="backend-service.yaml" linenums="1"
 apiVersion: v1
@@ -179,6 +179,8 @@ spec:
 4. The port the Service listens on (what callers connect to)
 5. The port the Pods are actually listening on — can differ from `port`
 
+`type`, `selector`, and `ports` are three of the many fields on [`ServiceSpec`, core/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/core/v1/types.go#L5979-L6227) in the Kubernetes API source — scroll it and you'll spot `externalTrafficPolicy`, `sessionAffinity`, and the dual-stack `ipFamilies` fields this article doesn't cover, all living on the same object.
+
 ```bash title="Apply and verify"
 kubectl apply -f backend-service.yaml
 # service/backend-svc created
@@ -188,20 +190,20 @@ kubectl get services
 # backend-svc    ClusterIP   10.96.45.123    <none>        80/TCP    5s
 ```
 
-Once the Service exists, any Pod in the same namespace can reach it at `http://backend-svc` — no IP addresses required. Kubernetes DNS handles the rest.
+Once the Service exists, any Pod in the same namespace can reach it at `http://backend-svc`, no IP addresses required. Kubernetes DNS handles the rest.
 
 ---
 
 ## Port-Forwarding: Local Development Access
 
-For development — "I just want to hit this endpoint from my laptop to test it" — `kubectl port-forward` creates a tunnel from your local machine to a Service in the cluster.
+For development ("I just want to hit this endpoint from my laptop to test it"), `kubectl port-forward` creates a tunnel from your local machine to a Service in the cluster.
 
 ```bash title="Forward a local port to a Service"
 kubectl port-forward service/backend-svc 8080:80
 # Forwarding from 127.0.0.1:8080 -> 80
 ```
 
-Open your browser to `http://localhost:8080` — you're hitting the Service in the cluster.
+Open your browser to `http://localhost:8080`, and you're hitting the Service in the cluster.
 
 !!! tip "Port-forward stays active until you press Ctrl+C"
     It's a temporary tunnel, not a permanent connection. Use it for quick tests and debugging sessions.
@@ -209,6 +211,8 @@ Open your browser to `http://localhost:8080` — you're hitting the Service in t
 ---
 
 ## Essential kubectl Commands
+
+The three commands you'll reach for constantly, all read-only:
 
 ```bash title="Read-only — safe to run anytime"
 kubectl get svc  # (1)!
@@ -310,11 +314,7 @@ You understand how Pods run your application and how Services give them stable n
 
 ### Deep Dives
 
-- [Kubernetes Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies) - How kube-proxy implements the virtual IP
-
-### Related Learning
-
-- [YAML](https://python.bradpenney.io/essentials/yaml/) - Every Service is defined in YAML — indentation, mappings, and lists explained if the manifest syntax feels unfamiliar
+- [Virtual IPs and Service Proxies](https://kubernetes.io/docs/reference/networking/virtual-ips/) - How kube-proxy implements the virtual IP
 
 ### Related Articles
 

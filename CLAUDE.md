@@ -26,12 +26,14 @@ Within `efficiency/` and `mastery/`, each former level's `overview.md` was renam
 Two editorial decisions that override the original Essentials = "Core Primitives only" plan:
 
 1. **The Essentials ↔ Efficiency dividing line is: does an application developer already touch this resource?**
-   - **Essentials** = every resource an app dev already uses, so a junior platform engineer must know it cold: Pods, Services, ConfigMaps/Secrets, Namespaces, Labels — **plus** basic Workloads: **Deployments, ReplicaSets** (how Deployments work under the hood), **Jobs & CronJobs**, and **basic Ingress**. Holding Deployments back to Efficiency was backwards — nobody runs bare Pods, and Deployments are table stakes, not "tier 2." These articles are to be **migrated from `efficiency/` into `essentials/` and rewritten to the Essentials dual persona**, then published one at a time. Add an Essentials **Workloads** topic group (alongside Core Primitives) for them.
-   - **Efficiency** = platform-engineering-specific resources/operations only: **StatefulSets, DaemonSets** (advanced/node-level workloads), advanced rollout/scaling ops, and the Networking deep dives (Ingress controllers/TLS depth, Network Policies, DNS, troubleshooting). `efficiency/deployments.md`, `efficiency/replicasets.md`, `efficiency/jobs_cronjobs.md`, and the basics of `efficiency/ingress.md` move out.
+   - **Essentials** = every resource an app dev already uses, so a junior platform engineer must know it cold: Pods, Services, ConfigMaps/Secrets, Namespaces, Labels — **plus** basic Workloads: **Deployments, ReplicaSets** (how Deployments work under the hood), **Jobs & CronJobs**, and **basic Ingress**. Holding Deployments back to Efficiency was backwards — nobody runs bare Pods, and Deployments are table stakes, not "tier 2." **Migrated from `efficiency/` into `essentials/` and rewritten to the Essentials dual persona, published 2026-07-19.**
+   - **Efficiency** = platform-engineering-specific resources/operations only: **StatefulSets, DaemonSets** (advanced/node-level workloads), advanced rollout/scaling ops, and the Networking deep dives (Ingress controllers/TLS depth, Network Policies, DNS, troubleshooting). `efficiency/deployments.md`, `efficiency/replicasets.md`, and `efficiency/jobs_cronjobs.md` were deleted 2026-07-19 once migrated (content now lives at the essentials/ paths above, not duplicated); the basics of `efficiency/ingress.md` moved out earlier (superseded by `essentials/ingress.md`, deleted 2026-07-07).
 
-2. **Security is NOT published until Core Primitives is complete.** The 5 `essentials/security_*` articles were live; as of 2026-06-18 they are **unpublished** (commented out of nav + added to the exclude list) and have been **rewritten to the Essentials dual persona** (deep-diving dev + junior platform engineer — including the operator-side of RBAC/Pod Security, not just the consumer view). Do NOT republish them until the Core Primitives + Workloads articles ship first. Note: `essentials/handling_secrets.md` was deliberately refocused on secret *hygiene/leak-prevention* and cross-links `config_and_secrets.md` for mechanics, to avoid duplicating it (no-repetition rule).
+   **Corollary found during a 2026-07-19 gap audit:** the same "does an app dev already touch this?" test applies just as strongly to two fields that were sitting at Mastery — `resources.requests/limits` and `livenessProbe`/`readinessProbe`/`startupProbe` are things every app dev sets in their own container spec, arguably more essential than Jobs/CronJobs. Rather than moving `mastery/resources.md`/`mastery/probes.md` wholesale (they're genuinely Mastery-depth: QoS classes, ResourceQuotas, LimitRanges, OOMKilled troubleshooting, graceful shutdown, production probe patterns — SRE-persona content, not app-dev), the fix was the same site-boundary split already used for ACME↔cert-manager: new Essentials-depth articles (`essentials/resource_requests_limits.md`, `essentials/probes.md`) cover what you set and the most-misunderstood gotcha for each; Mastery's existing articles are untouched and stay the deep dive. Essentials → Mastery cross-links are plain text, not hyperlinks, since Mastery is still unpublished.
 
-**Published surface (2026-07-14):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`) + **Essentials Architecture** (`architecture.md` — finished the 2026-06-19 stub and published 2026-07-14; light control-plane/nodes/reconcile-loop primer, cross-links forward to the new Efficiency CRI article) + **Essentials Networking** (`loadbalancer_services`, `ingress` — pathway steps 7 and 9) + **Efficiency Architecture** (`efficiency/container_runtime.md` — new 2026-07-14; the CRI, dockershim history, kubelet→CRI→runtime→OCI-runtime path, `crictl` — written as the k8s-side cross-link anchor for the future `exploring_containers` site's runtime articles) + **Efficiency Networking** (`efficiency/networking/gateway_api.md`, `efficiency/networking/cert_manager.md`, `efficiency/networking/external_dns.md` — cert_manager holds the k8s-side certificate machinery split out of the networking site's ACME article 2026-07-08; external_dns carries the Bindy mention + no-financial-stake disclosure). NOTE: the old `efficiency/ingress.md` draft ("Ingress Controllers") was superseded by `essentials/ingress.md` and **deleted 2026-07-07** (also removed from the exclude list and commented nav). Still draft/excluded: Security (all 5), Workloads, remaining Efficiency flat drafts, Mastery (including `mastery/cluster_architecture.md`, the fuller/deeper architecture draft — unrelated to the two new articles above, still needs frontmatter + a rewrite before it can publish).
+2. **Security is NOT published until Core Primitives AND Workloads are complete.** The 5 `essentials/security_*` articles were live; as of 2026-06-18 they are **unpublished** (commented out of nav + added to the exclude list) and have been **rewritten to the Essentials dual persona** (deep-diving dev + junior platform engineer — including the operator-side of RBAC/Pod Security, not just the consumer view). Both gating prerequisites (Core Primitives, Workloads) are now published as of 2026-07-19 — Security is unblocked but still commented pending a final editorial pass; publish when ready. Note: `essentials/handling_secrets.md` was deliberately refocused on secret *hygiene/leak-prevention* and cross-links `config_and_secrets.md` for mechanics, to avoid duplicating it (no-repetition rule).
+
+**Published surface (2026-07-19):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`) + **Essentials Architecture** (`architecture.md`) + **Essentials Networking** (`loadbalancer_services`, `ingress` — pathway steps 7 and 9) + **Essentials Workloads** (`deployments`, `replicasets`, `jobs_cronjobs`, `resource_requests_limits`, `probes` — published 2026-07-19) + **Efficiency Architecture** (`efficiency/container_runtime.md` — the CRI, dockershim history, kubelet→CRI→runtime→OCI-runtime path, `crictl` — written as the k8s-side cross-link anchor for the future `exploring_containers` site's runtime articles) + **Efficiency Networking** (`efficiency/networking/gateway_api.md`, `efficiency/networking/cert_manager.md`, `efficiency/networking/external_dns.md` — cert_manager holds the k8s-side certificate machinery split out of the networking site's ACME article 2026-07-08; external_dns carries the Bindy mention + no-financial-stake disclosure). Still draft/excluded: Security (all 5, unblocked but not yet published), remaining Efficiency flat drafts (`statefulsets`, `daemonsets`, `deployment_strategies`, and the Networking deep dives), Mastery (including `mastery/cluster_architecture.md`, the fuller/deeper architecture draft, still needs frontmatter + a rewrite before it can publish).
 
 - Navigation for Efficiency/Mastery (and now Security) stays commented out in `mkdocs.yaml` pending editorial review
 - Uncomment + un-exclude articles ONE AT A TIME after the quality checklist
@@ -345,8 +347,8 @@ In the Mastery tier, the persona shifts to platform engineers and DevOps/SRE rol
 
 - `docs/` - Markdown content organized into the four-tier model
   - `day_one/` - Getting started (app dev with cluster access). ✅ Published. **Untouched in the restructure — all cross-site inbound links point here.**
-  - `essentials/` - Architecture, Core Primitives (Pods, Services, ConfigMaps, Namespaces, Labels), Networking (LoadBalancer, Ingress). ✅ Architecture + Core Primitives + Networking published; Security/Workloads/Troubleshooting draft
-  - `efficiency/` - Architecture (the CRI) + Networking (Gateway API, cert-manager, external-dns) published; Workloads (Deployments, StatefulSets, DaemonSets, Jobs) + remaining Networking deep dives 🚧 draft
+  - `essentials/` - Architecture, Core Primitives (Pods, Services, ConfigMaps, Namespaces, Labels), Networking (LoadBalancer, Ingress), Workloads (Deployments, ReplicaSets, Jobs & CronJobs, Resource Requests & Limits, Probes). ✅ Architecture + Core Primitives + Networking + Workloads published; Security/Troubleshooting draft
+  - `efficiency/` - Architecture (the CRI) + Networking (Gateway API, cert-manager, external-dns) published; Workloads (StatefulSets, DaemonSets only — Deployments/ReplicaSets/Jobs & CronJobs migrated to essentials/ 2026-07-19) + remaining Networking deep dives 🚧 draft
   - `mastery/` - Storage (PV/PVC/StorageClass), Scheduling & Security (RBAC, taints, affinity, resources), Production Ops (logging, monitoring, probes, Helm, operators), plus `cluster_architecture.md`. 🚧 Draft (paywalled tier)
 - `mkdocs.yaml` - Site configuration and navigation (remaining Efficiency/Mastery drafts commented out)
 - `pyproject.toml` - Poetry dependencies
@@ -379,17 +381,30 @@ Articles:
 4. **Namespaces** - Logical separation, resource quotas, working across namespaces
 5. **Labels and Selectors** - Organizing resources, targeting workloads, best practices
 
-### Efficiency — Workloads (dir: `efficiency/`)
-**Persona:** App developer deploying real applications
+### Essentials: Workloads (dir: `essentials/`)
+**Persona:** Deep-diving dev + junior platform engineer (dual persona)
 
-**Goal:** Deploy and manage applications at scale with confidence
+**Goal:** Everything an app dev already puts in a real Deployment spec — not just "3 replicas, please"
+
+**Published 2026-07-19.** Migrated from `efficiency/` per the 2026-06-18 scope decision (Deployments/ReplicaSets/Jobs & CronJobs are app-dev table stakes, not platform-specific) — then expanded from 3 to 5 articles after an audit found Resource Requests/Limits and Probes were stuck at Mastery despite being fields every app dev sets in their own container spec. Mastery's `resources.md`/`probes.md` keep their platform-engineer/SRE-depth content (QoS classes, ResourceQuotas, LimitRanges, graceful shutdown, production probe patterns) unchanged — Essentials cross-links forward to them as plain text (Mastery is still unpublished, so no live hyperlinks per the link-audit rule).
 
 Articles:
-1. **Deployments Explained** - Declarative updates, rolling updates, rollbacks, scaling
-2. **ReplicaSets Under the Hood** - How Deployments work, when you'd use ReplicaSets directly
-3. **StatefulSets** - Ordered deployment, stable network IDs, when to use vs Deployments
-4. **DaemonSets** - One pod per node, use cases (logging agents, monitoring, networking)
-5. **Jobs and CronJobs** - Batch processing, scheduled tasks, cleanup jobs
+1. **Deployments** - Declarative rolling updates, rollbacks, scaling; imperative `kubectl set image`/`scale` framed as dev-shortcuts, not the production path
+2. **ReplicaSets Under the Hood** - How Deployments work, when (rarely) you'd touch one directly
+3. **Jobs and CronJobs** - Batch processing, scheduled tasks, concurrency policy blast radius
+4. **Resource Requests and Limits** - What each actually promises; the CPU-throttling-despite-low-average-usage gotcha (CFS quota/period mechanism) as the central "least understood" teaching point
+5. **Health Checks and Probes** - Liveness/readiness/startup, HTTP/TCP/exec, the checking-a-dependency-in-liveness mistake that causes crash loops
+
+### Efficiency — Workloads (dir: `efficiency/`)
+**Persona:** Intermediate platform engineer
+
+**Goal:** The platform-specific workload types Essentials doesn't cover
+
+Articles:
+1. **StatefulSets** - Ordered deployment, stable network IDs, when to use vs Deployments
+2. **DaemonSets** - One pod per node, use cases (logging agents, monitoring, networking)
+
+(Deployments Explained, ReplicaSets Under the Hood, and Jobs and CronJobs moved to Essentials — see above. `deployment_strategies.md`, "Blue-Green and Canary Deployments with Labels," also lives here as a separate deeper-dive draft.)
 
 ### Efficiency — Networking (dir: `efficiency/`)
 **Persona:** App developer + platform engineer
@@ -560,6 +575,25 @@ spec:
 3. Kubernetes will maintain exactly 3 running pods
 4. Always pin versions in production—avoid `:latest`
 ```
+
+**Linking to Kubernetes Source Code (standard, established 2026-07-19):**
+
+When an article annotates a YAML manifest's fields, follow up with one sentence linking to the real Go struct those fields come from — proof it's not a convention this site invented, and a way to show readers the API is a small, readable thing, not magic.
+
+```markdown
+`replicas`, `selector`, `template` are all fields on one real Go struct: [`DeploymentSpec`, apps/v1/types.go](https://github.com/kubernetes/api/blob/v0.36.2/apps/v1/types.go#L378-L421) in the Kubernetes API source.
+```
+
+Rules:
+
+1. **Repo:** `github.com/kubernetes/api` for resource types (`apps/v1`, `batch/v1`, `core/v1`, etc.); `github.com/kubernetes/apimachinery` for shared plumbing that isn't its own resource — `LabelSelector`, `ObjectMeta`, ownership/finalizer machinery. Never link into `github.com/kubernetes/kubernetes` (the monorepo) — controller-loop internals are dense, refactored often, and not what an Essentials reader needs; the type definition is the approachable, stable target.
+2. **Pin to a release tag, never `main` or a branch.** Line numbers in `main` rot within weeks. Get the current stable tag with `gh api repos/kubernetes/api/tags --jq '.[0:5][].name'` (skip `-alpha`/`-beta`/`-rc` — use the latest plain `vX.Y.Z`) and reuse the *same* tag across every permalink added in one pass, so they all reflect one consistent snapshot of the API.
+3. **Match the struct to what's actually annotated** — not just "the Spec struct" by default. `ConfigMap`/`Secret` have no `Spec` (link the top-level struct); `Service.Selector` is `map[string]string`, not the structured `LabelSelector` a Deployment's `selector` uses (link whichever is literally true for that field); `PodSpec` is ~1,370 lines and useless as a permalink — link `Container` instead, since that's what the annotated fields (`name`/`image`/`ports`) actually belong to. Get the real field list and line numbers by fetching the raw file (`raw.githubusercontent.com/<repo>/<tag>/<path>`) and locating the struct — never guess a path or line number from memory.
+4. **Verify every URL before it ships** — `curl -s -o /dev/null -w "%{http_code}"` against the constructed `github.com/.../blob/<tag>/<path>#L<start>-L<end>` permalink, confirm `200`.
+5. **Placement:** plain prose, immediately after the numbered annotation list for that YAML block — never its own admonition. Two admonitions back to back is its own anti-pattern on this site; a source-code pointer is supporting detail, not something that needs a callout box.
+6. **When it's a genuinely interesting fact, say so** — e.g., a Namespace's own `Spec` being nearly empty, or a Service's selector type structurally forbidding set-based matching. The link is more valuable when it *teaches* something, not just cites a source.
+
+Applied 2026-07-19 to all 5 essentials/Workloads articles (`ReplicaSetSpec`, `DeploymentSpec`, `JobSpec`, `CronJobSpec`) and all 5 essentials/Core Primitives articles (`Container`, `ServiceSpec`, `ConfigMap`, `Secret`, `NamespaceSpec`, `ResourceQuotaSpec`, `LimitRangeItem`, `LabelSelector`), pinned to `v0.36.2`. Apply the same pattern going forward on any new article with an annotated manifest — this is now standard, not a one-off.
 
 **Command Safety Labels:**
 

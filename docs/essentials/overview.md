@@ -58,7 +58,9 @@ The same foundation, deepening as each group lands:
 
 -   :material-sitemap: **[Architecture](architecture.md)** — control plane vs. nodes, and the reconcile loop
 
--   :material-cog-sync: **Workloads** *(coming soon)* — Deployments, ReplicaSets, Jobs, basic Ingress
+-   :material-lan: **[Networking](loadbalancer_services.md)** — LoadBalancer Services from cloud to bare metal, and reading the Ingress you inherited
+
+-   :material-cog-sync: **[Workloads](deployments.md)** — Deployments, ReplicaSets, Jobs & CronJobs, resource requests/limits, health probes
 
 -   :material-shield-lock: **Security** *(coming soon)* — `securityContext`, secret hygiene, RBAC, Pod Security Standards
 
