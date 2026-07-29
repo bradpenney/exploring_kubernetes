@@ -6,7 +6,7 @@ description: "Requests and limits explained the way they actually behave in the 
 # Resource Requests and Limits: What You're Actually Promising
 
 !!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first.
+    This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
 
 Here's a scenario that confuses almost everyone the first time it happens: your service's CPU usage graph shows a calm, flat line at 40% of its limit. Latency dashboards show periodic spikes anyway — a request that should take 10ms occasionally takes 400ms. Nothing in `kubectl top` explains it. `kubectl describe pod` eventually does: `cpu throttled`.
 
@@ -228,6 +228,8 @@ You don't need to get this perfect on day one — you need to not leave it blank
 ## What's Next?
 
 You've covered the half of "is my Pod actually production-ready" that concerns the kernel. The other half concerns Kubernetes' own traffic routing: **[Health Checks and Probes](probes.md)** — how Kubernetes decides a Pod is actually ready to receive requests, not just running.
+
+If you're following the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io), the next step is **[Diagnosing Pod Failure States](pod_failure_states.md)**: what it actually looks like in `kubectl get pods` when a limit or request from this article gets violated.
 
 ---
 

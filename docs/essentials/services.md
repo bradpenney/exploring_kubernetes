@@ -6,7 +6,7 @@ description: "How Kubernetes Services give ephemeral Pods a stable address — C
 # Services: How Your Apps Talk to Each Other
 
 !!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md) — read [Pods: The Atomic Unit](pods.md) first, since Services only make sense once you understand why Pod IPs are unreliable. It's also a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io).
+    This article is part of [Essentials: Core Primitives](overview.md) — read [Pods: The Atomic Unit](pods.md) first, since Services only make sense once you understand why Pod IPs are unreliable. It's also a step in two learning paths on [bradpenney.io](https://bradpenney.io): [Deploy Your First App to Kubernetes](https://bradpenney.io/pathways/deploy-to-kubernetes) and [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet).
 
 You have a frontend app that needs to call a backend API. The backend is running in three Pods. What URL do you hardcode in your frontend config?
 
@@ -299,9 +299,23 @@ When a Service exists but traffic reaches nothing, its selector almost certainly
 
 ## What's Next?
 
-You understand how Pods run your application and how Services give them stable networking. That's the foundation of Kubernetes application architecture.
+You understand how Pods run your application and how Services give them stable networking. That's the foundation of Kubernetes application architecture. From here, the path forward depends on which thread you're following:
 
-**Next:** [ConfigMaps and Secrets](config_and_secrets.md) — how to keep configuration and credentials out of your container images, and the real security limits of a Secret.
+<div class="grid cards two-col" markdown>
+
+-   :material-file-cog: **[ConfigMaps and Secrets](config_and_secrets.md)**
+
+    ---
+
+    Continuing **[Deploy Your First App to Kubernetes](https://bradpenney.io/pathways/deploy-to-kubernetes)** — how to keep configuration and credentials out of your container images, and the real security limits of a Secret.
+
+-   :material-lan: **[LoadBalancer Services: From Cloud to Bare Metal](loadbalancer_services.md)**
+
+    ---
+
+    Continuing **[Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet)** — what happens when that stable address needs to be reachable from outside the cluster.
+
+</div>
 
 ---
 

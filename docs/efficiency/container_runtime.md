@@ -6,7 +6,7 @@ description: "How kubelet talks to containerd or CRI-O through the CRI: the inte
 # The CRI: How kubelet Actually Talks to Container Runtimes
 
 !!! tip "Part of Efficiency"
-    This builds directly on [Essentials: Architecture](../essentials/architecture.md); read that first if "control plane," "node," and "kubelet" aren't already solid ground. This article picks up exactly where that one's runtime callout left off.
+    This builds directly on [Essentials: Architecture](../essentials/architecture.md); read that first if "control plane," "node," and "kubelet" aren't already solid ground. This article picks up exactly where that one's runtime callout left off. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
 
 If you've ever read a cluster upgrade changelog, seen "Docker support removed," and felt a small jolt of *wait, Kubernetes runs on Docker, doesn't it?*, you've bumped into the exact confusion this article clears up. Plenty of clusters run on `containerd`. Some run on `CRI-O`. A few run something more exotic for sandboxing. `kubelet` doesn't know or care which — and that's not an accident, it's a deliberate interface.
 
@@ -141,9 +141,25 @@ crictl inspect <container-id>   # low-level state: mounts, namespaces, OCI confi
 
 ## What's Next?
 
-You now have the full chain from a YAML file to a running Linux process. From here, the natural next step is the workloads that sit on top of Pods and manage them at scale.
+You now have the full chain from a YAML file to a running Linux process. From here, the natural next step is the workloads that sit on top of Pods and manage them at scale:
 
-**Related:** **[Essentials: Architecture](../essentials/architecture.md)** — the control-plane/node model this article assumes.
+<div class="grid cards two-col" markdown>
+
+-   :material-tune: **[Resource Requests and Limits](../essentials/resource_requests_limits.md)**
+
+    ---
+
+    Where the chain actually pays off: the `resources` field in a Pod spec is a direct instruction to the cgroups this runtime just set up.
+
+-   :material-sitemap: **[Essentials: Architecture](../essentials/architecture.md)**
+
+    ---
+
+    Skipped ahead to get here? This is the control-plane/node model this article assumes.
+
+</div>
+
+If you're following the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io), the next step is **[The Kubernetes Scheduler](scheduler.md)**: now that every Node has a working container runtime, this is what actually decides which Node a given Pod lands on.
 
 ---
 

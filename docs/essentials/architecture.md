@@ -6,9 +6,9 @@ description: "A working mental model of a Kubernetes cluster — the control pla
 # How a Kubernetes Cluster Is Built
 
 !!! tip "Part of Essentials"
-    This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it.
+    This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
 
-You've been reading "Kubernetes does X" and "the cluster reconciles your manifest." This article puts names to that machinery: just enough to make the rest of Essentials precise. The full depth (etcd internals, highly-available control planes, cluster networking) lives in the Mastery tier; here we want a working mental model, not an operator's manual.
+"Kubernetes does X" and "the cluster reconciles your manifest" get thrown around constantly, describing machinery that rarely gets named. This article puts names to it: just enough to make the rest of Essentials precise. The full depth (etcd internals, highly-available control planes, cluster networking) lives in the Mastery tier; here we want a working mental model, not an operator's manual.
 
 !!! info "What You'll Learn"
     By the end of this article, you'll understand:
@@ -131,9 +131,23 @@ Nothing in Kubernetes is a one-off action. Every change you make is a new desire
 
 ## What's Next?
 
-You now have names for the machinery behind "Kubernetes does X." Time to put it to use with the object everything else is built on.
+You now have names for the machinery behind "Kubernetes does X." Where you go next depends on which thread you're pulling:
 
-**Next:** **[Pods Deep Dive](pods.md)** — what a Pod actually is, why Kubernetes schedules Pods instead of containers, and the lifecycle you'll be debugging daily.
+<div class="grid cards two-col" markdown>
+
+-   :material-cube-outline: **[Pods Deep Dive](pods.md)**
+
+    ---
+
+    Time to put the machinery to use: what a Pod actually is, why Kubernetes schedules Pods instead of containers, and the lifecycle you'll be debugging daily.
+
+-   :material-cog-transfer-outline: **[The CRI: How kubelet Talks to Container Runtimes](../efficiency/container_runtime.md)**
+
+    ---
+
+    Go one layer deeper on the runtime callout above: picks up exactly where it left off.
+
+</div>
 
 ---
 
