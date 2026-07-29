@@ -87,6 +87,14 @@ Not how to *use* each primitive, but what it *is* — why Kubernetes works this 
 
     [:octicons-arrow-right-24: Deployments](essentials/deployments.md) · [ReplicaSets](essentials/replicasets.md) · [Jobs & CronJobs](essentials/jobs_cronjobs.md) · [Resource Requests & Limits](essentials/resource_requests_limits.md) · [Probes](essentials/probes.md)
 
+-   :material-stethoscope: **Troubleshooting**
+
+    ---
+
+    What `CrashLoopBackOff`, `Pending`, `ImagePullBackOff`, and `OOMKilled` actually mean in `kubectl get pods` — and the commands that take you from symptom to cause to fix.
+
+    [:octicons-arrow-right-24: Diagnosing Pod Failure States](essentials/pod_failure_states.md)
+
 -   :material-shield-lock: **Security** *(coming soon)*
 
     ---
@@ -118,6 +126,14 @@ Running real workloads at scale — the platform-specific pieces beyond the basi
     Putting a cluster app on the real internet — Gateway API with Traefik as the front door, cert-manager for TLS, and external-dns to point your domain at the cluster.
 
     [:octicons-arrow-right-24: Gateway API](efficiency/networking/gateway_api.md) · [cert-manager](efficiency/networking/cert_manager.md) · [external-dns](efficiency/networking/external_dns.md)
+
+-   :material-timer-sand: **Scheduling**
+
+    ---
+
+    How a Pod picks a Node — filtering, scoring, taints and tolerations, and why node affinity should target a *type* of Node, never one specific Node.
+
+    [:octicons-arrow-right-24: The Kubernetes Scheduler](efficiency/scheduler.md)
 
 -   :material-layers-triple: **Advanced Workloads** *(coming soon)*
 

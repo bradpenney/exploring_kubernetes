@@ -486,6 +486,8 @@ Articles must balance **playfulness with professionalism** and be **technically 
 - **Purpose-driven**: Always explain the "why" - why this resource type, why it matters, why it's the right tool
 - **Structured learning**: Build from simple to complex; scaffold concepts; clear progression between levels
 
+**⚠️ Watch the formula, not just the topic (2026-07-28):** "You've done X" asserts the reader's own history — a bet that fails whenever someone in the audience didn't do that exact thing, and it reads as alienating when it misses. Prefer grounding the hook in the practice/scenario itself: "Deploying an application means seeing `kubectl get pods` return a name like `my-app-7c5ddbdf54-x8f9p`" instead of "You've deployed an application. You've seen `kubectl get pods` return..." Still concrete, still scenario-first — just not a bet on this specific reader's biography.
+
 **Required Sections (following Exploring Linux standard):**
 
 1. Opening paragraph(s) - empathetic hook with real-world relevance
