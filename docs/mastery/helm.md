@@ -3,9 +3,9 @@
 !!! tip "Part of Mastery: Production Operations"
     This article is part of [Mastery: Production Operations](operations_overview.md), focusing on tools and practices for running Kubernetes at scale.
 
-You've been writing YAML files by hand. You've deployed applications, updated configurations, and rolled back changes. It works, but every environment needs slightly different values. Your development cluster uses different image tags than staging. Production has different replica counts. Each namespace has its own secrets.
+Writing YAML files by hand works, right up to a point: deploying applications, updating configurations, rolling back changes are all manageable — until every environment needs slightly different values. A development cluster uses different image tags than staging. Production has different replica counts. Each namespace has its own secrets.
 
-You're managing dozens of nearly-identical YAML files across environments, and every deployment requires careful find-and-replace editing. There has to be a better way.
+The result is dozens of nearly-identical YAML files across environments, and every deployment requiring careful find-and-replace editing. There has to be a better way.
 
 **That's exactly what Helm solves.**
 

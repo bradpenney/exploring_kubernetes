@@ -8,7 +8,7 @@ description: "Understand Kubernetes Pods — the smallest deployable unit: lifec
 !!! tip "Part of Essentials: Core Primitives"
     This article is part of [Essentials: Core Primitives](overview.md). Start with [Day One: Getting Started](../day_one/overview.md) if you're new to Kubernetes.
 
-You've deployed an application. You've seen `kubectl get pods` return a name like `my-app-7c5ddbdf54-x8f9p`. You've seen `CrashLoopBackOff` in the STATUS column and felt that specific anxiety.
+Deploying an application means seeing `kubectl get pods` return a name like `my-app-7c5ddbdf54-x8f9p`. It also means eventually seeing `CrashLoopBackOff` in the STATUS column — a specific kind of anxiety most Kubernetes users know well.
 
 **Pods are where all of that actually lives.**
 

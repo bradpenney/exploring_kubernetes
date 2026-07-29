@@ -3,7 +3,7 @@
 !!! tip "Part of Mastery: Production Operations"
     This article is part of [Mastery: Production Operations](operations_overview.md), focusing on tools and practices for running Kubernetes at scale.
 
-You've deployed stateless applications with Deployments. You've managed configuration with ConfigMaps and Secrets. You've packaged applications with Helm. These tools work brilliantly for standard workloads, but some applications need **operational knowledge encoded into Kubernetes itself**.
+Deployments handle stateless applications. ConfigMaps and Secrets handle configuration. Helm handles packaging. These tools work brilliantly for standard workloads, but some applications need **operational knowledge encoded into Kubernetes itself**.
 
 Consider running PostgreSQL on Kubernetes. A Deployment can start the pods, but what about:
 

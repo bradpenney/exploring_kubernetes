@@ -8,7 +8,7 @@ description: "What a ReplicaSet actually does, why Deployments manage them inste
 !!! tip "Part of Essentials: Workloads"
     This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first.
 
-You've been creating Deployments, which automatically create ReplicaSets. So what does a ReplicaSet actually do, and why does Kubernetes bother with the extra layer?
+Creating a Deployment automatically creates a ReplicaSet behind it. So what does a ReplicaSet actually do, and why does Kubernetes bother with the extra layer?
 
 **Short answer:** a ReplicaSet is deliberately dumb. It has exactly two inputs — a target count, a way to find Pods — and one job: make reality match the count. No memory of versions, no rollout logic, no opinions. Everything below is a consequence of that narrowness: what a controller this simple is good at, what it can't do (hence Deployment), and what breaks when one of its two inputs goes wrong.
 

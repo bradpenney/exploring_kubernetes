@@ -87,7 +87,6 @@ plugins:
         # Troubleshooting — surgical move of Pod failure-state content out of
         # pods.md (2026-06-19). DRAFT until the fuller diagnostic articles exist.
         - "essentials/troubleshooting_overview.md"
-        - "essentials/pod_failure_states.md"
         - "essentials/stuck_terminating.md"
         - "essentials/service_connectivity.md"
         # Efficiency — drafts listed individually since networking/gateway_api.md
@@ -217,9 +216,9 @@ nav:
       #     - Meeting Pod Security Standards: essentials/pod_security_standards.md
       # Troubleshooting — DRAFT (content moved out of pods.md 2026-06-19); needs
       # the diagnostic-method + connectivity articles before publishing.
-      # - Troubleshooting:
+      - Troubleshooting:
       #     - Overview: essentials/troubleshooting_overview.md
-      #     - Diagnosing Pod Failure States: essentials/pod_failure_states.md
+          - Diagnosing Pod Failure States: essentials/pod_failure_states.md
       #     - Resources Stuck in Terminating: essentials/stuck_terminating.md
       #     - Service Has No Endpoints: essentials/service_connectivity.md
 
@@ -232,6 +231,7 @@ nav:
   - ⚡ Efficiency:
       - Architecture:
           - "The CRI: How kubelet Talks to Container Runtimes": efficiency/container_runtime.md
+          - "The Kubernetes Scheduler: How a Pod Picks a Node": efficiency/scheduler.md
       - Networking:
           - "Gateway API with Traefik: The Standard Front Door": efficiency/networking/gateway_api.md
           - "cert-manager: Certificates as Cluster Resources": efficiency/networking/cert_manager.md

@@ -221,7 +221,7 @@ The conceptual mapping you'll be reviewing:
 
 ## What's Next?
 
-You can now read any front door you inherit, because you have the question that unlocks every object in the estate — *which controller reads this?* — and you know which controllers are on borrowed time. What makes the modern edge fully self-maintaining is automation on either side of it: [certificates that renew themselves](../efficiency/networking/cert_manager.md), and [DNS records that follow your Gateway automatically](../efficiency/networking/external_dns.md).
+You can now read any front door you inherit, because you have the question that unlocks every object in the estate — *which controller reads this?* — and you know which controllers are on borrowed time. What makes the modern edge fully self-maintaining is automation on either side of it, starting with certificates: **[Automating TLS Certificates: ACME and Let's Encrypt](https://networking.bradpenney.io/efficiency/tls/certificate_management/)** covers the protocol, before [cert-manager](../efficiency/networking/cert_manager.md) and [external-dns](../efficiency/networking/external_dns.md) put it to work inside the cluster.
 
 ---
 

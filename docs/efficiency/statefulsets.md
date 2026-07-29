@@ -3,7 +3,7 @@
 !!! tip "Part of Efficiency: Workloads"
     This article is part of [Efficiency: Workloads](workloads_overview.md). Read [Deployments Explained](deployments.md) and [ReplicaSets Under the Hood](replicasets.md) first.
 
-You've been using Deployments for stateless applications. But what if your app needs:
+Stateless applications are Deployments' home turf. But some applications need:
 
 - Stable, unique network identifiers
 - Stable, persistent storage

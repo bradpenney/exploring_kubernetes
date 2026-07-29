@@ -3,7 +3,7 @@
 !!! tip "Part of Efficiency: Networking"
     This article is part of [Efficiency: Networking](networking_overview.md). You should understand [basic Services](../essentials/services.md) from Essentials first.
 
-You've used Services to connect to Pods. But how do Services actually work? What happens when you hit a Service IP? How does traffic route to the right Pod?
+Services connect to Pods every day without much thought about the mechanism. But how do Services actually work? What happens when a Service IP gets hit? How does traffic route to the right Pod?
 
 **Time to look under the hood.**
 
