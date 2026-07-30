@@ -1,6 +1,6 @@
 ---
 date: "2026-07-19 09:00"
-title: "Health Checks and Probes: How Kubernetes Knows a Pod Is Ready"
+title: "Liveness, Readiness & Startup Probes Explained"
 description: "Liveness, readiness, and startup probes — what each one actually controls, the HTTP/TCP/exec mechanisms behind them, and the classic mistake that turns a database hiccup into a crash loop."
 ---
 # Health Checks and Probes

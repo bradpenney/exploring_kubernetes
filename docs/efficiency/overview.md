@@ -1,50 +1,83 @@
 ---
-title: "Kubernetes Efficiency: Workloads & Networking"
-description: "Move beyond single Pods: manage real workloads with Deployments, StatefulSets, DaemonSets, and Jobs, then connect them with Services, Ingress, and DNS."
+date: "2026-07-30 10:00"
+title: "Kubernetes Efficiency: Runtime, Networking & Scheduling"
+description: "Beyond single Pods: how the CRI actually runs your containers, how the scheduler picks a Node, and how to put a cluster app on the real internet."
 ---
-# Efficiency: Running Real Workloads
+# Efficiency
 
 !!! tip "Building on Essentials"
-    You understand Pods and Services. Now let's run *real* applications — the controllers that keep workloads healthy at scale, and the networking that connects them.
+    Essentials gave you the primitives and the objects you already touch as an app dev. Efficiency is where the platform underneath them stops being a black box — the runtime that actually runs your containers, the scheduler that places them, and the networking that gets real traffic to them.
 
-## What You'll Master
+Essentials treated `kubectl apply` as something that just works once you understand the objects. Efficiency asks the next question: what makes it work? kubelet doesn't run your container directly — it hands the job to a runtime through a well-defined interface. The scheduler doesn't place Pods randomly — it filters and scores every Node before picking one. And exposing a Service to the internet is a chain of independent, composable pieces, not a single Ingress rule.
 
-The **Efficiency** tier is where you stop thinking about individual Pods and start thinking about *applications*. Two topic areas, building on each other:
+This tier treats you as the platform engineer now responsible for these systems, not just a consumer of them.
 
----
+## Start Here: Architecture & Scheduling
 
-<div class="grid cards" markdown>
+The mechanics underneath every Pod you've already deployed.
 
--   :material-sync: **[Workloads](workloads_overview.md)**
+<div class="grid cards two-col" markdown>
 
-    ---
-
-    The controllers that manage Pods for you — Deployments and ReplicaSets, StatefulSets for stateful apps, DaemonSets for per-node agents, and Jobs/CronJobs for batch work. The shift from "how do I get this running?" to "how do I keep this running reliably?"
-
--   :material-lan: **[Networking](networking_overview.md)**
+-   :material-cog-sync: **[The CRI](container_runtime.md)**
 
     ---
 
-    How traffic actually flows — Services in depth, Ingress controllers for HTTP routing, Network Policies for isolation, DNS and service discovery, and a methodical approach to troubleshooting when connections fail.
+    How kubelet actually talks to containerd and CRI-O — and the dockershim history behind why this interface exists at all.
+
+-   :material-timer-sand: **[The Scheduler](scheduler.md)**
+
+    ---
+
+    Filtering and scoring: how a Pod picks a Node, and why affinity should target a *type* of Node, never one specific Node.
+
+</div>
+
+## Putting It on the Internet
+
+The chain of pieces between a running Pod and a real domain name.
+
+<div class="grid cards two-col" markdown>
+
+-   :material-door: **[Gateway API](networking/gateway_api.md)**
+
+    ---
+
+    The standard front door — Traefik as the Gateway API implementation, replacing the aging Ingress model.
+
+-   :material-certificate: **[cert-manager](networking/cert_manager.md)**
+
+    ---
+
+    Certificates as cluster resources — automated issuance and renewal, no more manually copied `.pem` files.
+
+-   :material-web: **[external-dns](networking/external_dns.md)**
+
+    ---
+
+    Pointing your domain at the cluster automatically, kept in sync as Services and Ingresses change.
+
+-   :material-layers-triple: **Advanced Workloads** *(coming soon)*
+
+    ---
+
+    StatefulSets for stable identity, DaemonSets for node-level agents, and the rollout controls that keep them healthy.
 
 </div>
 
 ---
 
-## Who This Is For
+## What You'll Take Away
 
-**You are:**
+By the end of Efficiency you'll be able to:
 
-- A developer who's comfortable deploying to Kubernetes and wants to understand *how* it keeps things running
-- A junior platform engineer starting to own deployments and networking
-- Ready to move past single-Pod thinking to controllers, scaling, and traffic flow
-
-The Workloads articles still speak to the application developer. By the time you reach Networking, the content begins serving both developers and platform engineers — it's the bridge toward the Mastery tier.
+- Trace a container from `kubectl apply` through kubelet, the CRI, and the runtime to a running process
+- Explain why a Pod landed on the Node it did — and predict where the next one will go
+- Stand up a real front door for a cluster app: routing, TLS, and DNS, all reconciled automatically
 
 ---
 
 ## What's Next?
 
-Start with **[Workloads](workloads_overview.md)** — Deployments are the foundation everything else builds on.
+Start with **[The CRI](container_runtime.md)** — the layer between the object you applied and the process actually running.
 
-After Efficiency, the **[Mastery](../mastery/overview.md)** tier takes you into production operations: storage, scheduling, security, and observability for clusters you're responsible for.
+After Efficiency, the Mastery tier takes you into production operations: storage, scheduling depth, security, and observability for clusters you're responsible for.

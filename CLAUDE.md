@@ -19,7 +19,7 @@ The site uses the **four-section tier model** shared across all `exploring_*` si
 | **Efficiency** | `efficiency/` | former Level 2 (Workloads) + Level 3 (Networking), **minus the basics moved to Essentials** | Intermediate platform engineer running workloads |
 | **Mastery** *(paywalled tier)* | `mastery/` | former Level 4 (Storage) + Level 5 (Sched/Security) + Level 6 (Prod Ops) | Platform engineer / SRE, production clusters |
 
-Within `efficiency/` and `mastery/`, each former level's `overview.md` was renamed to a topic-group overview (`workloads_overview.md`, `networking_overview.md`, `storage_overview.md`, `security_overview.md`, `operations_overview.md`), matching the sub-group pattern on the Linux site. Tier-level `overview.md` files (`efficiency/overview.md`, `mastery/overview.md`) are not yet written — create them when building out each tier.
+Within `efficiency/` and `mastery/`, each former level's `overview.md` was renamed to a topic-group overview (`workloads_overview.md`, `networking_overview.md`, `storage_overview.md`, `security_overview.md`, `operations_overview.md`), matching the sub-group pattern on the Linux site. `efficiency/overview.md` was written and published 2026-07-30 (rewritten from a stale Workloads/Networking draft to match the live Architecture/Networking/Scheduling structure). `mastery/overview.md` is not yet written — create it when building out that tier.
 
 ### Essentials scope expansion + Security sequencing (2026-06-18)
 
@@ -33,7 +33,7 @@ Two editorial decisions that override the original Essentials = "Core Primitives
 
 2. **Security is NOT published until Core Primitives AND Workloads are complete.** The 5 `essentials/security_*` articles were live; as of 2026-06-18 they are **unpublished** (commented out of nav + added to the exclude list) and have been **rewritten to the Essentials dual persona** (deep-diving dev + junior platform engineer — including the operator-side of RBAC/Pod Security, not just the consumer view). Both gating prerequisites (Core Primitives, Workloads) are now published as of 2026-07-19 — Security is unblocked but still commented pending a final editorial pass; publish when ready. Note: `essentials/handling_secrets.md` was deliberately refocused on secret *hygiene/leak-prevention* and cross-links `config_and_secrets.md` for mechanics, to avoid duplicating it (no-repetition rule).
 
-**Published surface (2026-07-19):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`) + **Essentials Architecture** (`architecture.md`) + **Essentials Networking** (`loadbalancer_services`, `ingress` — pathway steps 7 and 9) + **Essentials Workloads** (`deployments`, `replicasets`, `jobs_cronjobs`, `resource_requests_limits`, `probes` — published 2026-07-19) + **Efficiency Architecture** (`efficiency/container_runtime.md` — the CRI, dockershim history, kubelet→CRI→runtime→OCI-runtime path, `crictl` — written as the k8s-side cross-link anchor for the future `exploring_containers` site's runtime articles) + **Efficiency Networking** (`efficiency/networking/gateway_api.md`, `efficiency/networking/cert_manager.md`, `efficiency/networking/external_dns.md` — cert_manager holds the k8s-side certificate machinery split out of the networking site's ACME article 2026-07-08; external_dns carries the Bindy mention + no-financial-stake disclosure). Still draft/excluded: Security (all 5, unblocked but not yet published), remaining Efficiency flat drafts (`statefulsets`, `daemonsets`, `deployment_strategies`, and the Networking deep dives), Mastery (including `mastery/cluster_architecture.md`, the fuller/deeper architecture draft, still needs frontmatter + a rewrite before it can publish).
+**Published surface (2026-07-19):** Day One (all) + **all of Essentials Core Primitives** (`overview`, `pods`, `services`, `config_and_secrets`, `namespaces`, `labels_selectors`) + **Essentials Architecture** (`architecture.md`) + **Essentials Networking** (`loadbalancer_services`, `ingress` — pathway steps 7 and 9) + **Essentials Workloads** (`deployments`, `replicasets`, `jobs_cronjobs`, `resource_requests_limits`, `probes` — published 2026-07-19) + **Efficiency Overview** (`efficiency/overview.md` — published 2026-07-30) + **Efficiency Architecture** (`efficiency/container_runtime.md` — the CRI, dockershim history, kubelet→CRI→runtime→OCI-runtime path, `crictl` — written as the k8s-side cross-link anchor for the future `exploring_containers` site's runtime articles) + **Efficiency Networking** (`efficiency/networking/gateway_api.md`, `efficiency/networking/cert_manager.md`, `efficiency/networking/external_dns.md` — cert_manager holds the k8s-side certificate machinery split out of the networking site's ACME article 2026-07-08; external_dns carries the Bindy mention + no-financial-stake disclosure). Still draft/excluded: Security (all 5, unblocked but not yet published), remaining Efficiency flat drafts (`statefulsets`, `daemonsets`, `deployment_strategies`, and the Networking deep dives), Mastery (including `mastery/cluster_architecture.md`, the fuller/deeper architecture draft, still needs frontmatter + a rewrite before it can publish).
 
 - Navigation for Efficiency/Mastery (and now Security) stays commented out in `mkdocs.yaml` pending editorial review
 - Uncomment + un-exclude articles ONE AT A TIME after the quality checklist
@@ -45,7 +45,7 @@ Two editorial decisions that override the original Essentials = "Core Primitives
 
 **Git Operations**: The user handles all git operations (commits, pushes, etc.) themselves. Do not commit or push changes.
 
-**MkDocs Operations**: The user handles running `mkdocs serve` and `mkdocs build` themselves. Do not run these commands.
+**MkDocs Operations (updated 2026-07-30):** `poetry run mkdocs build --strict` is allowed for testing/verification — use it to confirm changes actually build cleanly before handing off. `mkdocs serve` is allowed too if a live preview is genuinely needed, but only on a non-default port (3000 is almost always occupied by something else) and only as a short-lived test — never left running. The user still handles real preview sessions and all deploys.
 
 ## SEO Strategy and Publication Process
 
@@ -111,7 +111,8 @@ plugins:
         # Efficiency — drafts listed INDIVIDUALLY since efficiency/networking/gateway_api.md
         # published (2026-07-02); the old blanket "efficiency/*" glob is gone because
         # mkdocs-exclude globs cross "/" (fnmatch). New efficiency drafts MUST be added here.
-        - "efficiency/overview.md"       # …and the other 13 flat drafts (see mkdocs.yaml)
+        # efficiency/overview.md PUBLISHED 2026-07-30 — no longer in this list.
+        - "efficiency/workloads_overview.md"   # …and the other flat drafts (see mkdocs.yaml)
         # Mastery (Storage + Scheduling/Security + Production Ops) — all draft
         - "mastery/*"
   # ... other plugins
@@ -177,6 +178,8 @@ Uncomment the article in the `nav:` section of `mkdocs.yaml`:
     - Pods Deep Dive: essentials/pods.md
     # - Services: essentials/services.md  # Still in draft
 ```
+
+**Every tier needs its own overview page (mandatory, cross-site standard, added 2026-07-30):** before a tier's first article goes live, that tier must have a published `overview.md` linked at the top of its nav section. It's the tier's real SEO landing page (a semantic hub distinct from the homepage) and the reader's orientation point. **This is exactly the gap found here 2026-07-30:** Efficiency had five live published articles (CRI, scheduler, Gateway API, cert-manager, external-dns) but no linked overview — the file existed, written, but sat excluded and stale (described a Workloads/Networking structure that no longer matched the real nav). Fixed by rewriting it to match the live Architecture/Networking/Scheduling structure and un-excluding it. Essentials had one from the start; don't assume the earliest tier is the one to check — audit every live tier.
 
 #### 4. Verify Publication
 

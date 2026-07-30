@@ -1,6 +1,6 @@
 ---
 date: "2026-07-19 09:00"
-title: "Resource Requests and Limits: What You're Actually Promising"
+title: "Kubernetes Resource Requests vs Limits Explained"
 description: "Requests and limits explained the way they actually behave in the kernel — including why CPU limits throttle pods whose average usage graph looks perfectly fine."
 ---
 # Resource Requests and Limits: What You're Actually Promising

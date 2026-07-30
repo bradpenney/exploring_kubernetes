@@ -1,6 +1,6 @@
 ---
 date: "2026-07-09 12:00"
-title: "LoadBalancer Services: From Cloud to Bare Metal"
+title: "Kubernetes LoadBalancer Service Explained: MetalLB & Cloud"
 description: "What actually happens when you set type: LoadBalancer — cloud controllers, MetalLB on bare metal, pending IPs, traffic policy, and the one-per-app trap."
 ---
 # LoadBalancer Services: From Cloud to Bare Metal

@@ -1,6 +1,6 @@
 ---
 date: "2026-07-26 10:30"
-title: "The Kubernetes Scheduler: How a Pod Picks a Node"
+title: "Kubernetes Scheduler Explained: Filtering & Scoring"
 description: "A Pod isn't running anywhere until something decides which Node it belongs on. Filtering, scoring, taints, and affinity. The mechanics of kube-scheduler, and why Pending is a scheduling failure, not a mystery."
 ---
 # The Kubernetes Scheduler: How a Pod Picks a Node

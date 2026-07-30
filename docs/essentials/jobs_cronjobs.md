@@ -1,6 +1,6 @@
 ---
 date: "2026-07-19 09:00"
-title: "Jobs and CronJobs: Batch and Scheduled Tasks"
+title: "Kubernetes Jobs vs CronJobs: Batch Processing Explained"
 description: "Run tasks to completion instead of forever — database migrations, scheduled backups, and batch processing with Kubernetes Jobs and CronJobs."
 ---
 # Jobs and CronJobs: Batch and Scheduled Tasks

@@ -1,6 +1,6 @@
 ---
 date: "2026-07-09 12:00"
-title: "Gateway API with Traefik: The Standard Front Door"
+title: "Kubernetes Gateway API Explained: Traefik Setup Guide"
 description: "Stop writing Ingress annotations. How Gateway API's role-split design works — GatewayClass, Gateway, HTTPRoute — wired end to end with Traefik, TLS included."
 ---
 # Gateway API with Traefik: The Standard Front Door

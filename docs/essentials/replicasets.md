@@ -1,6 +1,6 @@
 ---
 date: "2026-07-19 09:00"
-title: "ReplicaSets Under the Hood"
+title: "What Is a Kubernetes ReplicaSet? How It Really Works"
 description: "What a ReplicaSet actually does, why Deployments manage them instead of Pods directly, and how to debug one when Pod counts don't match what you expect."
 ---
 # ReplicaSets Under the Hood

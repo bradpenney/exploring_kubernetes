@@ -1,6 +1,6 @@
 ---
 date: "2026-07-09 12:00"
-title: "Kubernetes Ingress: Reading the Front Door You Inherit"
+title: "Kubernetes Ingress Explained: Rules, TLS & Annotations"
 description: "Every existing cluster still routes through Ingress. Read rules, pathTypes, TLS, and annotations fluently — and plan the Gateway API migration off ingress-nginx."
 ---
 # Kubernetes Ingress: Reading the Front Door You Inherit

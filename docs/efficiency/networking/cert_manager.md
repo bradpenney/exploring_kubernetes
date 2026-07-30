@@ -1,6 +1,6 @@
 ---
 date: "2026-07-09 12:00"
-title: "cert-manager: Certificates as Cluster Resources"
+title: "cert-manager Explained: Automated TLS in Kubernetes"
 description: "Issuers, Certificates, and one Gateway annotation: how cert-manager turns TLS issuance into desired state — plus the debug chain for when it won't issue."
 ---
 # cert-manager: Certificates as Cluster Resources

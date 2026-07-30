@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{#-
+  Adds Article/TechArticle JSON-LD structured data to every page that has
+  frontmatter title + description (i.e. every published article, per this
+  site's own publish checklist). Invisible to readers — read by search
+  crawlers to understand page type without inferring it from prose.
+-#}
+{% block extrahead %}
+  {{ super() }}
+  {% if page and page.meta and page.meta.title and page.meta.description %}
+    {% set safe_title = page.meta.title | replace('\\', '\\\\') | replace('"', '\\"') %}
+    {% set safe_desc = page.meta.description | replace('\\', '\\\\') | replace('"', '\\"') %}
+    {% set safe_date = (page.meta.date or '') | replace('\\', '\\\\') | replace('"', '\\"') %}
+    {% set safe_author = config.site_author | replace('\\', '\\\\') | replace('"', '\\"') %}
+    {% set safe_url = page.canonical_url | replace('\\', '\\\\') | replace('"', '\\"') %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "{{ safe_title }}",
+  "description": "{{ safe_desc }}",
+  "url": "{{ safe_url }}",
+  "datePublished": "{{ safe_date }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ safe_author }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ safe_author }}"
+  }
+}
+</script>
+  {% endif %}
+{% endblock %}

@@ -1,6 +1,6 @@
 ---
 date: "2026-07-09 12:00"
-title: "Pointing Your Domain at the Cluster with external-dns"
+title: "external-dns Explained: Automated DNS for Kubernetes"
 description: "The last manual step, automated: external-dns watches your HTTPRoutes and writes DNS records — to a cloud provider, or to authoritative DNS you run yourself."
 ---
 # Pointing Your Domain at the Cluster with external-dns

@@ -91,7 +91,7 @@ plugins:
         - "essentials/service_connectivity.md"
         # Efficiency — drafts listed individually since networking/gateway_api.md
         # published (2026-07-02). New efficiency drafts must be ADDED here.
-        - "efficiency/overview.md"
+        # efficiency/overview.md PUBLISHED 2026-07-30 — see essentials/overview.md pattern.
         - "efficiency/workloads_overview.md"
         - "efficiency/statefulsets.md"
         - "efficiency/daemonsets.md"
@@ -229,6 +229,7 @@ nav:
 
   # ⚡ Efficiency - Running Real Workloads (curious dev / junior platform engineer)
   - ⚡ Efficiency:
+      - Overview: efficiency/overview.md
       - Architecture:
           - "The CRI: How kubelet Talks to Container Runtimes": efficiency/container_runtime.md
           - "The Kubernetes Scheduler: How a Pod Picks a Node": efficiency/scheduler.md
