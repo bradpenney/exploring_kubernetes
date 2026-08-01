@@ -11,8 +11,6 @@ description: A practical journey through Kubernetes for developers and platform 
 
 Your manager said "we're using Kubernetes now," or you saw it on a job description, or your team adopted it and you're expected to figure it out. This site takes you from "what even is this?" through deploying your first application to running production clusters — at whatever level you need.
 
-A subsection of [BradPenney.io](https://bradpenney.io), written from years of production Kubernetes experience.
-
 ---
 
 ## 🏥 Day One: Getting Started
@@ -76,6 +74,15 @@ Three tiers past Day One, each with its own overview covering exactly what's ins
 ---
 
 **Ready to start?** Begin with the **[Day One Overview](day_one/overview.md)** to pick your deployment path, or jump straight to **[Essentials](essentials/overview.md)** if you're already comfortable with `kubectl`.
+
+## Part of the BradPenney.io Network
+
+This site is part of a family of progressive technical learning resources:
+
+- [Exploring Containers](https://containers.bradpenney.io) — what a container actually is before Kubernetes schedules it
+- [Exploring GitOps](https://gitops.bradpenney.io) — how production teams actually ship changes to a cluster
+- [Exploring Linux](https://linux.bradpenney.io) — the kernel primitives (namespaces, cgroups) a cluster runs on
+- [Exploring Networking](https://networking.bradpenney.io) — how Services and Ingress actually route traffic on the wire
 
 ## Subscribe by RSS
 
