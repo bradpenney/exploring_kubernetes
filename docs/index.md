@@ -76,3 +76,9 @@ Three tiers past Day One, each with its own overview covering exactly what's ins
 ---
 
 **Ready to start?** Begin with the **[Day One Overview](day_one/overview.md)** to pick your deployment path, or jump straight to **[Essentials](essentials/overview.md)** if you're already comfortable with `kubectl`.
+
+## Subscribe by RSS
+
+New articles publish straight to the [RSS feed](https://k8s.bradpenney.io/feed_rss_created.xml) — no algorithm, no email required.
+
+<a href="https://iheartrss.com/"><img src="https://iheartrss.com/iheartrss-dark.svg" alt="I ♥ RSS" width="88" height="31"></a>
