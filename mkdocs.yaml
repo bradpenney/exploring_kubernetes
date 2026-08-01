@@ -108,6 +108,7 @@ plugins:
       image: https://k8s.bradpenney.io/images/exploring_kubernetes.png
       abstract_chars_count: 160
       length: 20
+      pretty_print: true
       date_from_meta:
         as_creation: "date"
         as_update: "git"
