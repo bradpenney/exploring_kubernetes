@@ -5,8 +5,25 @@ description: "What a ReplicaSet actually does, why Deployments manage them inste
 ---
 # ReplicaSets Under the Hood
 
-!!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Workloads](deployments.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-rocket-launch-outline: __Workloads__ — step 2 of 5
+
+        ---
+
+        ← [Deployments](deployments.md) · **you are here** · [Jobs and CronJobs](jobs_cronjobs.md) →
+
+        [Start the deep dive →](deployments.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 Creating a Deployment automatically creates a ReplicaSet behind it. So what does a ReplicaSet actually do, and why does Kubernetes bother with the extra layer?
 
@@ -20,7 +37,7 @@ graph TD
     P2 -.->|crashes| Gone[Pod gone<br/>current: 2]
     Gone -->|controller notices mismatch| New[New Pod created<br/>current: 3 again]
 
-    style RS fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style RS fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style P1 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style P2 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style P3 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff

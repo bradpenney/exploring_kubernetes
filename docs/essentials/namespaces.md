@@ -5,8 +5,25 @@ description: "How Kubernetes namespaces scope resources and enable multi-tenancy
 ---
 # Namespaces: The Boundary Everything Else Is Scoped To
 
-!!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md). It assumes you're comfortable with [Pods](pods.md), [Services](services.md), and [ConfigMaps and Secrets](config_and_secrets.md).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Core Primitives](pods.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-cube-outline: __Core Primitives__ — step 4 of 5
+
+        ---
+
+        ← [ConfigMaps and Secrets](config_and_secrets.md) · **you are here** · [Labels and Selectors](labels_selectors.md) →
+
+        [Start the deep dive →](pods.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 Almost everything you've created so far (Pods, Services, ConfigMaps, Secrets) lives **inside a namespace**. It's the partition that lets dozens of teams share one cluster without their object names colliding, lets one cluster hold `dev` and `staging` side by side, and gives the platform team a unit to attach quotas and access rules to.
 

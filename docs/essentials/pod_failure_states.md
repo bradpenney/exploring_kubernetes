@@ -5,10 +5,60 @@ description: "What CrashLoopBackOff, Pending, ImagePullBackOff, and OOMKilled ac
 ---
 # Diagnosing Pod Failure States
 
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a pathway:</span> [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-chip: __How Modern Software Really Runs on a CPU__ — step 15 of 17
+
+        ---
+
+        ← [Resource Requests and Limits](https://k8s.bradpenney.io/essentials/resource_requests_limits/) · **you are here** · [Your Flux Workflow](https://gitops.bradpenney.io/day_one/your_flux_workflow/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cpu-to-cluster)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
 !!! tip "Part of Essentials: Troubleshooting"
-    These are the statuses you'll see in the `STATUS` column of `kubectl get pods` when something's wrong. Each maps to a small set of causes and a quick way to confirm which one you're hitting. For the Pod *lifecycle phases* themselves (Pending → Running → Succeeded/Failed), see [Pods Deep Dive](pods.md). This article is also the closing step of the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io): every status below is one of this pathway's mechanisms failing loudly enough to show up in `kubectl get pods`.
+    These are the statuses you'll see in the `STATUS` column of `kubectl get pods` when something's wrong. Each maps to a small set of causes and a quick way to confirm which one you're hitting. For the Pod *lifecycle phases* themselves (Pending → Running → Succeeded/Failed), see [Pods Deep Dive](pods.md).
 
 Most Pod problems announce themselves as one of a handful of statuses. Learn what each one is actually telling you, and the fix usually follows.
+
+```mermaid
+flowchart TD
+    S["kubectl get pods<br/>read the STATUS column"] --> CLB{"CrashLoopBackOff?"}
+    S --> PEND{"Pending?"}
+    S --> IPB{"ImagePullBackOff?"}
+    S --> RUN{"Running, but<br/>unresponsive?"}
+
+    CLB -->|"yes"| LOGS["kubectl logs --previous<br/>container started, then crashed"]
+    PEND -->|"yes"| DESC1["kubectl describe pod<br/>scheduler rejected every Node"]
+    IPB -->|"yes"| DESC2["kubectl describe pod<br/>registry/image problem"]
+    RUN -->|"yes"| EXEC["kubectl logs / kubectl exec<br/>app-level problem, not Kubernetes"]
+
+    LOGS --> OOM{"Last State:<br/>OOMKilled?"}
+    OOM -->|"yes"| MEM["kernel OOM killer enforced<br/>resources.limits.memory"]
+    OOM -->|"no"| APP["application error —<br/>read the crash output"]
+
+    style S fill:#1a202c,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style CLB fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style PEND fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style IPB fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style RUN fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style OOM fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style LOGS fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style DESC1 fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style DESC2 fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style EXEC fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style MEM fill:#326CE5,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style APP fill:#326CE5,stroke:#cbd5e0,stroke-width:2px,color:#fff
+```
 
 | Status | What Actually Failed | First Command |
 |---|---|---|
@@ -141,10 +191,6 @@ kubectl exec -it <pod-name> -- sh  # (2)!
 ## What's Next
 
 This closes the loop on the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway's Kubernetes steps. **[Your Flux Workflow](https://gitops.bradpenney.io/day_one/your_flux_workflow/)** covers how a Pod's spec (including the resource limits this article keeps referencing) gets onto the cluster declaratively in the first place.
-
-<!-- TODO (fuller write-up): Error/Completed, ContainerCreating states; a fuller
-     symptom → cause → fix table; and the connectivity/label-mismatch path
-     cross-linking Services and Labels. -->
 
 ---
 

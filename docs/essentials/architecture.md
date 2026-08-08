@@ -5,8 +5,36 @@ description: "A working mental model of a Kubernetes cluster — the control pla
 ---
 # How a Kubernetes Cluster Is Built
 
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Architecture](architecture.md){: .pathway-pill } [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-sitemap: __Architecture__ — step 1 of 3
+
+        ---
+
+        ← *(first step)* · **you are here** · [The CRI: How kubelet Talks to Container Runtimes](../efficiency/container_runtime.md) →
+
+        [Start the deep dive →](architecture.md)
+
+    -   :material-chip: __How Modern Software Really Runs on a CPU__ — step 11 of 17
+
+        ---
+
+        ← [What Is a Container, Really?](https://containers.bradpenney.io/day_one/what_is_a_container/) · **you are here** · [The CRI: How kubelet Talks to Container Runtimes](https://k8s.bradpenney.io/efficiency/container_runtime/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cpu-to-cluster)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
 !!! tip "Part of Essentials"
-    This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
+    This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it.
 
 "Kubernetes does X" and "the cluster reconciles your manifest" get thrown around constantly, describing machinery that rarely gets named. This article puts names to it: just enough to make the rest of Essentials precise. The full depth (etcd internals, highly-available control planes, cluster networking) lives in the Mastery tier; here we want a working mental model, not an operator's manual.
 

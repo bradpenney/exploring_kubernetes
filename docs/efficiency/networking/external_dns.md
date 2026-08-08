@@ -5,8 +5,36 @@ description: "The last manual step, automated: external-dns watches your HTTPRou
 ---
 # Pointing Your Domain at the Cluster with external-dns
 
-!!! tip "Part of a Learning Path"
-    This article is a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io). It assumes the [Gateway API front door](gateway_api.md) is in place.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Networking](../../essentials/loadbalancer_services.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-lan: __Networking__ — step 5 of 5
+
+        ---
+
+        ← [cert-manager: Certificates as Cluster Resources](cert_manager.md) · **you are here** · *(last step)* →
+
+        [Start the deep dive →](../../essentials/loadbalancer_services.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 11 of 13
+
+        ---
+
+        ← [cert-manager: Certificates as Cluster Resources](https://k8s.bradpenney.io/efficiency/networking/cert_manager/) · **you are here** · [Deploying Platform Services with Flux and OCI Artifacts](https://gitops.bradpenney.io/essentials/deploying_the_edge_stack/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    It assumes the [Gateway API front door](gateway_api.md) is in place.
 
 The DNS ticket is still sitting in your queue. An app team shipped a perfect HTTPRoute for `pay.example.com` this morning — the route attached, the certificate issued — and now they're blocked on *you*, because someone with zone access has to type an address into a DNS console. On a platform where the load balancer provisions itself, routes attach themselves, and certificates renew themselves, one artifact is still hand-made: the **DNS record**. Every hostname, every environment, forever.
 

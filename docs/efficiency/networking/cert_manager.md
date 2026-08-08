@@ -5,8 +5,36 @@ description: "Issuers, Certificates, and one Gateway annotation: how cert-manage
 ---
 # cert-manager: Certificates as Cluster Resources
 
-!!! tip "Part of a Learning Path"
-    This article is a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io). It assumes the [Gateway API front door](gateway_api.md) and the [ACME protocol](https://networking.bradpenney.io/efficiency/tls/certificate_management/) — how a machine proves domain ownership — from the networking side of this pathway.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Networking](../../essentials/loadbalancer_services.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-lan: __Networking__ — step 4 of 5
+
+        ---
+
+        ← [Gateway API with Traefik: The Standard Front Door](gateway_api.md) · **you are here** · [Pointing Your Domain at the Cluster with external-dns](external_dns.md) →
+
+        [Start the deep dive →](../../essentials/loadbalancer_services.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 10 of 13
+
+        ---
+
+        ← [Kubernetes Ingress: Reading the Front Door You Inherit](https://k8s.bradpenney.io/essentials/ingress/) · **you are here** · [Pointing Your Domain at the Cluster with external-dns](https://k8s.bradpenney.io/efficiency/networking/external_dns/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    It assumes the [Gateway API front door](gateway_api.md) and the [ACME protocol](https://networking.bradpenney.io/efficiency/tls/certificate_management/) — how a machine proves domain ownership — from the networking side of this pathway.
 
 The [Gateway article](gateway_api.md) left you holding a promise: its HTTPS listener references a Secret called `example-com-tls`, and something, somehow, has to put a valid certificate in it, and keep putting one there, every renewal, forever. Do that by hand and you've built the exact calendar-driven outage the [ACME protocol](https://networking.bradpenney.io/efficiency/tls/certificate_management/) exists to end.
 

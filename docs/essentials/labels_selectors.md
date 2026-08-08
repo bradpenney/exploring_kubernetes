@@ -5,8 +5,25 @@ description: "How Kubernetes labels and selectors couple resources — equality 
 ---
 # Labels and Selectors: How Kubernetes Wires Itself Together
 
-!!! tip "Part of Essentials: Core Primitives"
-    This is the final article in [Essentials: Core Primitives](overview.md). It builds on [Pods](pods.md), [Services](services.md), [ConfigMaps and Secrets](config_and_secrets.md), and [Namespaces](namespaces.md).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Core Primitives](pods.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-cube-outline: __Core Primitives__ — step 5 of 5
+
+        ---
+
+        ← [Namespaces](namespaces.md) · **you are here** · *(last step)* →
+
+        [Start the deep dive →](pods.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 Here's a question that exposes whether you actually understand Kubernetes: **how does a Service know which Pods to send traffic to?** It doesn't hold a list of Pod names. It doesn't reference Pods by IP. It runs a *query* — "give me every Pod with `app: backend`" — and the result set is whatever currently matches.
 

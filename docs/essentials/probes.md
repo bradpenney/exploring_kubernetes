@@ -5,8 +5,25 @@ description: "Liveness, readiness, and startup probes — what each one actually
 ---
 # Health Checks and Probes
 
-!!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Workloads](deployments.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-rocket-launch-outline: __Workloads__ — step 5 of 5
+
+        ---
+
+        ← [Resource Requests and Limits](resource_requests_limits.md) · **you are here** · *(last step)* →
+
+        [Start the deep dive →](deployments.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 A Pod can be `Running` and still be completely broken. The container process is alive, `kubectl get pods` shows `1/1`, and every request to it returns a 500 — because its database connection died five minutes ago and nothing restarted it. As far as Kubernetes is concerned, a `Running` container *is* healthy, unless you tell it otherwise.
 

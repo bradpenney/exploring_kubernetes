@@ -5,8 +5,25 @@ description: "How Kubernetes Deployments manage ReplicaSets to scale, self-heal,
 ---
 # Deployments: Scaling and Self-Healing
 
-!!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — read [Pods: The Atomic Unit](pods.md) and [Services](services.md) first. Deployments are what you'll actually create; Pods and Services are what they're built from.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Workloads](deployments.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-rocket-launch-outline: __Workloads__ — step 1 of 5
+
+        ---
+
+        ← *(first step)* · **you are here** · [ReplicaSets Under the Hood](replicasets.md) →
+
+        [Start the deep dive →](deployments.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 If Pods are the building blocks of Kubernetes, **Deployments** are the architects. In production, you almost never create a Pod directly — you create a Deployment, and the Deployment creates the Pods for you.
 
@@ -35,10 +52,10 @@ graph TB
     Wait -.-> Current
 
     style Applied fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Desired fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Desired fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style Current fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style Compare fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Action fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Action fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
 !!! warning "In practice: GitOps applies this, and manual changes don't stick"
@@ -76,7 +93,7 @@ graph TD
     RS -- "Maintains count" --> P3[Pod v1.2]
 
     style Applied fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
-    style Dep fill:#48bb78,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style Dep fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style RS fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style P1 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
     style P2 fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff

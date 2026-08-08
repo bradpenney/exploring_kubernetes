@@ -5,8 +5,25 @@ description: "Run tasks to completion instead of forever — database migrations
 ---
 # Jobs and CronJobs: Batch and Scheduled Tasks
 
-!!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — you should understand [Deployments](deployments.md) first.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Workloads](deployments.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-rocket-launch-outline: __Workloads__ — step 3 of 5
+
+        ---
+
+        ← [ReplicaSets Under the Hood](replicasets.md) · **you are here** · [Resource Requests and Limits](resource_requests_limits.md) →
+
+        [Start the deep dive →](deployments.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 A Deployment's entire purpose is keeping something running forever. A database migration, a nightly backup, a batch of image resizing has the opposite goal: run, finish, stop. For a Job, *not* finishing is the failure — that single inversion is what a Job actually is, and everything below follows from it. Once a resource's job is to finish rather than persist, three questions define the whole feature set: how many times does it need to succeed, on what schedule, and what happens when it doesn't.
 
@@ -47,11 +64,11 @@ graph LR
     PJ --> PS[Pod Succeeds]
     PS --> C[Complete]
 
-    style D fill:#48bb78,stroke:#2d3748,color:#fff
-    style J fill:#48bb78,stroke:#2d3748,color:#fff
-    style PR fill:#2d3748,stroke:#cbd5e0,color:#fff
-    style PJ fill:#2d3748,stroke:#cbd5e0,color:#fff
-    style C fill:#4a5568,stroke:#cbd5e0,color:#fff
+    style D fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style J fill:#2f855a,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style PR fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style PJ fill:#2d3748,stroke:#cbd5e0,stroke-width:2px,color:#fff
+    style C fill:#4a5568,stroke:#cbd5e0,stroke-width:2px,color:#fff
 ```
 
 A Deployment treats "the container exited" as a failure to fix. A Job treats it as success. Same primitive underneath, a controller creating Pods from a template, but the definition of done is inverted — and that inversion is the whole spine of this article.

@@ -71,6 +71,18 @@ Three tiers past Day One, each with its own overview covering exactly what's ins
 
 </div>
 
+## Deep Dives
+
+<div class="grid cards" markdown>
+
+-   :material-map-marker-path: **[Deep Dives](https://bradpenney.io/deep-dives#kubernetes)**
+
+    ---
+
+    Ordered article series that stay inside this site, start to finish — Core Primitives, Networking, Workloads, and Architecture.
+
+</div>
+
 ---
 
 **Ready to start?** Begin with the **[Day One Overview](day_one/overview.md)** to pick your deployment path, or jump straight to **[Essentials](essentials/overview.md)** if you're already comfortable with `kubectl`.

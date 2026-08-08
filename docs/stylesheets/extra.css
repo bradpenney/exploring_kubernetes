@@ -260,6 +260,38 @@
   justify-content: center;
 }
 
+/* Pathway pills: compact multi-pathway indicator at the top of an article,
+   replacing an ever-growing "Part of a Learning Path" admonition. */
+.pathway-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 1.3em 0;
+  font-size: 0.8rem;
+}
+.pathway-pills__label {
+  color: var(--md-default-fg-color--light);
+  margin-right: 0.15rem;
+}
+.pathway-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.8rem;
+  border: 1px solid var(--brand-hairline);
+  border-radius: 999px;
+  background: rgba(234, 228, 214, 0.02);
+  color: var(--md-default-fg-color--light) !important;
+  text-decoration: none !important;
+  font-size: 0.78rem;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+.pathway-pill:hover {
+  border-color: var(--brand-accent);
+  color: var(--brand-accent) !important;
+  background: var(--brand-accent-soft);
+}
+
 /* Header logo: force it into the top bar at every width (Material hides the
    header logo below 76em by default) and size it consistently across sites. */
 .md-header__button.md-logo {

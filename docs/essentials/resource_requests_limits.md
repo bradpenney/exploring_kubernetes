@@ -5,8 +5,33 @@ description: "Requests and limits explained the way they actually behave in the 
 ---
 # Resource Requests and Limits: What You're Actually Promising
 
-!!! tip "Part of Essentials: Workloads"
-    This article is part of [Essentials](overview.md) — read [Deployments](deployments.md) first. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Workloads](deployments.md){: .pathway-pill } [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-rocket-launch-outline: __Workloads__ — step 4 of 5
+
+        ---
+
+        ← [Jobs and CronJobs](jobs_cronjobs.md) · **you are here** · [Health Checks and Probes](probes.md) →
+
+        [Start the deep dive →](deployments.md)
+
+    -   :material-chip: __How Modern Software Really Runs on a CPU__ — step 14 of 17
+
+        ---
+
+        ← [The Kubernetes Scheduler](https://k8s.bradpenney.io/efficiency/scheduler/) · **you are here** · [Diagnosing Pod Failure States](https://k8s.bradpenney.io/essentials/pod_failure_states/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cpu-to-cluster)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 Here's a scenario that confuses almost everyone the first time it happens: your service's CPU usage graph shows a calm, flat line at 40% of its limit. Latency dashboards show periodic spikes anyway — a request that should take 10ms occasionally takes 400ms. Nothing in `kubectl top` explains it. `kubectl describe pod` eventually does: `cpu throttled`.
 

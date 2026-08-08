@@ -5,8 +5,25 @@ description: "How Kubernetes ConfigMaps and Secrets keep config out of images �
 ---
 # ConfigMaps and Secrets: Configuration as a First-Class Object
 
-!!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md). It assumes you're comfortable with [Pods](pods.md) and [Services](services.md).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Core Primitives](pods.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-cube-outline: __Core Primitives__ — step 3 of 5
+
+        ---
+
+        ← [Services - Stable Networking for Pods](services.md) · **you are here** · [Namespaces](namespaces.md) →
+
+        [Start the deep dive →](pods.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 A container image should be **environment-agnostic**. The same `myapp:v1.4.2` artifact that runs in dev should run in staging and production unchanged: same bytes, same SHA. The only thing that differs is configuration: the database URL, the log level, the feature flags, the API credentials.
 

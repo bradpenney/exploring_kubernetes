@@ -5,8 +5,36 @@ description: "Every existing cluster still routes through Ingress. Read rules, p
 ---
 # Kubernetes Ingress: Reading the Front Door You Inherit
 
-!!! tip "Part of a Learning Path"
-    This article is a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io). It reads best after [Gateway API with Traefik](../efficiency/networking/gateway_api.md) — the standard that replaced what this article covers.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Networking](loadbalancer_services.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-lan: __Networking__ — step 2 of 5
+
+        ---
+
+        ← [LoadBalancer Services: From Cloud to Bare Metal](loadbalancer_services.md) · **you are here** · [Gateway API with Traefik: The Standard Front Door](../efficiency/networking/gateway_api.md) →
+
+        [Start the deep dive →](loadbalancer_services.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 9 of 13
+
+        ---
+
+        ← [Gateway API: Gateways and HTTPRoutes with Traefik](https://k8s.bradpenney.io/efficiency/networking/gateway_api/) · **you are here** · [cert-manager: Certificates as Cluster Resources](https://k8s.bradpenney.io/efficiency/networking/cert_manager/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    It reads best after [Gateway API with Traefik](../efficiency/networking/gateway_api.md) — the standard that replaced what this article covers.
 
 New exposure work belongs on [Gateway API](../efficiency/networking/gateway_api.md). Then you open the cluster you actually inherited: `kubectl get ingress -A` returns forty objects, every one of them serving production traffic right now, and none of them going anywhere this quarter. **Ingress** ran the front door of essentially every Kubernetes cluster built between 2016 and the mid-2020s — so reading it fluently isn't studying history; it's a skill you'll need in the first week of operating any cluster that predates you.
 

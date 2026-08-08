@@ -5,8 +5,36 @@ description: "What actually happens when you set type: LoadBalancer — cloud co
 ---
 # LoadBalancer Services: From Cloud to Bare Metal
 
-!!! tip "Part of a Learning Path"
-    This article is a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io). It builds directly on [Services](services.md) — the selector, EndpointSlice, and `kube-proxy` mechanics from that article are assumed here.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Networking](loadbalancer_services.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-lan: __Networking__ — step 1 of 5
+
+        ---
+
+        ← *(first step)* · **you are here** · [Kubernetes Ingress: Reading the Front Door You Inherit](ingress.md) →
+
+        [Start the deep dive →](loadbalancer_services.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 7 of 13
+
+        ---
+
+        ← [Services — Stable Networking for Pods](https://k8s.bradpenney.io/essentials/services/) · **you are here** · [Gateway API: Gateways and HTTPRoutes with Traefik](https://k8s.bradpenney.io/efficiency/networking/gateway_api/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    It builds directly on [Services](services.md) — the selector, EndpointSlice, and `kube-proxy` mechanics from that article are assumed here.
 
 Your app works. Inside the cluster, its [Service](services.md) answers on a stable address, other Pods reach it fine — and none of that helps the teammate who just asked *"what's the URL?"* Right now your only honest answer is `kubectl port-forward`, which stops existing the moment you close your laptop. The cluster's networking, so far, ends at the cluster's edge.
 

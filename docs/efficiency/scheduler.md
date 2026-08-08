@@ -5,8 +5,36 @@ description: "A Pod isn't running anywhere until something decides which Node it
 ---
 # The Kubernetes Scheduler: How a Pod Picks a Node
 
-!!! tip "Part of Efficiency"
-    This builds on [Essentials: Architecture](../essentials/architecture.md). The control-plane component named there gets its full mechanics here. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Architecture](../essentials/architecture.md){: .pathway-pill } [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-sitemap: __Architecture__ — step 3 of 3
+
+        ---
+
+        ← [The CRI: How kubelet Talks to Container Runtimes](container_runtime.md) · **you are here** · *(last step)* →
+
+        [Start the deep dive →](../essentials/architecture.md)
+
+    -   :material-chip: __How Modern Software Really Runs on a CPU__ — step 13 of 17
+
+        ---
+
+        ← [The CRI: How kubelet Talks to Container Runtimes](https://k8s.bradpenney.io/efficiency/container_runtime/) · **you are here** · [Resource Requests and Limits](https://k8s.bradpenney.io/essentials/resource_requests_limits/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cpu-to-cluster)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    This builds on [Essentials: Architecture](../essentials/architecture.md). The control-plane component named there gets its full mechanics here.
 
 You `kubectl apply` a Deployment, and thirty seconds later a Pod is still sitting in `Pending`. `kubectl get pods` gives you nothing to work with. No crash, no logs, because the container has never started. The answer is always in one place: `kubectl describe pod`, and specifically its `Events` section, because *something* just failed to make a decision, and that something has a name.
 

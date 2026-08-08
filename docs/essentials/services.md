@@ -5,8 +5,33 @@ description: "How Kubernetes Services give ephemeral Pods a stable address — C
 ---
 # Services: How Your Apps Talk to Each Other
 
-!!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md) — read [Pods: The Atomic Unit](pods.md) first, since Services only make sense once you understand why Pod IPs are unreliable. It's also a step in two learning paths on [bradpenney.io](https://bradpenney.io): [Deploy Your First App to Kubernetes](https://bradpenney.io/pathways/deploy-to-kubernetes) and [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Core Primitives](pods.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-cube-outline: __Core Primitives__ — step 2 of 5
+
+        ---
+
+        ← [Pods Deep Dive](pods.md) · **you are here** · [ConfigMaps and Secrets](config_and_secrets.md) →
+
+        [Start the deep dive →](pods.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 6 of 13
+
+        ---
+
+        ← [TLS Basics: How HTTPS Actually Works](https://networking.bradpenney.io/essentials/tls/tls_basics/) · **you are here** · [LoadBalancer Services: From Cloud to Bare Metal](https://k8s.bradpenney.io/essentials/loadbalancer_services/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
 
 You have a frontend app that needs to call a backend API. The backend is running in three Pods. What URL do you hardcode in your frontend config?
 

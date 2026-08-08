@@ -5,8 +5,36 @@ description: "How kubelet talks to containerd or CRI-O through the CRI: the inte
 ---
 # The CRI: How kubelet Actually Talks to Container Runtimes
 
-!!! tip "Part of Efficiency"
-    This builds directly on [Essentials: Architecture](../essentials/architecture.md); read that first if "control plane," "node," and "kubelet" aren't already solid ground. This article picks up exactly where that one's runtime callout left off. It's also a step in the [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster) pathway on [bradpenney.io](https://bradpenney.io).
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Architecture](../essentials/architecture.md){: .pathway-pill } [How Modern Software Really Runs on a CPU](https://bradpenney.io/pathways/cpu-to-cluster){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-sitemap: __Architecture__ — step 2 of 3
+
+        ---
+
+        ← [How a Kubernetes Cluster Is Built](../essentials/architecture.md) · **you are here** · [The Kubernetes Scheduler: How a Pod Picks a Node](scheduler.md) →
+
+        [Start the deep dive →](../essentials/architecture.md)
+
+    -   :material-chip: __How Modern Software Really Runs on a CPU__ — step 12 of 17
+
+        ---
+
+        ← [Kubernetes Architecture](https://k8s.bradpenney.io/essentials/architecture/) · **you are here** · [The Kubernetes Scheduler](https://k8s.bradpenney.io/efficiency/scheduler/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cpu-to-cluster)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    This builds directly on [Essentials: Architecture](../essentials/architecture.md); read that first if "control plane," "node," and "kubelet" aren't already solid ground. This article picks up exactly where that one's runtime callout left off.
 
 If you've ever read a cluster upgrade changelog, seen "Docker support removed," and felt a small jolt of *wait, Kubernetes runs on Docker, doesn't it?*, you've bumped into the exact confusion this article clears up. Plenty of clusters run on `containerd`. Some run on `CRI-O`. A few run something more exotic for sandboxing. `kubelet` doesn't know or care which — and that's not an accident, it's a deliberate interface.
 

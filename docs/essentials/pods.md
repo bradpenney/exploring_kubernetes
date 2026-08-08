@@ -5,8 +5,28 @@ description: "Understand Kubernetes Pods — the smallest deployable unit: lifec
 ---
 # Pods: What Actually Runs Your Application
 
-!!! tip "Part of Essentials: Core Primitives"
-    This article is part of [Essentials: Core Primitives](overview.md). Start with [Day One: Getting Started](../day_one/overview.md) if you're new to Kubernetes.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive:</span> [Core Primitives](pods.md){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards" markdown>
+
+    -   :material-cube-outline: __Core Primitives__ — step 1 of 5
+
+        ---
+
+        ← *(first step)* · **you are here** · [Services - Stable Networking for Pods](services.md) →
+
+        [Start the deep dive →](pods.md)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    New to Kubernetes? Start with [Day One: Getting Started](../day_one/overview.md) first.
 
 Deploying an application means seeing `kubectl get pods` return a name like `my-app-7c5ddbdf54-x8f9p`. It also means eventually seeing `CrashLoopBackOff` in the STATUS column — a specific kind of anxiety most Kubernetes users know well.
 

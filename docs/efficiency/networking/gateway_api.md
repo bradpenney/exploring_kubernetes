@@ -5,8 +5,36 @@ description: "Stop writing Ingress annotations. How Gateway API's role-split des
 ---
 # Gateway API with Traefik: The Standard Front Door
 
-!!! tip "Part of a Learning Path"
-    This article is a step in the [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet) pathway on [bradpenney.io](https://bradpenney.io). It assumes the [LoadBalancer Services](../../essentials/loadbalancer_services.md) picture: one external L4 address, and the question of what routes L7 traffic behind it.
+<!-- PATHWAY_ROADMAP:START -->
+<div class="pathway-pills" markdown>
+:material-map-marker-path: <span class="pathway-pills__label">Part of a deep dive and a pathway:</span> [Networking](../../essentials/loadbalancer_services.md){: .pathway-pill } [Put Your Kubernetes App on the Internet](https://bradpenney.io/pathways/cluster-to-internet){: .pathway-pill }
+</div>
+
+??? abstract ":material-map-legend: Consult the map"
+
+    <div class="grid cards two-col" markdown>
+
+    -   :material-lan: __Networking__ — step 3 of 5
+
+        ---
+
+        ← [Kubernetes Ingress: Reading the Front Door You Inherit](../../essentials/ingress.md) · **you are here** · [cert-manager: Certificates as Cluster Resources](cert_manager.md) →
+
+        [Start the deep dive →](../../essentials/loadbalancer_services.md)
+
+    -   :material-server-network: __Put Your Kubernetes App on the Internet__ — step 8 of 13
+
+        ---
+
+        ← [LoadBalancer Services: From Cloud to Bare Metal](https://k8s.bradpenney.io/essentials/loadbalancer_services/) · **you are here** · [Kubernetes Ingress: Reading the Front Door You Inherit](https://k8s.bradpenney.io/essentials/ingress/) →
+
+        [Start the pathway →](https://bradpenney.io/pathways/cluster-to-internet)
+
+    </div>
+<!-- PATHWAY_ROADMAP:END -->
+
+!!! tip "Prerequisites"
+    It assumes the [LoadBalancer Services](../../essentials/loadbalancer_services.md) picture: one external L4 address, and the question of what routes L7 traffic behind it.
 
 You own the cluster's edge. Twelve application teams want hostnames, paths, and TLS behind the one public address you [pay for](../../essentials/loadbalancer_services.md), and every one of their routing changes currently lands in *your* queue, because the edge config is a single shared object only your team can safely touch.
 
