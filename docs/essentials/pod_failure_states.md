@@ -25,8 +25,7 @@ description: "What CrashLoopBackOff, Pending, ImagePullBackOff, and OOMKilled ac
     </div>
 <!-- PATHWAY_ROADMAP:END -->
 
-!!! tip "Part of Essentials: Troubleshooting"
-    These are the statuses you'll see in the `STATUS` column of `kubectl get pods` when something's wrong. Each maps to a small set of causes and a quick way to confirm which one you're hitting. For the Pod *lifecycle phases* themselves (Pending → Running → Succeeded/Failed), see [Pods Deep Dive](pods.md).
+These are the statuses you'll see in the `STATUS` column of `kubectl get pods` when something's wrong. Each maps to a small set of causes and a quick way to confirm which one you're hitting. For the Pod *lifecycle phases* themselves (Pending → Running → Succeeded/Failed), see [Pods Deep Dive](pods.md).
 
 Most Pod problems announce themselves as one of a handful of statuses. Learn what each one is actually telling you, and the fix usually follows.
 

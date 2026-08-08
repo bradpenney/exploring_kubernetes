@@ -33,8 +33,7 @@ description: "A working mental model of a Kubernetes cluster — the control pla
     </div>
 <!-- PATHWAY_ROADMAP:END -->
 
-!!! tip "Part of Essentials"
-    This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it.
+This is the foundation the rest of Essentials leans on. Before you dig into [Pods](pods.md) and [Services](services.md), it helps to know *what* you're actually talking to when you run `kubectl apply` — what decides where your Pod runs, and what runs it.
 
 "Kubernetes does X" and "the cluster reconciles your manifest" get thrown around constantly, describing machinery that rarely gets named. This article puts names to it: just enough to make the rest of Essentials precise. The full depth (etcd internals, highly-available control planes, cluster networking) lives in the Mastery tier; here we want a working mental model, not an operator's manual.
 
