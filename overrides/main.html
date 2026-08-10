@@ -5,6 +5,25 @@
   frontmatter title + description (i.e. every published article, per this
   site's own publish checklist). Invisible to readers — read by search
   crawlers to understand page type without inferring it from prose.
+
+  Also adds BreadcrumbList JSON-LD mirroring the visible `navigation.path`
+  breadcrumb trail (theme feature) — that trail is visual only, it emits no
+  structured data of its own, and Google's breadcrumb rich-result feature
+  specifically reads schema.org markup, not the rendered nav HTML. Tier
+  section crumbs (e.g. "Essentials") aren't real pages in mkdocs's nav
+  model (no .url), so each one is linked to its tier's overview page
+  (every live tier has one, see feedback_tier_overview_required memory) —
+  the same target a reader would actually land on if that crumb were
+  clickable. Matched by URL suffix (`overview/`), NOT by comparing the nav
+  label "Overview" against `ch.title` — a Page's `.title` is overwritten by
+  its own frontmatter/H1 once content is parsed, so it never actually
+  equals the literal nav label; the `*_overview.md` filename convention is
+  the one stable signal (see the k8s CLAUDE.md renaming note for the same
+  convention site-wide: workloads_overview.md, networking_overview.md,
+  etc). A section with no overview child just gets "name" with no "item"
+  (schema.org and Google both tolerate this; required on all but the last
+  item, and this only happens on sub-groupings beneath a tier that already
+  contributed its own crumb).
 -#}
 {% block extrahead %}
   {{ super() }}
@@ -30,6 +49,42 @@
     "@type": "Organization",
     "name": "{{ safe_author }}"
   }
+}
+</script>
+    {% set crumb_items = [] %}
+    {% for c in page.ancestors[::-1] %}
+      {% set ns = namespace(ov_url=none) %}
+      {% for ch in c.children %}
+        {% if ch.is_page and ch.url.endswith('overview/') %}
+          {% set ns.ov_url = ch.canonical_url %}
+        {% endif %}
+      {% endfor %}
+      {% set _ = crumb_items.append({'name': c.title, 'url': ns.ov_url}) %}
+    {% endfor %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ config.site_url | trim('/') }}/"
+    }{% for c in crumb_items %},
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index + 1 }},
+      "name": "{{ c.name | replace('\\', '\\\\') | replace('"', '\\"') }}"{% if c.url %},
+      "item": "{{ c.url | replace('\\', '\\\\') | replace('"', '\\"') }}"{% endif %}
+    }{% endfor %},
+    {
+      "@type": "ListItem",
+      "position": {{ crumb_items | length + 2 }},
+      "name": "{{ safe_title }}",
+      "item": "{{ safe_url }}"
+    }
+  ]
 }
 </script>
   {% endif %}
